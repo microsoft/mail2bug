@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{22CB93EF-6D91-40B7-A6C9-E5F67595160E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mail2Bug</RootNamespace>
+    <AssemblyName>Mail2Bug</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Exchange.WebServices, Version=14.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Exchange.WebServices.1.2\lib\Microsoft.Exchange.WebServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\TFS.API.11.0.50727.1\lib\Microsoft.TeamFoundation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\TFS.API.11.0.50727.1\lib\Microsoft.TeamFoundation.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\TFS.API.11.0.50727.1\lib\Microsoft.TeamFoundation.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client">
+      <HintPath>..\packages\TFS.API.11.0.50727.1\lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\TFS.API.11.0.50727.1\lib\Microsoft.TeamFoundation.WorkItemTracking.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TestApiCore">
+      <HintPath>..\packages\Microsoft.TestApi.0.6.0.0\lib\net40\TestApiCore.dll</HintPath>
+    </Reference>
+    <Reference Include="TestApiWpf">
+      <HintPath>..\packages\Microsoft.TestApi.0.6.0.0\lib\net40\TestApiWpf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Config.cs" />
+    <Compile Include="Email\AckEmailHandler.cs" />
+    <Compile Include="Email\EmailBodyProcessingUtils.cs" />
+    <Compile Include="Email\EWS\EWSConnectionFactory.cs" />
+    <Compile Include="Email\EWS\EWSIncomingFileAttachment.cs" />
+    <Compile Include="Email\EWS\EWSIncomingItemAttachment.cs" />
+    <Compile Include="Email\EWS\EWSIncomingMessage.cs" />
+    <Compile Include="Email\EWS\FolderMailBoxManager.cs" />
+    <Compile Include="Email\EWS\RecipientsMailboxManager.cs" />
+    <Compile Include="Email\IIncomingEmailAttachment.cs" />
+    <Compile Include="Email\IIncomingEmailMessage.cs" />
+    <Compile Include="Email\IMailboxManager.cs" />
+    <Compile Include="Email\IMailSender.cs" />
+    <Compile Include="Email\MailboxManagerFactory.cs" />
+    <Compile Include="Email\Mocks\IncomingAttachmentMock.cs" />
+    <Compile Include="Email\Mocks\IncomingEmailMessageMock.cs" />
+    <Compile Include="Email\Mocks\MailManagerMock.cs" />
+    <Compile Include="ExceptionClasses\BadConfigException.cs" />
+    <Compile Include="ExceptionClasses\MailFolderNotFoundException.cs" />
+    <Compile Include="ExceptionClasses\WorkItemUpdateException.cs" />
+    <Compile Include="Helpers\DPAPIHelper.cs" />
+    <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="MessageProcessingStrategies\DateBasedValueResolver.cs" />
+    <Compile Include="MessageProcessingStrategies\IMessageProcessingStrategy.cs" />
+    <Compile Include="MessageProcessingStrategies\INameResolver.cs" />
+    <Compile Include="MessageProcessingStrategies\MessageProcessingStrategyFactory.cs" />
+    <Compile Include="MessageProcessingStrategies\NameResolver.cs" />
+    <Compile Include="MessageProcessingStrategies\NameResolverMock.cs" />
+    <Compile Include="MessageProcessingStrategies\OverridesExtractor.cs" />
+    <Compile Include="MessageProcessingStrategies\SimpleBugStrategy.cs" />
+    <Compile Include="MessageProcessingStrategies\SpecialValueResolver.cs" />
+    <Compile Include="MessageProcessingStrategies\UpdateItemMetadataStrategy.cs" />
+    <Compile Include="Helpers\TextUtils.cs" />
+    <Compile Include="Mail2BugEngine.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHelpers\RandomDataHelper.cs" />
+    <Compile Include="WorkItemManagement\IWorkItemManager.cs" />
+    <Compile Include="WorkItemManagement\MessageToWorkItemMapper.cs" />
+    <Compile Include="WorkItemManagement\TFSWorkItemManager.cs" />
+    <Compile Include="WorkItemManagement\WorkItemManagerMock.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

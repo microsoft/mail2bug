@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Instances>
+    <InstanceConfig Name="MockMockMock">
+      <TfsServerConfig>
+        <Project>MyProj</Project>
+        <WorkItemTemplate>Bug</WorkItemTemplate>
+        <CacheQueryFile>Query.txt</CacheQueryFile>
+        <SimulationMode>true</SimulationMode>
+        <NamesListFieldName>Assigned To</NamesListFieldName>
+      </TfsServerConfig>
+      <WorkItemSettings>
+        <ConversationIndexFieldName>ConversationId</ConversationIndexFieldName>
+        <DefaultFieldValues>
+          <DefaultValueDefinition Field="Assigned To" Value="ABCD" />
+        </DefaultFieldValues>
+        <AddEmailHeaderToItem>false</AddEmailHeaderToItem>
+        <DefaultAssign>Active</DefaultAssign>
+      </WorkItemSettings>
+      <EmailSettings>
+        <ServiceType>EWS</ServiceType>
+        <EWSMailboxAddress>abc@def.com</EWSMailboxAddress>
+
+        <SendAckEmails>false</SendAckEmails>
+        <AckEmailsRecipientsAll>true</AckEmailsRecipientsAll>
+        <IncomingFolder>M2B</IncomingFolder>
+        <CompletedFolder>DONE</CompletedFolder>
+        <ErrorFolder>ERROR</ErrorFolder>
+        <AppendOnlyEmailTitleRegex>.*(bug)\s*#\s*(?&lt;id&gt;\d+)</AppendOnlyEmailTitleRegex>
+        <AppendOnlyEmailBodyRegex>!!!(bug)\s*#?\s*(?&lt;id&gt;\d+)</AppendOnlyEmailBodyRegex>
+        <EmailSlaTemplateFile>ReplyTemplate.htm</EmailSlaTemplateFile>
+      </EmailSettings>
+    </InstanceConfig>
+  </Instances>
+</Config>
