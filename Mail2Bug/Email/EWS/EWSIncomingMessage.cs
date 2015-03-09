@@ -49,8 +49,8 @@ namespace Mail2Bug.Email.EWS
         public string SenderName { get { return _message.Sender.Name; } }
         public string SenderAlias { get { return GetAliasFromEmailAddress(_message.Sender.Address); } }
         public string SenderAddress { get { return _message.Sender.Address; } }
-        public IEnumerable<string> To { get { return _message.ToRecipients.Select(x => GetAliasFromEmailAddress(x.Address)); } }
-        public IEnumerable<string> Cc { get { return _message.CcRecipients.Select(x => GetAliasFromEmailAddress(x.Address)); } }
+        public IEnumerable<string> To { get { return _message.ToRecipients.Select(x => x.Address); } }
+        public IEnumerable<string> Cc { get { return _message.CcRecipients.Select(x => x.Address); } }
         public DateTime SentOn { get { return _message.DateTimeSent; } }
         public bool IsHtmlBody { get { return _message.Body.BodyType == BodyType.HTML; } }
 

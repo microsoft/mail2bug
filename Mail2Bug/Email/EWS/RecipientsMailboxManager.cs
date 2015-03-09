@@ -14,11 +14,13 @@ namespace Mail2Bug.Email.EWS
     public class RecipientsMailboxManager : IMailboxManager
     {
         private readonly ExchangeService _service;
+        private readonly IEnumerable<string> _emailAddresses;
         private readonly IEnumerable<string> _displayNames;
 
-        public RecipientsMailboxManager(ExchangeService connection, IEnumerable<string> displayNames )
+        public RecipientsMailboxManager(ExchangeService connection, IEnumerable<string> emailAddresses, IEnumerable<string> displayNames )
         {
             _service = connection;
+            _emailAddresses = emailAddresses;
             _displayNames = displayNames;
         }
 
@@ -32,6 +34,12 @@ namespace Mail2Bug.Email.EWS
             {
                 conditions.Add(new SearchFilter.ContainsSubstring(ItemSchema.DisplayTo, name));
                 conditions.Add(new SearchFilter.ContainsSubstring(ItemSchema.DisplayCc, name));
+            }
+
+            foreach (var address in _emailAddresses)
+            {
+                conditions.Add(new SearchFilter.ContainsSubstring(EmailMessageSchema.ToRecipients, address));
+                conditions.Add(new SearchFilter.ContainsSubstring(EmailMessageSchema.CcRecipients, address));
             }
 
             var filter = new SearchFilter.SearchFilterCollection(LogicalOperator.Or, conditions);

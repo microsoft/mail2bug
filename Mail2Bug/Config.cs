@@ -166,9 +166,10 @@ namespace Mail2Bug
 			public string ErrorFolder { get; set; }
 
             /// <summary>
-            /// Following setting is use for EWSByRecipieints MailboxServiceType
-            /// Basically, this setting should have a semicolon delimited list of recipient *Display Names*
-            /// Only messages that have one of those recipients in the To or CC lines will be processed
+            /// Following settings are used for EWSByRecipieints MailboxServiceType
+            /// Basically, this setting should have a semicolon delimited list of recipient Display Names or
+            /// email addresses. Only messages that have one of those recipients in the To or CC lines will 
+            /// RecipientsEmailAddressesbe processed
             /// 
             /// This is a prefrered mode of operation, since it incorporates the "Routing" part of detecting
             /// which instance handles which message into the tool rather than relying on exchange routing rules
@@ -176,6 +177,7 @@ namespace Mail2Bug
             /// limit on # of rules, rules not being honoered - both of which we've seen happening in production)
             /// </summary>
             public string RecipientDisplayNames { get; set; }
+            public string RecipientEmailAddresses { get; set; }
 
 			public string AppendOnlyEmailTitleRegex { get; set; }
             public string AppendOnlyEmailBodyRegex { get; set; }

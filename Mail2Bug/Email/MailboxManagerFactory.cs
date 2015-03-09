@@ -1,4 +1,6 @@
-﻿using Mail2Bug.Email.EWS;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Mail2Bug.Email.EWS;
 using Mail2Bug.ExceptionClasses;
 using Mail2Bug.Helpers;
 
@@ -30,14 +32,25 @@ namespace Mail2Bug.Email
 
                 case Config.EmailSettings.MailboxServiceType.EWSByRecipients:
                     return new RecipientsMailboxManager(
-                        ConnectionFactory.GetConnection(credentials), 
-                        emailSettings.RecipientDisplayNames.Split(';'));
+                        ConnectionFactory.GetConnection(credentials),
+                        ParseDelimitedList(emailSettings.RecipientEmailAddresses, ';'),
+                        ParseDelimitedList(emailSettings.RecipientDisplayNames, ';'));
 
                 default:
                     throw new BadConfigException(
                         "EmailSettings.ServiceType",
                         string.Format("Invalid mailbox service type defined in config ({0})", emailSettings.ServiceType));
             }
+        }
+
+        private static IEnumerable<string> ParseDelimitedList(string text, char delimiter)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return new List<string>();
+            }
+
+            return text.Split(delimiter);
         }
 
         // Enable connection caching for performance improvement when hosting multiple instances
