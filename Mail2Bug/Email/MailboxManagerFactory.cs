@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Mail2Bug.Email.EWS;
 using Mail2Bug.ExceptionClasses;
 using Mail2Bug.Helpers;
@@ -33,8 +32,7 @@ namespace Mail2Bug.Email
                 case Config.EmailSettings.MailboxServiceType.EWSByRecipients:
                     return new RecipientsMailboxManager(
                         ConnectionFactory.GetConnection(credentials),
-                        ParseDelimitedList(emailSettings.RecipientEmailAddresses, ';'),
-                        ParseDelimitedList(emailSettings.RecipientDisplayNames, ';'));
+                        ParseDelimitedList(emailSettings.Recipients, ';'));
 
                 default:
                     throw new BadConfigException(

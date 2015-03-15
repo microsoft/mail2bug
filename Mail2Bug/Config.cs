@@ -50,9 +50,6 @@ namespace Mail2Bug
 			// The name of the field which contains all the allowed names in its allowed values list (usually "Assigned To")
 			public string NamesListFieldName { get; set; }
 
-            // The AD Organization designation
-            public string ADOrganization { get; set; }
-
 			[XmlIgnore]
 			public string CacheQuery
 			{
@@ -176,8 +173,7 @@ namespace Mail2Bug
             /// yielding a more coherent configuration store + avoiding Exchange flakiness with inbox rules ( e.g.
             /// limit on # of rules, rules not being honoered - both of which we've seen happening in production)
             /// </summary>
-            public string RecipientDisplayNames { get; set; }
-            public string RecipientEmailAddresses { get; set; }
+            public string Recipients { get; set; }
 
 			public string AppendOnlyEmailTitleRegex { get; set; }
             public string AppendOnlyEmailBodyRegex { get; set; }
