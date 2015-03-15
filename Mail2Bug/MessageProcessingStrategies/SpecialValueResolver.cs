@@ -84,7 +84,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             // Name resolution was not successful, return the display name
             Logger.WarnFormat("Name resolution failed for sender alias '{0}'. Returning display name.",
                                 message.SenderAlias);
-            return message.SenderAlias;
+            return message.SenderName;
         }
 
         private static string GetValidSubject(IIncomingEmailMessage message)

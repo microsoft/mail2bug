@@ -387,7 +387,12 @@ namespace Mail2BugUnitTests
                     Mnemonics = new List<Config.MnemonicDefinition>(),
                     RecipientOverrides = new List<Config.RecipientOverrideDefinition>(),
                     DateBasedOverrides = new List<Config.DateBasedFieldOverrides>()
+                },
+                EmailSettings = new Config.EmailSettings
+                {
+                    ExplicitOverridesRegex = @"###\s*(?<fieldName>[^:]*):\s*(?<value>.*)"
                 }
+               
             };
 
             return config;

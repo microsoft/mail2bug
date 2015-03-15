@@ -232,6 +232,12 @@ namespace Mail2Bug.WorkItemManagement
         {
             var keyField = _config.WorkItemSettings.ConversationIndexFieldName;
 
+            if (!workItem.Fields.Contains(keyField))
+            {
+                Logger.WarnFormat("Item {0} doesn't contain the key field {1}. Not caching", workItem.Id, keyField);
+                return;
+            }
+
             var keyFieldValue = workItem.Fields[keyField].Value.ToString().Trim();
             Logger.DebugFormat("Work item {0} conversation ID is {1}", workItem.Id, keyFieldValue);
             if (string.IsNullOrEmpty(keyFieldValue))

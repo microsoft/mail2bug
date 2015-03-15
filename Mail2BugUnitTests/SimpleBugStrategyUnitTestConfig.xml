@@ -18,7 +18,7 @@
         <DefaultAssign>Active</DefaultAssign>
       </WorkItemSettings>
       <EmailSettings>
-        <ServiceType>EWS</ServiceType>
+        <ServiceType>EWSByFolder</ServiceType>
         <EWSMailboxAddress>abc@def.com</EWSMailboxAddress>
 
         <SendAckEmails>false</SendAckEmails>
@@ -28,7 +28,8 @@
         <ErrorFolder>ERROR</ErrorFolder>
         <AppendOnlyEmailTitleRegex>.*(bug)\s*#\s*(?&lt;id&gt;\d+)</AppendOnlyEmailTitleRegex>
         <AppendOnlyEmailBodyRegex>!!!(bug)\s*#?\s*(?&lt;id&gt;\d+)</AppendOnlyEmailBodyRegex>
-        <EmailSlaTemplateFile>ReplyTemplate.htm</EmailSlaTemplateFile>
+        <ExplicitOverridesRegex>###\s*(?&lt;fieldName&gt;[^:]*):\s*(?&lt;value&gt;.*)</ExplicitOverridesRegex>
+        <ReplyTemplate>ReplyTemplate.htm</ReplyTemplate>
       </EmailSettings>
     </InstanceConfig>
   </Instances>

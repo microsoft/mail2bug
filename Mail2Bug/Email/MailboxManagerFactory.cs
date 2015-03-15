@@ -25,7 +25,7 @@ namespace Mail2Bug.Email
             {
                 // We used to support DotMapi as well, but that's deprecated now. Nevertheless, we may want to support
                 // other mail providers in the future.
-                case Config.EmailSettings.MailboxServiceType.EWS:
+                case Config.EmailSettings.MailboxServiceType.EWSByFolder:
                     return new FolderMailboxManager(
                         ConnectionFactory.GetConnection(credentials), 
                         emailSettings.IncomingFolder);

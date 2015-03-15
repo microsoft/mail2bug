@@ -9,9 +9,6 @@ namespace Mail2Bug.Email
     /// This is useful for abstracting away the underlying layer that actually handles the email messages, allowing us to
     /// change it over time without major rewrites of the actual logic, which should be mostly decoupled from the details of
     /// how email messages are retrieved, parsed etc.
-    /// 
-    /// I am introducing this to abstract away the current usage of DotMAPI, which is very unstable, and allow me to replace
-    /// it with usage of EWS (Exchange Web Services).
     /// </summary>
     public interface IIncomingEmailMessage
     {

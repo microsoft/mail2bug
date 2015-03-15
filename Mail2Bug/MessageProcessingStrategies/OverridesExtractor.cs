@@ -156,7 +156,7 @@ namespace Mail2Bug.MessageProcessingStrategies
         /// </summary>
         private IEnumerable<KeyValuePair<string, string>> GetExplicitOverrides()
         {
-            var overridesRegex = new Regex(@"###\s*(?<fieldName>\w[\w\s]*):\s*(?<value>.*)");
+            var overridesRegex = new Regex(_config.EmailSettings.ExplicitOverridesRegex);
 
             var overrides =
                 from Match match in overridesRegex.Matches(GetMessageFullText())

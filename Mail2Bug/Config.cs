@@ -137,7 +137,7 @@ namespace Mail2Bug
 		{
             public enum MailboxServiceType
             {
-                EWS,
+                EWSByFolder,
                 EWSByRecipients
             }
 
@@ -159,7 +159,7 @@ namespace Mail2Bug
             public bool AckEmailsRecipientsAll { get; set; }
 
             /// <summary>
-            /// Following three are used for EWS MailboxServiceType
+            /// Following three are used for EWSByFolder MailboxServiceType
             /// </summary>
 			public string IncomingFolder { get; set; }
 			public string CompletedFolder { get; set; }
@@ -181,6 +181,7 @@ namespace Mail2Bug
 
 			public string AppendOnlyEmailTitleRegex { get; set; }
             public string AppendOnlyEmailBodyRegex { get; set; }
+            public string ExplicitOverridesRegex { get; set; }
 
 			public string ReplyTemplate { get; set; }
 
