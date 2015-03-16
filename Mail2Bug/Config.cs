@@ -70,9 +70,6 @@ namespace Mail2Bug
             public List<MnemonicDefinition> Mnemonics { get; set; }
             public List<RecipientOverrideDefinition> RecipientOverrides { get; set; }
             public List<DateBasedFieldOverrides> DateBasedOverrides { get; set; } 
-			public bool AddEmailHeaderToItem { get; set; }
-
-			public string DefaultAssign { get; set; }
 
             public bool AttachOriginalMessage { get; set; }
 

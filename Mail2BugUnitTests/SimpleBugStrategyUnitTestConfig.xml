@@ -6,7 +6,7 @@
         <Project>MyProj</Project>
         <WorkItemTemplate>Bug</WorkItemTemplate>
         <CacheQueryFile>Query.txt</CacheQueryFile>
-        <SimulationMode>true</SimulationMode>
+        <SimulationMode>false</SimulationMode>
         <NamesListFieldName>Assigned To</NamesListFieldName>
       </TfsServerConfig>
       <WorkItemSettings>
@@ -14,18 +14,15 @@
         <DefaultFieldValues>
           <DefaultValueDefinition Field="Assigned To" Value="ABCD" />
         </DefaultFieldValues>
-        <AddEmailHeaderToItem>false</AddEmailHeaderToItem>
-        <DefaultAssign>Active</DefaultAssign>
       </WorkItemSettings>
       <EmailSettings>
-        <ServiceType>EWSByFolder</ServiceType>
+        <ServiceType>EWSByRecipients</ServiceType>
         <EWSMailboxAddress>abc@def.com</EWSMailboxAddress>
+        <Recipients>abc@def.com</Recipients>
 
         <SendAckEmails>false</SendAckEmails>
         <AckEmailsRecipientsAll>true</AckEmailsRecipientsAll>
         <IncomingFolder>M2B</IncomingFolder>
-        <CompletedFolder>DONE</CompletedFolder>
-        <ErrorFolder>ERROR</ErrorFolder>
         <AppendOnlyEmailTitleRegex>.*(bug)\s*#\s*(?&lt;id&gt;\d+)</AppendOnlyEmailTitleRegex>
         <AppendOnlyEmailBodyRegex>!!!(bug)\s*#?\s*(?&lt;id&gt;\d+)</AppendOnlyEmailBodyRegex>
         <ExplicitOverridesRegex>###\s*(?&lt;fieldName&gt;[^:]*):\s*(?&lt;value&gt;.*)</ExplicitOverridesRegex>

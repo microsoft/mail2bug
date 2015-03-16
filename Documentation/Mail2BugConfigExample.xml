@@ -1,0 +1,91 @@
+﻿<?xml version="1.0"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Instances>
+    <InstanceConfig Name="Hello World">
+      <TfsServerConfig>
+        <CollectionUri>http://tfsServer.madeUpDomain.com:8080/tfs/something</CollectionUri>
+        <Project>HelloWorldProject</Project>
+        <WorkItemTemplate>Bug</WorkItemTemplate>
+        <!-- see example query file in the same folder as this example config-->
+        <CacheQueryFile>.\Resources\Query.txt</CacheQueryFile>
+        <SimulationMode>false</SimulationMode>
+		<NamesListFieldName>Assigned To</NamesListFieldName>
+      </TfsServerConfig>
+      <WorkItemSettings>
+          <!-- The conversation index field should be a textual field with a capacity of 200 or more. Ideally 
+               you'll create a dedicated field for this rather than overloading an existing one, to avoid
+               other people/tools overwriting it with unrelated data. Also, by making it dedicated, you can
+               also make the decision to make it invisible (since no one should be editing it manually)-->
+          <ConversationIndexFieldName>ConverstionID</ConversationIndexFieldName> 
+        <DefaultFieldValues>
+            <!-- The important part is to include a default value for every mandatory field, otherwise work
+                 item creation will fail. The only automatically defined default is the 'Title' field, that gets
+                 the email subject as a value. -->
+          <DefaultValueDefinition Field="Assigned To" Value="Unassigned" />
+          <DefaultValueDefinition Field="Severity" Value="1" />
+          <DefaultValueDefinition Field="Area Path" Value="HelloWorldProject\BusinessLogic" />
+          <DefaultValueDefinition Field="Iteration Path" Value="HelloWorldProject\Iteration 42" />
+        </DefaultFieldValues>
+		<Mnemonics>
+            <!-- To set several fields with one mnemonic, just define several line items with the mnemonic
+                 as the "Mnemonic" attribute, one for each field you want to set -->
+			<MnemonicDefinition Mnemonic="Test" Field="Issue" Value="Test Defect"/>
+		</Mnemonics>
+        <DateBasedOverrides>
+            <!-- In this example: Set the iteration path based on the current date - for items created in
+                 January (i.e. after 1/1/2015, but before 2/1/2015), set the iteration path to iteration 41.
+                 Similarly, items created in Febrary will be in Iteration 42. Anything starting Marc and
+                 beyond would be Iteration 43.
+                 Anything before 1/1/2015 will get the default, which is Iteration 40 -->
+          <DateBasedFieldOverrides FieldName="Iteration Path">
+            <Entries>
+				<DateBasedOverrideEntry StartDate="2015-01-01" Value="HelloWorldProject\Iteration 41" />
+				<DateBasedOverrideEntry StartDate="2015-02-01" Value="HelloWorldProject\Iteration 42" />
+				<DateBasedOverrideEntry StartDate="2015-03-01" Value="HelloWorldProject\Iteration 43" />
+            </Entries>
+            <DefaultValue>HelloWorldProject\Iteration 40</DefaultValue>
+          </DateBasedFieldOverrides>
+        </DateBasedOverrides>
+
+        <!-- 'true' means we should attached the email message that triggered the creation of the work item -->
+		<AttachOriginalMessage>true</AttachOriginalMessage>
+      </WorkItemSettings>
+      <EmailSettings>
+          <!-- EWSByRecipients is the most straight-forward way to set up the mailbox. Basically, it will process
+               any email in the Inbox that has any of the recipients in the To or Cc fields.
+               Recipients can be specified as email addresses, or as display names
+               When specifying more than one recipient, use ; as separator -->
+        <ServiceType>EWSByRecipients</ServiceType>
+        <Recipients>mail2bug@workplace.com</Recipients>
+
+        <!-- The email address whose inbox that we want to monitor -->
+        <EWSMailboxAddress>mail2bug@workplace.com</EWSMailboxAddress>
+
+        <!-- A username with permissions to log in to the email account. This is generally either in the form of
+             email address form (usually the same as the email address in EWSMailboxAddress), or in DOMAIN\username
+             form. I've seen cases where the same server would take one or the other (or both), depending on the
+             server set up, as well as the client set up, so if one doesn't work, try the other -->
+        <EWSUsername>mail2bug@workplace.com</EWSUsername>
+        <!-- Pointer to a file that stores the password for the login account. The file is expected to be encrypted
+             with DPAPI - use the DpapiTool.exe from the Tools subfolder to create one. Note that the tool needs to be
+             run under the same credentials that mail2bug will run with, otherwise it won't be able to decrypt the
+             contents. -->
+        <EWSPasswordFile>.\Resources\mail2bug.bin</EWSPasswordFile>
+
+        <SendAckEmails>true</SendAckEmails>
+		<AckEmailsRecipientsAll>true</AckEmailsRecipientsAll>
+
+        <!-- A pointer to a file containing the ack email template for sending back responses when a new work item is
+             created-->
+        <ReplyTemplate>.\Resources\AckEmail.htm</ReplyTemplate>
+
+        <!-- Ideally, you'll never need to change these regexes and you'll use the defaults below, but they do give you 
+             the flexibility to define your own format for specifying overrides, or detecting that an email is an "append
+             only" email. Don't forget to escape any angle brackets. -->
+        <AppendOnlyEmailTitleRegex>.*(bug)\s*#*\s*(?&lt;id&gt;\d+)</AppendOnlyEmailTitleRegex>
+		<AppendOnlyEmailBodyRegex>!!!(bug)\s*#*\s*(?&lt;id&gt;\d+)</AppendOnlyEmailBodyRegex>
+		<ExplicitOverridesRegex>###\s*(?&lt;fieldName&gt;[^:]*):\s*(?&lt;value&gt;.*)</ExplicitOverridesRegex>
+      </EmailSettings>
+    </InstanceConfig>
+  </Instances>
+</Config>
