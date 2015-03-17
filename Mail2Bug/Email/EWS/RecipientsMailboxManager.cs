@@ -46,7 +46,7 @@ namespace Mail2Bug.Email.EWS
                 {
                     queryString.Append(" OR ");
                 }
-                queryString.AppendFormat("Participants:\"{0}\"", name);
+                queryString.AppendFormat("participants:\"{0}\"", name.ToLower());
             }
 
             return queryString.ToString();

@@ -22,6 +22,7 @@ namespace Mail2Bug
         {
             if(args.Contains("-break"))
             {
+                Logger.Info("Breaking into debugger");
                 Debugger.Break();
             }
 
