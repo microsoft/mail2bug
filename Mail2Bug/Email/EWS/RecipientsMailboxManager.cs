@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Exchange.WebServices.Data;
 
 namespace Mail2Bug.Email.EWS
@@ -15,12 +14,12 @@ namespace Mail2Bug.Email.EWS
     public class RecipientsMailboxManager : IMailboxManager
     {
         private readonly ExchangeService _service;
-        private readonly string _recipientsQueryString;
+        private readonly IEnumerable<string> _recipients;
 
         public RecipientsMailboxManager(ExchangeService connection, IEnumerable<string> recipients)
         {
             _service = connection;
-            _recipientsQueryString = BuildRecipientsQueryString(recipients);
+            _recipients = recipients;
         }
 
         public IEnumerable<IIncomingEmailMessage> ReadMessages()
@@ -28,28 +27,53 @@ namespace Mail2Bug.Email.EWS
             var inbox = Folder.Bind(_service, WellKnownFolderName.Inbox);
             var view = new ItemView(Math.Max(inbox.TotalCount,100));
 
-            var items = inbox.FindItems(_recipientsQueryString, view);
+            var items = inbox.FindItems(view);
 
             return items
-                .Where(item => item is EmailMessage)
-                .OrderBy(message => message.DateTimeReceived)
+                .Where(ShouldConsiderItem)
+                .OrderBy(message =>
+                {   
+                    message.Load(new PropertySet(ItemSchema.DateTimeReceived));
+                    return message.DateTimeReceived; 
+                })
                 .Select(message => new EWSIncomingMessage(message as EmailMessage))
                 .AsEnumerable();
         }
 
-        private static string BuildRecipientsQueryString(IEnumerable<string> recipients)
+        private bool ShouldConsiderItem(Item item)
         {
-            var queryString = new StringBuilder();
-            foreach (var name in recipients)
+            // Consider only email messages
+            var message = item as EmailMessage;
+            
+            if (message == null)
             {
-                if (queryString.Length != 0)
-                {
-                    queryString.Append(" OR ");
-                }
-                queryString.AppendFormat("to:\"{0}\" OR cc:\"{0}\"", name.ToLower());
+                return false;
             }
 
-            return queryString.ToString();
+            // Load the properties we're going to use for evaluating the message
+            message.Load(new PropertySet(
+                    EmailMessageSchema.ToRecipients,
+                    EmailMessageSchema.CcRecipients
+                ));
+
+            // If the recipient is in either the To or CC lines, then this message should be considered
+            return _recipients.Any(recipient =>
+                EmailAddressesMatch(message.ToRecipients, recipient) ||
+                EmailAddressesMatch(message.CcRecipients, recipient));
+        }
+
+        private bool EmailAddressesMatch(EmailAddressCollection emailAddresses, string recipient)
+        {
+            if (emailAddresses == null)
+            {
+                return false;
+            }
+
+            return
+                emailAddresses.Any(
+                    address =>
+                        address.Address.Equals(recipient, StringComparison.InvariantCultureIgnoreCase) ||
+                        address.Name.Equals(recipient, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Mail2Bug.MessageProcessingStrategies
 
             // Found specia value - return resolution
             var resolvedValue = _valueResolutionMap[value];
-            Logger.InfoFormat("Resolved value '{0}' to '{1}'", value, resolvedValue);
+            Logger.DebugFormat("Resolved value '{0}' to '{1}'", value, resolvedValue);
             return resolvedValue;
         }
 

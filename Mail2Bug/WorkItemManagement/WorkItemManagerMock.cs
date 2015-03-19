@@ -3,29 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
 using log4net;
 using Mail2Bug.MessageProcessingStrategies;
 
 namespace Mail2Bug.WorkItemManagement
 {
-    public class WorkItemManagerMock :IWorkItemManager, IDisposable
+    public class WorkItemManagerMock :IWorkItemManager
     {
         private readonly string _keyField;
-
-        static WorkItemManagerMock()
-        {
-            XmlWriterSettings = new XmlWriterSettings
-                {
-                    NewLineChars = "\r\n",
-                    Encoding = Encoding.UTF8,
-                    Indent = true,
-                    IndentChars = "\t",
-                    CheckCharacters = false
-                };
-        }
 
         public WorkItemManagerMock(string keyField, INameResolver resolver = null)
         {
@@ -89,52 +74,6 @@ namespace Mail2Bug.WorkItemManagement
             return id;
         }
 
-        private void SerializeBugs()
-        {
-            try
-            {
-                Logger.DebugFormat("Serializing bugs to file {0}", Path.GetFullPath(SerializationFilename));
-
-                using (var fs = new FileStream(SerializationFilename, FileMode.Create, FileAccess.Write))
-                {
-                    using (var writer = XmlWriter.Create(fs,XmlWriterSettings))
-                    {
-                        writer.WriteStartElement("Bugs");
-
-                        foreach (var bug in Bugs)
-                        {
-                            Logger.DebugFormat("Processing bug {0} with {1} values", bug.Key, bug.Value.Count);
-                            writer.WriteStartElement("WorkItem");
-                            writer.WriteAttributeString("ID", bug.Key.ToString(CultureInfo.InvariantCulture));
-
-                            foreach (var val in bug.Value)
-                            {
-                                Logger.DebugFormat("Bug {0}: Writing value {1},{2}", bug.Key, val.Key, val.Value);
-                                writer.WriteElementString(GetValidXmlElementName(val.Key), val.Value);
-                            }
-
-                            Logger.DebugFormat("Finished processing bug {0}", bug.Key);
-                            writer.WriteEndElement();
-                        }
-
-                        Logger.DebugFormat("Finished processing all bugs");
-                        writer.WriteEndElement();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.ToString());
-            }
-        }
-
-        private static string GetValidXmlElementName(string val)
-        {
-            var validName = Regex.Replace(val, @"[\s()]", "_");
-            Logger.DebugFormat("{0} --> {1}", val, validName);
-            return validName;
-        }
-
         public void ModifyWorkItem(int workItemId, string comment, Dictionary<string, string> values)
         {
             if (ThrowOnModifyBug != null) throw ThrowOnModifyBug;
@@ -166,11 +105,6 @@ namespace Mail2Bug.WorkItemManagement
 
         }
 
-        public void Dispose()
-        {
-            SerializeBugs();
-        }
-
         public SortedList<string, int> WorkItemsCache { get; set; }
 
         public Dictionary<int, Dictionary<string, string>> Bugs = new Dictionary<int, Dictionary<string, string>>(); 
@@ -185,10 +119,7 @@ namespace Mail2Bug.WorkItemManagement
 
         readonly Random _rand = new Random();
         private readonly INameResolver _resolver;
-        private static readonly string SerializationFilename = Path.Combine(Directory.GetCurrentDirectory(),"SerializedBugs.xml");
         public const string HistoryField = "History";
-
-        private static readonly XmlWriterSettings XmlWriterSettings;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(WorkItemManagerMock));
     }

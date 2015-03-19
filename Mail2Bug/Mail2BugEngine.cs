@@ -7,9 +7,8 @@ using Mail2Bug.WorkItemManagement;
 
 namespace Mail2Bug
 {
-	class Mail2BugEngine : IDisposable
+	class Mail2BugEngine 
 	{
-		private readonly IWorkItemManager _workItemManager;
 	    private readonly IMailboxManager _mailboxManager;
 		private readonly IMessageProcessingStrategy _messageProcessingStrategy;
 		private readonly Config.InstanceConfig _config;
@@ -22,19 +21,20 @@ namespace Mail2Bug
             _mailboxManager = MailboxManagerFactory.CreateMailboxManager(_config.EmailSettings);
 
 		    Logger.InfoFormat("Initializing WorkItemManager");
-		    if(configInstance.TfsServerConfig.SimulationMode)
+            IWorkItemManager workItemManager;
+            if (configInstance.TfsServerConfig.SimulationMode)
 		    {
                 Logger.InfoFormat("Working in simulation mode. Using WorkItemManagerMock");
-		        _workItemManager = new WorkItemManagerMock(_config.WorkItemSettings.ConversationIndexFieldName);
+		        workItemManager = new WorkItemManagerMock(_config.WorkItemSettings.ConversationIndexFieldName);
 		    }
 		    else
 		    {
                 Logger.InfoFormat("Working in standard mode, using TFSWorkItemManager");
-		        _workItemManager = new TFSWorkItemManager(_config);
+		        workItemManager = new TFSWorkItemManager(_config);
 		    }
 
 		    Logger.InfoFormat("Initializing MessageProcessingStrategy");
-		    _messageProcessingStrategy = new SimpleBugStrategy(_config, _workItemManager);
+		    _messageProcessingStrategy = new SimpleBugStrategy(_config, workItemManager);
 		}
 
 	    public void ProcessInbox()
@@ -92,12 +92,6 @@ namespace Mail2Bug
 			    }
 			}
 		}
-
-	    public void Dispose()
-	    {
-	        var disposableManager = _workItemManager as IDisposable;
-            if (disposableManager != null) disposableManager.Dispose();
-	    }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Mail2BugEngine));
     }

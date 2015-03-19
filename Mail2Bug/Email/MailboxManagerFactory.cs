@@ -2,6 +2,7 @@
 using Mail2Bug.Email.EWS;
 using Mail2Bug.ExceptionClasses;
 using Mail2Bug.Helpers;
+using Microsoft.Exchange.WebServices.Data;
 
 namespace Mail2Bug.Email
 {
@@ -20,18 +21,17 @@ namespace Mail2Bug.Email
                 Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile)
             };
 
+            var exchangeService = ConnectionFactory.GetConnection(credentials);
             switch (emailSettings.ServiceType)
             {
-                // We used to support DotMapi as well, but that's deprecated now. Nevertheless, we may want to support
-                // other mail providers in the future.
                 case Config.EmailSettings.MailboxServiceType.EWSByFolder:
                     return new FolderMailboxManager(
-                        ConnectionFactory.GetConnection(credentials), 
+                        exchangeService, 
                         emailSettings.IncomingFolder);
 
                 case Config.EmailSettings.MailboxServiceType.EWSByRecipients:
                     return new RecipientsMailboxManager(
-                        ConnectionFactory.GetConnection(credentials),
+                        exchangeService,
                         ParseDelimitedList(emailSettings.Recipients, ';'));
 
                 default:

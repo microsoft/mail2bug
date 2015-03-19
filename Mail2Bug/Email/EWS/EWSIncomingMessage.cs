@@ -24,6 +24,7 @@ namespace Mail2Bug.Email.EWS
                     EmailMessageSchema.ToRecipients,
                     EmailMessageSchema.CcRecipients,
                     ItemSchema.MimeContent,
+                    ItemSchema.DateTimeReceived,
                     ItemSchema.DateTimeSent,
                     EmailMessageSchema.ConversationTopic,
                     ItemSchema.Attachments,
