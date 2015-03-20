@@ -11,7 +11,8 @@ namespace Mail2Bug.MessageProcessingStrategies
 {
     public class SimpleBugStrategy : IMessageProcessingStrategy
     {
-    	private readonly Config.InstanceConfig _config;
+        private const int TfsTextFieldMaxLength = 255;
+        private readonly Config.InstanceConfig _config;
 		private readonly IWorkItemManager _workItemManager;
         private readonly AckEmailHandler _ackEmailHandler;
         private readonly MessageToWorkItemMapper _messageToWorkItemMapper;
@@ -75,7 +76,9 @@ namespace Mail2Bug.MessageProcessingStrategies
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
 
     		workItemUpdates["Title"] = resolver.Subject;
-    		workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] = message.ConversationIndex;
+            var rawConversationIndex = message.ConversationIndex;
+            workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] = 
+                rawConversationIndex.Substring(0, Math.Min(rawConversationIndex.Length, TfsTextFieldMaxLength));
 
     		foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
     		{

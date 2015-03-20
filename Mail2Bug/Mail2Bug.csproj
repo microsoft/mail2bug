@@ -109,13 +109,11 @@
     <Compile Include="MessageProcessingStrategies\DateBasedValueResolver.cs" />
     <Compile Include="MessageProcessingStrategies\IMessageProcessingStrategy.cs" />
     <Compile Include="MessageProcessingStrategies\INameResolver.cs" />
-    <Compile Include="MessageProcessingStrategies\MessageProcessingStrategyFactory.cs" />
     <Compile Include="MessageProcessingStrategies\NameResolver.cs" />
     <Compile Include="MessageProcessingStrategies\NameResolverMock.cs" />
     <Compile Include="MessageProcessingStrategies\OverridesExtractor.cs" />
     <Compile Include="MessageProcessingStrategies\SimpleBugStrategy.cs" />
     <Compile Include="MessageProcessingStrategies\SpecialValueResolver.cs" />
-    <Compile Include="MessageProcessingStrategies\UpdateItemMetadataStrategy.cs" />
     <Compile Include="Helpers\TextUtils.cs" />
     <Compile Include="Mail2BugEngine.cs" />
     <Compile Include="Main.cs" />
