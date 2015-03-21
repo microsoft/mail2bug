@@ -50,6 +50,12 @@ namespace Mail2Bug.Email.EWS
                 return false;
             }
 
+            // If no recipients were mentioned, it means process all incoming emails
+            if (!_recipients.Any())
+            {
+                return true;
+            }
+
             // Load the properties we're going to use for evaluating the message
             message.Load(new PropertySet(
                     EmailMessageSchema.ToRecipients,

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Mail2Bug.ExceptionClasses;
+using Mail2Bug.WorkItemManagement;
 
 namespace Mail2Bug
 {
@@ -53,7 +55,14 @@ namespace Mail2Bug
 			[XmlIgnore]
 			public string CacheQuery
 			{
-				get { return FileToString(CacheQueryFile); }
+			    get
+			    {
+			        if (String.IsNullOrEmpty(CacheQueryFile))
+			        {
+			            throw new BadConfigException("CacheQueryFile","Query file must be specified");
+			        }
+			        return TFSQueryParser.ParseQueryFile(FileToString(CacheQueryFile));
+			    }
 			}
 		}
 

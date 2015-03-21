@@ -206,16 +206,10 @@ namespace Mail2Bug.WorkItemManagement
 
             WorkItemsCache = new SortedList<string, int>();
 
-            //get WIQ
-            const string wiqlStartTag = "<Wiql>";
-            const string wiqlEndTag = "</Wiql>";
-
-            var iStart = _config.TfsServerConfig.CacheQuery.IndexOf(wiqlStartTag, StringComparison.Ordinal) + wiqlStartTag.Length;
-            var iEnd = _config.TfsServerConfig.CacheQuery.IndexOf(wiqlEndTag, StringComparison.Ordinal);
-            var strWiq = _config.TfsServerConfig.CacheQuery.Substring(iStart, iEnd - iStart);
-
             //search TFS to get list
-            foreach (WorkItem workItem in _tfsStore.Query(strWiq))
+            var itemsToCache = _tfsStore.Query(_config.TfsServerConfig.CacheQuery);
+            Logger.InfoFormat("{0} items retrieved by TFS cache query", itemsToCache.Count);
+            foreach (WorkItem workItem in itemsToCache)
             {
                 try
                 {

@@ -121,6 +121,7 @@
     <Compile Include="TestHelpers\RandomDataHelper.cs" />
     <Compile Include="WorkItemManagement\IWorkItemManager.cs" />
     <Compile Include="WorkItemManagement\MessageToWorkItemMapper.cs" />
+    <Compile Include="WorkItemManagement\TFSQueryParser.cs" />
     <Compile Include="WorkItemManagement\TFSWorkItemManager.cs" />
     <Compile Include="WorkItemManagement\WorkItemManagerMock.cs" />
   </ItemGroup>
