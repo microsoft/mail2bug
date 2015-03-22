@@ -25,11 +25,11 @@ Another common scenario is for support organizations - for automatically creatin
 * Supports Unicode text
 
 # Usage
-* Once Mail2Bug is deployed and configured, just add the appropriate email address to the 'To' or 'Cc' line of an email to have a work item created for the thread.
-  * You can specify an explicit override in the form of `###FieldName:Value` simply by putting that text in the body of the email. This will set the specified field to the specified value.
-  * You can specify a mnemonic in the form of `@@@mnemonic` simply by putting that text in the body of the email. This will set all the relevant fields defined for the mnemonic. Mnemonics are defined in the configuration by the tool administrator.
-  * You can "link" a thread to an existing item by putting a string of the form `work item #1234` in the subject or alternatively put a string of the form `!!!work item #1234` in the email body
-  * The actual format for specifying overrides, mnemonics, and append-only threads is configurable - the format specified above is the standard default configuration
+Once Mail2Bug is deployed and configured, just add the appropriate email address to the 'To' or 'Cc' line of an email to have a work item created for the thread.
+* You can specify an explicit override in the form of `###FieldName:Value` simply by putting that text in the body of the email. This will set the specified field to the specified value.
+* You can specify a mnemonic in the form of `@@@mnemonic` simply by putting that text in the body of the email. This will set all the relevant fields defined for the mnemonic. Mnemonics are defined in the configuration by the tool administrator.
+* You can "link" a thread to an existing item by putting a string of the form `work item #1234` in the subject or alternatively put a string of the form `!!!work item #1234` in the email body
+* The actual format for specifying overrides, mnemonics, and append-only threads is configurable - the format specified above is the standard default configuration
 
 # How to build Mail2Bug
   * Requires Visual Studio 2012
