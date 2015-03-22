@@ -7,7 +7,7 @@
         <Project>HelloWorldProject</Project>
         <WorkItemTemplate>Bug</WorkItemTemplate>
         <!-- see example query file in the same folder as this example config-->
-        <CacheQueryFile>.\Resources\Query.txt</CacheQueryFile>
+        <CacheQueryFile>.\Resources\Query.wiq</CacheQueryFile>
         <SimulationMode>false</SimulationMode>
 		<NamesListFieldName>Assigned To</NamesListFieldName>
       </TfsServerConfig>
