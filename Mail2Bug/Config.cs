@@ -162,9 +162,10 @@ namespace Mail2Bug
             public bool AckEmailsRecipientsAll { get; set; }
 
             /// <summary>
-            /// Following three are used for EWSByFolder MailboxServiceType
+            /// Incoming Folder is used for EWSByFolder MailboxServiceType
             /// </summary>
 			public string IncomingFolder { get; set; }
+
 			public string CompletedFolder { get; set; }
 			public string ErrorFolder { get; set; }
 

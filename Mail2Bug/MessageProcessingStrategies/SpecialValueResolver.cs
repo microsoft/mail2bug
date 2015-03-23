@@ -22,9 +22,6 @@ namespace Mail2Bug.MessageProcessingStrategies
         public const string StartTimeKeyword = "##StartTime";
         public const string EndTimeKeyword = "##EndTime";
 
-        //add ToRecipient  Keyword for the list of Recipients in order to provide the option to set the <assigned to> value to the first recipient 
-        public const string ToRecipientKeyword = "##ToRecipient";
-
         #endregion
 
         public SpecialValueResolver(IIncomingEmailMessage message, INameResolver resolver)
@@ -34,8 +31,11 @@ namespace Mail2Bug.MessageProcessingStrategies
             _valueResolutionMap[SubjectKeyword] = GetValidSubject(message);
             _valueResolutionMap[SenderKeyword] = GetSender(message);
             _valueResolutionMap[MessageBodyKeyword] = TextUtils.FixLineBreaks(message.PlainTextBody);
-            _valueResolutionMap[MessageBodyWithSenderKeyword] = 
-                String.Format("{0}\n{1}{2}", _valueResolutionMap[MessageBodyKeyword], "Created by email: ", message.SenderAddress);
+            _valueResolutionMap[MessageBodyWithSenderKeyword] =
+                String.Format("{0}\nCreated by: {1}({2})", 
+                _valueResolutionMap[MessageBodyKeyword], 
+                message.SenderName, 
+                message.SenderAddress);
             _valueResolutionMap[RawMessageBodyKeyword] = TextUtils.FixLineBreaks(message.RawBody);
             _valueResolutionMap[NowKeyword] = DateTime.Now.ToString("g");
             _valueResolutionMap[TodayKeyword] = DateTime.Now.ToString("d");
@@ -66,7 +66,6 @@ namespace Mail2Bug.MessageProcessingStrategies
         public string Sender { get { return _valueResolutionMap[SenderKeyword]; } }
         public string MessageBody { get { return _valueResolutionMap[MessageBodyKeyword]; } }
         public string RawMessageBody { get { return _valueResolutionMap[RawMessageBodyKeyword]; } }
-        public string ToRecipient { get { return _valueResolutionMap[ToRecipientKeyword]; } }
         public string Location { get { return _valueResolutionMap[LocationKeyword]; } }
         public string StartTime { get { return _valueResolutionMap[StartTimeKeyword]; } }
         public string EndTime { get { return _valueResolutionMap[EndTimeKeyword]; } }

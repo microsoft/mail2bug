@@ -1,0 +1,219 @@
+﻿<?xml version="1.0"?>
+<!-- Config is the root element -->
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- 'Instances' holds one or more InstanceConfig nodes -->
+  <Instances>
+
+    <!-- 'InstanceConfig' defines a single instance of the service
+         The 'Name' attribute defines the instance name and is used for logging -->
+    <InstanceConfig Name="Hello World">
+
+    <!-- 'TfsServerConfig' defines the TFS related settings, and specifically all the settings required to connect to TFS -->
+      <TfsServerConfig>
+        <!-- 'CollectionUri' - The URI of the collection. 
+             - For On-prem TFS, the URI will look something like: `http://server:8080/tfs/YourColllection/`
+             - For VS Online, the URI will look something like: `https://name.visualstudio.com/DefaultCollection/` -->
+        <CollectionUri>http://tfsServer.madeUpDomain.com:8080/tfs/something</CollectionUri>
+
+        <!-- ServiceIdentityUsername - the username to use for logging in to TFS
+             - To use default credentials - i.e. login as the user running mail2bug - omit this element 
+             - For VS online, you must provision a Service Identity and use it here. This can be done by following the
+               instructions [here] (http://nakedalm.com/getting-service-account-vso-tfs-service-credential-viewer/)
+             - Note also that for VS online, there will be changes coming soon, since the ServiceIdentity method of
+               authentication is going to be deprecated by VSO in favor of AAD, so if you're using VS online, stay tuned
+               for changes in upcoming versions (ideally, config elements won't change, since username and password would
+               still be needed, but instructions on what values to use might change) -->
+        <ServiceIdentityUsername>mail2bug</ServiceIdentityUsername>
+
+        <!-- ServiceIdentityPasswordFile - the path to a DPAPI encrypted password file (created using the DpapiTool) - omit
+             this element if you're using default credentials -->
+        <ServiceIdentityPasswordFile>.\Resources\mail2bug.bin</ServiceIdentityPasswordFile>
+
+        <!-- 'Project' - The name of the project within the collection -->
+        <Project>HelloWorldProject</Project>
+
+        <!-- 'WorkItemTemplate' - The type of work item you want to create for new email threads -->
+        <WorkItemTemplate>Bug</WorkItemTemplate>
+
+        <!-- CacheQueryFile - the path to a file containing the query that retrieves the work items to cache. This file
+             is created by authoring the query in VS and saving it to a .wiq file -->
+        <CacheQueryFile>.\Resources\Query.wiq</CacheQueryFile>
+
+        <!-- SimulationMode - should be set to 'false'.
+             When 'true', the TFS interaction is mocked and new work items are not really created. Used for testing
+             purposes only -->
+        <SimulationMode>false</SimulationMode>
+
+        <!-- NamesListFieldName - the name of a field whose "allowed values" list contains all the names recognized by
+             TFS. Used for resolving name values from email recipients. Usually set to the "Assigned To" field -->
+        <NamesListFieldName>Assigned To</NamesListFieldName>
+      </TfsServerConfig>
+
+      <!-- 'WorkItemSettings' defines settings related to how work items created - default values, mnemonics, etc. -->
+      <WorkItemSettings>
+
+        <!-- ConversationIndexFieldName - The name of the field that should be used for storing the conversation ID from
+             the email that triggered the creation of the work item. The conversation ID is the means by which mail2bug 
+             identifies new emails on the same email thread as belonging to the same thread, and adds them to the previously
+             created item rather than creating a new one.
+             - This should be a TFS Text field (max-length 255)
+             - Ideally you'll create a dedicated field for this rather than overloading an existing one, to avoid other
+               people/tools overwriting it with unrelated data. You should also consider not adding the field to the work
+               item editing form (since no one should be editing it manually) -->
+        <ConversationIndexFieldName>ConverstionID</ConversationIndexFieldName>
+
+        <!-- 'DefaultFieldValues' defines all the deafult values that should be assigned to the work item fields, one
+             DefaultValueDefinition item per field.
+             The important part is to include a default value for every mandatory field, otherwise work item creation will
+             fail. The only automatically defined default is the 'Title' field, that gets the email subject as a value
+             (and even that can be overridden by explicitly mentioning a different default value) -->
+        <DefaultFieldValues>
+          <!-- 'DefaultValueDefinition' defines a single default value 
+               - 'Field' attribute - name of the field to set
+               - 'Value' attribute - the default contents to assign to the field 
+        
+               The default settings supports the following special values, prefixed by double hash-signs.
+               - Subject - The email subject
+               - MessageBody - The body of the email message converted to plain text (i.e. if the body was HTML,
+                               it would be stripped to plain text)
+               - MessageBodyWithSender - Similar to MessageBody, but with an added line at the bottom mentioning the
+                 display name and email address of the sender. Useful to include indication of the person whose email
+                 triggered the work item creation
+               - RawMessageBody - The raw body of the email - i.e. if it's an HTML message, this would be the full
+                 message HTML
+               - Now - Current date time in general ("g") date time format (see 
+                 https://msdn.microsoft.com/en-us/library/az4se3k1%28v=vs.110%29.aspx for date time format specification)
+               - Today - Current date in short date format ("d")
+               - Sender - The name of the sender, resolved against the list of names recognized by TFS. If resolution fails
+                          this would resolve to the sender display name.
+               - Location - In case the email is a meeting invite, the location of the meeting; empty string otherwise.
+               - StartTime - In case the email is a meeting invite, the meeting start time; empty string otherwise.
+               - EndTime - In case the email is a meeting invite, the meeting end time; empty string otherwise.
+                    
+               The example below sets default for 5 fields - 4 of them with static default values, and the last
+               one (Description) set to the text of the email body
+               -->
+          <DefaultValueDefinition Field="Assigned To" Value="Unassigned" />
+          <DefaultValueDefinition Field="Severity" Value="1" />
+          <DefaultValueDefinition Field="Area Path" Value="HelloWorldProject\BusinessLogic" />
+          <DefaultValueDefinition Field="Iteration Path" Value="HelloWorldProject\Iteration 42" />
+          <DefaultValueDefinition Field="Description" Value="##MessageBody" />
+        </DefaultFieldValues>
+        <!--  Mnemonics allow you to define short strings that users can put in the email to set specific fields to
+              predefined values without the need for verbose explicit overrides. A single mnemonic can set one specific
+              field, or several fieds. To have a single mnemonic set several fields, just add multiple MnemonicDefinition
+              elements with the same mnemonic specified in the "Mnemonic" attribute - one for each field you want to set 
+
+              To trigger a mnemonic, the users just include the string @@@mnemonic name in the email body
+              A single email may contain multiple mnemonics -->
+        <Mnemonics>
+          <!-- 'MnemonicDefinition' - Defines a mnemonic
+               'Mnemonic' attribute - the mnemonic name - this is the mnemonic text that the users will need to include in
+               their email, prefixed by @@@
+               'Field' attribute - the field that would be set when the mnemonic is triggered
+               'Value' attribute - the value that would be assigned to the field
+             -->
+          <MnemonicDefinition Mnemonic="Test" Field="Issue" Value="Test Defect" />
+        </Mnemonics>
+        <!-- 'DateBasedOverrides' allows you to set the value of fields based on the current date. This is useful
+             mostly for Iteration/Release fields-->
+        <DateBasedOverrides>
+          <!-- For each field you want to set based on the current date, create a single 'DateBasedFieldOverrides' element
+               'FieldName' attribute - the name of the field to be set
+                
+               'Entries' - a collection of DateBasedOverrideEntry items, each defining a start date and a value 
+               mail2bug will choose the entry with the latest start date that is still before the current date
+               and will assign the value from that entry to the field.
+               
+               'DefaultValue' - if all start dates are after the current date, then the default value will be used
+               instead.
+
+               In the example below example: Set the 'Iteration' field based on the current date - 
+               - For items created in January (i.e. after 1/1/2015, but before 2/1/2015), set it to 'Iteration 41' 
+               - For items created in Febrary, set it to 'Iteration 42'
+               - For items created in March or later it set it to 'Iteration 43'
+               - Items created before 1/1/2015 will get the default, which is Iteration 40 -->
+          <DateBasedFieldOverrides FieldName="Iteration">
+            <Entries>
+              <DateBasedOverrideEntry StartDate="2015-01-01" Value="Iteration 41" />
+              <DateBasedOverrideEntry StartDate="2015-02-01" Value="Iteration 42" />
+              <DateBasedOverrideEntry StartDate="2015-03-01" Value="Iteration 43" />
+            </Entries>
+            <DefaultValue>Iteration 40</DefaultValue>
+          </DateBasedFieldOverrides>
+        </DateBasedOverrides>
+
+        <!-- 'AttachOriginalMessage' - 'true' means we should attached the email message that triggered the creation
+             of the work item -->
+        <AttachOriginalMessage>true</AttachOriginalMessage>
+      </WorkItemSettings>
+
+      <!-- 'EmailSettings' - contains settings related to accessing the email account and processing individual emails -->
+      <EmailSettings>
+
+        <!-- 'ServiceType' - this value dictates how the email inbox is monitored and which emails will be picked up for
+             processing.
+             
+             There are two types supported: 
+             - 'EWSByRecipients' (recommended) 
+             - 'EWSByFolder'
+
+             'EWSByRecipients' - mail2bug will monitor the 'Inbox' of the mailbox and will process all the items where
+             one of the recipients specified in the 'Recipients' element (below) is in the 'To' or 'CC' lines.
+             For a setup where the mailbox is serving a single instance, 'Recipients' would be empty and all items in
+             the inbox would be processed.
+             For setups where you want to serve multiple instances on a single mailbox, you can create other email addresses
+             that lead to the same mailbox and define which instance should pick each message by specifying the relevant
+             email address in the 'Recipients' element 
+
+             'EWSByFolder' - mail2bug will monitor a specific folder under the root of the mailbox. In this setup, you
+             create (server side) exchange rules to route incoming emails to the correct folder.
+             Note that the folders need to be directly under the root of the mailbox rather than under 'Inbox'. 
+             The folder name to monitor is specified by the 'IncomingFolder' element
+             The reason for this method being less preferable is that it involves extra steps for creating exchange rules,
+             which can be quite cumbersome. Also, exchange rules can be flaky at times, especially if you have a lot of them
+             defined. -->
+        <ServiceType>EWSByRecipients</ServiceType>
+
+        <!-- The recipients to consider for EWSByRecipients. Email addresses are the standard thing to use, although display
+             names also work. -->
+        <Recipients>mail2bug@domain.com</Recipients>
+
+        <!-- The email address of the inbox we want to monitor -->
+        <EWSMailboxAddress>mail2bug@domain.com</EWSMailboxAddress>
+
+        <!-- A username with permissions to log in to the email account. This is generally either in the form of
+             email (usually the same as the email address in EWSMailboxAddress), or in DOMAIN\username form. I've seen cases
+             where the same server would take one or the other (or both), depending on the server set up, as well as the client
+             set up, so if one doesn't work, try the other -->
+        <EWSUsername>mail2bug@domain.com</EWSUsername>
+
+        <!-- Pointer to a file that stores the password for the login account. The file is expected to be encrypted
+             with DPAPI - use the DpapiTool.exe from the Tools subfolder to create one. Note that the tool needs to be
+             run under the same credentials that mail2bug will run with, otherwise it won't be able to decrypt the
+             contents. -->
+        <EWSPasswordFile>.\Resources\mail2bug.bin</EWSPasswordFile>
+
+        <!-- 'SendAckEmails' - Should mail2bug send replies when creating new work items? -->
+        <SendAckEmails>true</SendAckEmails>
+
+        <!-- 'AckEmailsRecipientsAll' - When sending replies for new item creation, shoud mail2bug Reply-All, or just
+             'Reply' to the sender? -->
+        <AckEmailsRecipientsAll>true</AckEmailsRecipientsAll>
+
+        <!-- A pointer to a file containing the email template for sending back responses when a new work item is
+             created-->
+        <ReplyTemplate>.\Resources\ReplyTemplateExample.htm</ReplyTemplate>
+
+        <!-- Ideally, you'll never need to change these regexes and you'll use the defaults below, but they do give you 
+             the flexibility to define your own format for specifying overrides, or detecting that an email is an "append
+             only" email. Don't forget to escape any angle brackets. 
+             If you need to change these, keep in mind that the capturing group tags (e.g. 'id', 'fieldName') must be
+             present for the code to be able to use the regular expressions  -->
+        <AppendOnlyEmailTitleRegex>.*(bug|work item)\s*#*\s*(?&lt;id&gt;\d+)</AppendOnlyEmailTitleRegex>
+        <AppendOnlyEmailBodyRegex>!!!(bug|work item)\s*#*\s*(?&lt;id&gt;\d+)</AppendOnlyEmailBodyRegex>
+        <ExplicitOverridesRegex>###\s*(?&lt;fieldName&gt;[^:]*):\s*(?&lt;value&gt;.*)</ExplicitOverridesRegex>
+      </EmailSettings>
+    </InstanceConfig>
+  </Instances>
+</Config>
