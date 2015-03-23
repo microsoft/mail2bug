@@ -11,7 +11,7 @@ Another common scenario is for support organizations - for automatically creatin
 
 # Key Features 
 * Creates work items from email threads
-  * Supports MS Team Foundation Server (TFS)
+  * Supports MS Team Foundation Server (TFS) and Visual Studio Online (VSO)
 * Updates the work item with further emails on the original thread, keeping it up to date without requiring manual copying of that information to the item
 * Adds attachments from the email to the work item (as file attachments)
 * Default values for work item fields set by the tool administrator
