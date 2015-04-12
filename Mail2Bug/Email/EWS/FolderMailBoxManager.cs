@@ -39,6 +39,11 @@ namespace Mail2Bug.Email.EWS
                 .AsEnumerable();
         }
 
+        public void OnProcessingFinished(IIncomingEmailMessage message, bool successful)
+        {
+            message.Delete();
+        }
+
         public Folder FindFolderByName(string mailFolder)
         {
             Logger.DebugFormat("Looking for folder named '{0}'", mailFolder);

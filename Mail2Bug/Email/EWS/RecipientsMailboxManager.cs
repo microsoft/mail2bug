@@ -40,6 +40,11 @@ namespace Mail2Bug.Email.EWS
                 .AsEnumerable();
         }
 
+        public void OnProcessingFinished(IIncomingEmailMessage message, bool successful)
+        {
+            message.Delete();
+        }
+
         private bool ShouldConsiderItem(Item item)
         {
             // Consider only email messages

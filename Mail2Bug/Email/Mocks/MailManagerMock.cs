@@ -8,10 +8,12 @@ namespace Mail2Bug.Email.Mocks
     public class MailManagerMock : IMailboxManager
     {
         private readonly List<IIncomingEmailMessage> _messages = new List<IIncomingEmailMessage>();
+        private readonly List<IIncomingEmailMessage> _postProcessedMessages = new List<IIncomingEmailMessage>(); 
 
         public void Clear()
         {
             _messages.Clear();
+            _postProcessedMessages.Clear();
         }
 
         public IncomingEmailMessageMock AddReply(IIncomingEmailMessage message, string replyText)
@@ -61,6 +63,13 @@ namespace Mail2Bug.Email.Mocks
             return _messages;
         }
 
-        Random _rand = new Random();
+        public void OnProcessingFinished(IIncomingEmailMessage message, bool successful)
+        {
+            _postProcessedMessages.Add(message);
+        }
+
+        public IEnumerable<IIncomingEmailMessage> PostProcessedMessages { get { return _postProcessedMessages; }}
+
+        readonly Random _rand = new Random();
     }
 }

@@ -74,7 +74,8 @@ namespace Mail2Bug
                 inboxItemsList.Count, _config.EmailSettings.IncomingFolder, _config.Name);
 
             foreach (var message in inboxItemsList)
-			{
+            {
+                var messageProcessedSuccessfully = true;
 			    try
 			    {
 			        Logger.InfoFormat("Processing message {0}", message.Subject);
@@ -84,11 +85,12 @@ namespace Mail2Bug
 			    }
 			    catch (Exception exception)
 			    {
+			        messageProcessedSuccessfully = false;
 			        Logger.Error("Error processing message", exception);
 			    }
 			    finally
 			    {
-                    message.Delete();
+			        _mailboxManager.OnProcessingFinished(message, messageProcessedSuccessfully);
 			    }
 			}
 		}
