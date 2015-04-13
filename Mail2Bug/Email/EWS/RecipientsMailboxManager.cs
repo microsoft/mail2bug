@@ -15,11 +15,13 @@ namespace Mail2Bug.Email.EWS
     {
         private readonly ExchangeService _service;
         private readonly IEnumerable<string> _recipients;
+        private readonly IMessagePostProcessor _postProcessor;
 
-        public RecipientsMailboxManager(ExchangeService connection, IEnumerable<string> recipients)
+        public RecipientsMailboxManager(ExchangeService connection, IEnumerable<string> recipients, IMessagePostProcessor postProcessor)
         {
             _service = connection;
             _recipients = recipients;
+            _postProcessor = postProcessor;
         }
 
         public IEnumerable<IIncomingEmailMessage> ReadMessages()
@@ -42,7 +44,7 @@ namespace Mail2Bug.Email.EWS
 
         public void OnProcessingFinished(IIncomingEmailMessage message, bool successful)
         {
-            message.Delete();
+            _postProcessor.Process((EWSIncomingMessage)message, successful);
         }
 
         private bool ShouldConsiderItem(Item item)
@@ -73,7 +75,7 @@ namespace Mail2Bug.Email.EWS
                 EmailAddressesMatch(message.CcRecipients, recipient));
         }
 
-        private bool EmailAddressesMatch(EmailAddressCollection emailAddresses, string recipient)
+        private bool EmailAddressesMatch(IEnumerable<EmailAddress> emailAddresses, string recipient)
         {
             if (emailAddresses == null)
             {

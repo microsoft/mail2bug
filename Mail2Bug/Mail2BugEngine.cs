@@ -66,12 +66,11 @@ namespace Mail2Bug
 
             if (inboxItemsList.Count == 0)
             {
-                Logger.InfoFormat("No messages found in folder {0} (Instance {1})", _config.EmailSettings.IncomingFolder, _config.Name);
+                Logger.InfoFormat("No messages found for instance {0}", _config.Name);
                 return;
             }
 
-            Logger.InfoFormat("Found {0} messages in folder {1} (Instance {2}). Processing...", 
-                inboxItemsList.Count, _config.EmailSettings.IncomingFolder, _config.Name);
+            Logger.InfoFormat("Found {0} messages for Instance {1}. Processing...", inboxItemsList.Count, _config.Name);
 
             foreach (var message in inboxItemsList)
             {

@@ -173,6 +173,11 @@ namespace Mail2Bug.Email.EWS
             return string.IsNullOrEmpty(aliasFromEmailAddress) ? address : aliasFromEmailAddress;
         }
 
+        public Item MoveMessage(FolderId destination)
+        {
+            return _message.Move(destination);
+        }
+
         private static readonly ILog Logger = LogManager.GetLogger(typeof(EWSIncomingMessage));
     }
 }

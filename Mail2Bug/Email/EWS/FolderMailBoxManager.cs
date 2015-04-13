@@ -14,16 +14,25 @@ namespace Mail2Bug.Email.EWS
     {
         private readonly ExchangeService _service;
         private readonly string _mailFolder;
+        private readonly IMessagePostProcessor _postProcessor;
 
-        public FolderMailboxManager(ExchangeService connection, string incomingFolder)
+        public FolderMailboxManager(ExchangeService connection, string incomingFolder, IMessagePostProcessor postProcessor)
         {
             _service = connection;
             _mailFolder = incomingFolder;
+            _postProcessor = postProcessor;
         }
 
         public IEnumerable<IIncomingEmailMessage> ReadMessages()
         {
-            var folder = FindFolderByName(_mailFolder);
+            var folder = FolderNameResolver.FindFolderByName(_mailFolder, _service);
+
+            if (folder == null)
+            {
+                Logger.ErrorFormat("Couldn't find incoming mail folder ({0})", _mailFolder);
+                throw new MailFolderNotFoundException(_mailFolder);
+            }
+
             if (folder.TotalCount == 0)
             {
                 Logger.DebugFormat("No items found in folder '{0}'. Returning empty list.", _mailFolder);
@@ -41,30 +50,7 @@ namespace Mail2Bug.Email.EWS
 
         public void OnProcessingFinished(IIncomingEmailMessage message, bool successful)
         {
-            message.Delete();
-        }
-
-        public Folder FindFolderByName(string mailFolder)
-        {
-            Logger.DebugFormat("Looking for folder named '{0}'", mailFolder);
-            // Look for the folder under the mailbox root
-            var rootFolder = Folder.Bind(_service, WellKnownFolderName.MsgFolderRoot);
-
-            // Folder name should be equal to 'mailFolder'
-            var folderFilter = new SearchFilter.IsEqualTo(FolderSchema.DisplayName, mailFolder);
-
-            // No need to look for more than one folder (can't have more than one folder with the exact same name)
-            var findFoldersResults = rootFolder.FindFolders(folderFilter, new FolderView(1));
-
-            if (!findFoldersResults.Any())
-            {
-                throw new MailFolderNotFoundException(mailFolder);
-            }
-
-            Logger.DebugFormat("Found folder {0} ({1} matching folder items)", mailFolder, findFoldersResults.Count());
-
-            var folder = findFoldersResults.First();
-            return folder;
+            _postProcessor.Process((EWSIncomingMessage)message, successful);
         }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(FolderMailboxManager));

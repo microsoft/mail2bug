@@ -22,23 +22,37 @@ namespace Mail2Bug.Email
             };
 
             var exchangeService = ConnectionFactory.GetConnection(credentials);
+            var postProcessor = GetPostProcesor(emailSettings, exchangeService);
+
             switch (emailSettings.ServiceType)
             {
                 case Config.EmailSettings.MailboxServiceType.EWSByFolder:
                     return new FolderMailboxManager(
                         exchangeService, 
-                        emailSettings.IncomingFolder);
+                        emailSettings.IncomingFolder,
+                        postProcessor);
 
                 case Config.EmailSettings.MailboxServiceType.EWSByRecipients:
                     return new RecipientsMailboxManager(
                         exchangeService,
-                        ParseDelimitedList(emailSettings.Recipients, ';'));
+                        ParseDelimitedList(emailSettings.Recipients, ';'),
+                        postProcessor);
 
                 default:
                     throw new BadConfigException(
                         "EmailSettings.ServiceType",
                         string.Format("Invalid mailbox service type defined in config ({0})", emailSettings.ServiceType));
             }
+        }
+
+        private static IMessagePostProcessor GetPostProcesor(Config.EmailSettings emailSettings, ExchangeService service)
+        {
+            if (string.IsNullOrEmpty(emailSettings.CompletedFolder) || string.IsNullOrEmpty(emailSettings.ErrorFolder))
+            {
+                return new DeleterMessagePostProcessor();
+            }
+
+            return new ArchiverMessagePostProcessor(emailSettings.CompletedFolder, emailSettings.ErrorFolder, service);
         }
 
         private static IEnumerable<string> ParseDelimitedList(string text, char delimiter)

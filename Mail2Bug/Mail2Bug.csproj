@@ -87,11 +87,15 @@
     <Compile Include="Config.cs" />
     <Compile Include="Email\AckEmailHandler.cs" />
     <Compile Include="Email\EmailBodyProcessingUtils.cs" />
+    <Compile Include="Email\EWS\ArchiverMessagePostProcessor.cs" />
     <Compile Include="Email\EWS\EWSConnectionFactory.cs" />
     <Compile Include="Email\EWS\EWSIncomingFileAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingItemAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingMessage.cs" />
     <Compile Include="Email\EWS\FolderMailBoxManager.cs" />
+    <Compile Include="Email\EWS\FolderNameResolver.cs" />
+    <Compile Include="Email\EWS\IMessagePostProcessor.cs" />
+    <Compile Include="Email\EWS\DeleterMessagePostProcessor.cs" />
     <Compile Include="Email\EWS\RecipientsMailboxManager.cs" />
     <Compile Include="Email\IIncomingEmailAttachment.cs" />
     <Compile Include="Email\IIncomingEmailMessage.cs" />
