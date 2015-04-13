@@ -39,7 +39,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 return;
             }
 
-            AppendToWorkItem(message, workItemId.Value);
+            UpdateWorkItem(message, workItemId.Value);
         }
 
         private void NewWorkItem(IIncomingEmailMessage message)
@@ -108,7 +108,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
         }
 
-        private void AppendToWorkItem(IIncomingEmailMessage message, int workItemId)
+        private void UpdateWorkItem(IIncomingEmailMessage message, int workItemId)
         {
             Logger.InfoFormat("Modifying work item {0} subject: {1}", workItemId, message.Subject);
 

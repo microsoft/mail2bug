@@ -16,7 +16,7 @@ namespace Mail2Bug.Email
         /// <summary>
         /// Send mail announcing receipt of new ticket
         /// </summary>
-        public void SendAckEmail(IIncomingEmailMessage originalMessage, string bugId)
+        public void SendAckEmail(IIncomingEmailMessage originalMessage, string workItemId)
         {
             // Don't send ack emails if it's disabled in configuration or if we're in simulation mode
             if (!_config.EmailSettings.SendAckEmails || _config.TfsServerConfig.SimulationMode)
@@ -28,20 +28,20 @@ namespace Mail2Bug.Email
             var ewsMessage = originalMessage as EWSIncomingMessage;
             if (ewsMessage != null)
             {
-                HandleEWSMessage(ewsMessage, bugId);
+                HandleEWSMessage(ewsMessage, workItemId);
             }
         }
 
-        private void HandleEWSMessage(EWSIncomingMessage originalMessage, string bugId)
+        private void HandleEWSMessage(EWSIncomingMessage originalMessage, string workItemId)
         {
-            originalMessage.Reply(GetReplyContents(bugId), _config.EmailSettings.AckEmailsRecipientsAll);
+            originalMessage.Reply(GetReplyContents(workItemId), _config.EmailSettings.AckEmailsRecipientsAll);
         }
 
-        private string GetReplyContents(string bugId)
+        private string GetReplyContents(string workItemId)
         {
             var bodyBuilder = new StringBuilder();
             bodyBuilder.Append(_config.EmailSettings.GetReplyTemplate());
-            bodyBuilder.Replace("[BUGID]", bugId);
+            bodyBuilder.Replace("[BUGID]", workItemId);
             bodyBuilder.Replace("[TFSCollectionUri]", _config.TfsServerConfig.CollectionUri);
             return bodyBuilder.ToString();
         }
