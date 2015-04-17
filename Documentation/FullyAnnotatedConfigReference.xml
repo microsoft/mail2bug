@@ -175,6 +175,16 @@
              defined. -->
         <ServiceType>EWSByRecipients</ServiceType>
 
+        <!-- If both CompletedFolder and ErrorFolder are specified, after messages are processed, they are moved to these
+             folders rather than deleted. Successfully processed messages get moved to the CompletedFolder, while ones
+             for which we encountered an error are moved to the ErrorFolder.
+
+             If either of these two elements are missing, we default back to deleting messages after processing them.
+
+             Important: Both folders are expected to be directly under the mailbox root (as opposed to under "Inbox").  -->
+        <CompletedFolder>Completed</CompletedFolder>
+        <ErrorFolder>Error</ErrorFolder>
+
         <!-- The recipients to consider for EWSByRecipients. Email addresses are the standard thing to use, although display
              names also work. -->
         <Recipients>mail2bug@domain.com</Recipients>
