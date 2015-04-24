@@ -36,7 +36,9 @@
         <WorkItemTemplate>Bug</WorkItemTemplate>
 
         <!-- CacheQueryFile - the path to a file containing the query that retrieves the work items to cache. This file
-             is created by authoring the query in VS and saving it to a .wiq file -->
+             is created by authoring the query in VS and saving it to a .wiq file 
+             Note that @Projet is not properly handled in the context of the service, so be sure to remove the default
+             clause for 'TeamProject = @Project' from the query -->
         <CacheQueryFile>.\Resources\Query.wiq</CacheQueryFile>
 
         <!-- SimulationMode - should be set to 'false'.
