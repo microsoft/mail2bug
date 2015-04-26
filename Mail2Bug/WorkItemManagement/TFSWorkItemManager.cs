@@ -3,7 +3,9 @@ using log4net;
 using Mail2Bug.ExceptionClasses;
 using Mail2Bug.Helpers;
 using Mail2Bug.MessageProcessingStrategies;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.Common.Internal;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using System;
 using System.Collections.Generic;
@@ -87,31 +89,76 @@ namespace Mail2Bug.WorkItemManagement
         {
             var credentials = new List<TfsClientCredentials>();
             
-            if (!string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityUsername)
-                && !string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPasswordFile)
-                && File.Exists(_config.TfsServerConfig.ServiceIdentityPasswordFile))
-            {
-                try
-                {
-                    var password = DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile);
-
-                    credentials.Add(
-                        new TfsClientCredentials(
-                            new SimpleWebTokenCredential(_config.TfsServerConfig.ServiceIdentityUsername, password)));
-                    credentials.Add(
-                        new TfsClientCredentials(
-                            new WindowsCredential(
-                                new NetworkCredential(_config.TfsServerConfig.ServiceIdentityUsername, password))));
-                }
-                catch (Exception e)
-                {
-                    throw new BadConfigException("ServiceIdentityUsername or ServiceIdentityPasswordFile", e.Message);
-                }
-            }
-            
+            credentials.AddRange(GetServiceIdentityCredentials());
+            credentials.AddRange(GetOAuthCredentials());
             credentials.Add(new TfsClientCredentials(true));
 
             return credentials;
+        }
+
+        private IEnumerable<TfsClientCredentials> GetOAuthCredentials()
+        {
+            try
+            {
+                var usernameAndPassword = GetUsernameAndPasswordFromConfig();
+
+                if (usernameAndPassword == null || 
+                    string.IsNullOrEmpty(_config.TfsServerConfig.OAuthClientId) ||
+                    string.IsNullOrEmpty(_config.TfsServerConfig.OAuthContext) ||
+                    string.IsNullOrEmpty(_config.TfsServerConfig.OAuthResourceId))
+                {
+                    return new List<TfsClientCredentials>();
+                }
+
+                var userCredential = new UserCredential(usernameAndPassword.Item1, usernameAndPassword.Item2);
+                var authContext = new AuthenticationContext(_config.TfsServerConfig.OAuthContext);
+                var result = authContext.AcquireToken(_config.TfsServerConfig.OAuthResourceId, _config.TfsServerConfig.OAuthClientId, userCredential);
+                var oauthToken = new OAuthTokenCredential(result.AccessToken);
+                return new List<TfsClientCredentials>()
+                {
+                    new TfsClientCredentials(oauthToken)
+                };
+            }
+            catch (Exception ex)
+            {
+                Logger.WarnFormat("Error trying to generate OAuth Token for TFS connection\n{0}", ex);
+                return new List<TfsClientCredentials>();
+            }
+        }
+
+        private IEnumerable<TfsClientCredentials> GetServiceIdentityCredentials()
+        {
+            var usernameAndPassword = GetUsernameAndPasswordFromConfig();
+            if (usernameAndPassword == null)
+            {
+                return new List<TfsClientCredentials>();
+            }
+
+            return new List<TfsClientCredentials>
+            {
+                new TfsClientCredentials(
+                    new SimpleWebTokenCredential(usernameAndPassword.Item1, usernameAndPassword.Item2)),
+                new TfsClientCredentials(
+                    new WindowsCredential(
+                        new NetworkCredential(usernameAndPassword.Item1, usernameAndPassword.Item2)))
+            };
+        }
+
+        private Tuple<string,string> GetUsernameAndPasswordFromConfig()
+        {
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityUsername)
+                || string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPasswordFile))
+            {
+                return null;
+            }
+
+            if (!File.Exists(_config.TfsServerConfig.ServiceIdentityPasswordFile))
+            {
+                throw new BadConfigException("ServiceIdentityPasswordFile", "Password file doesn't exist");
+            }
+
+            return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, 
+                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile));
         }
 
         public void AttachFiles(int workItemId, List<string> fileList)

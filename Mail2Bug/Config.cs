@@ -64,6 +64,10 @@ namespace Mail2Bug
 			        return TFSQueryParser.ParseQueryFile(FileToString(CacheQueryFile));
 			    }
 			}
+
+		    public string OAuthContext { get; set; }
+		    public string OAuthResourceId { get; set; }
+		    public string OAuthClientId { get; set; }
 		}
 
 		public class WorkItemSettings
