@@ -32,7 +32,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             _valueResolutionMap[SenderKeyword] = GetSender(message);
             _valueResolutionMap[MessageBodyKeyword] = TextUtils.FixLineBreaks(message.PlainTextBody);
             _valueResolutionMap[MessageBodyWithSenderKeyword] =
-                String.Format("{0}\nCreated by: {1}({2})", 
+                String.Format("{0}\n\nCreated by: {1} ({2})", 
                 _valueResolutionMap[MessageBodyKeyword], 
                 message.SenderName, 
                 message.SenderAddress);
