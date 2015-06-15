@@ -18,8 +18,8 @@ namespace Mail2Bug.Email
         /// </summary>
         public void SendAckEmail(IIncomingEmailMessage originalMessage, string workItemId)
         {
-            // Don't send ack emails if it's disabled in configuration or if we're in simulation mode
-            if (!_config.EmailSettings.SendAckEmails || _config.TfsServerConfig.SimulationMode)
+            // Don't send ack emails if it's disabled in configuration
+            if (!_config.EmailSettings.SendAckEmails)
             {
                 Logger.DebugFormat("Ack emails disabled in configuration - skipping");
                 return;
