@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Mail2Bug.Email;
 using Mail2Bug.TestHelpers;
 
-namespace Mail2Bug.Email.Mocks
+namespace Mail2BugUnitTests.Mocks.Email
 {
     public class MailManagerMock : IMailboxManager
     {

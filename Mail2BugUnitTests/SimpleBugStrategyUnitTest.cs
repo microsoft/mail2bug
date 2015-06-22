@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using log4net;
 using Mail2Bug;
-using Mail2Bug.Email.Mocks;
 using Mail2Bug.Helpers;
 using Mail2Bug.MessageProcessingStrategies;
 using Mail2Bug.TestHelpers;
 using Mail2Bug.WorkItemManagement;
+using Mail2BugUnitTests.Mocks.Email;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Mail2BugUnitTests
@@ -84,7 +84,7 @@ namespace Mail2BugUnitTests
             ValidateBugValue(bugValues, nowField, DateTime.Now.ToString("g"));
             ValidateBugValue(bugValues, todayField, DateTime.Now.ToString("d"));
             ValidateBugValue(bugValues, messageBodyField, message.PlainTextBody);
-            ValidateBugValue(bugValues, messageBodyWithSenderField, String.Format("{0}\nCreated by: {1}({2})", message.PlainTextBody, message.SenderName, message.SenderAddress));
+            ValidateBugValue(bugValues, messageBodyWithSenderField, String.Format("{0}\n\nCreated by: {1} ({2})", message.PlainTextBody, message.SenderName, message.SenderAddress));
             ValidateBugValue(bugValues, senderField, message.SenderName);
             ValidateBugValue(bugValues, subjectField, message.ConversationTopic);
         }

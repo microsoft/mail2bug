@@ -5,11 +5,12 @@ using System.Globalization;
 using System.Linq;
 using log4net;
 using Mail2Bug.Email;
+using Mail2Bug.Helpers;
 using Mail2Bug.WorkItemManagement;
 
 namespace Mail2Bug.MessageProcessingStrategies
 {
-    public class SimpleBugStrategy : IMessageProcessingStrategy
+    public class SimpleBugStrategy : IMessageProcessingStrategy, IDisposable
     {
         private const int TfsTextFieldMaxLength = 255;
         private readonly Config.InstanceConfig _config;
@@ -150,5 +151,10 @@ namespace Mail2Bug.MessageProcessingStrategies
         }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SimpleBugStrategy));
+
+        public void Dispose()
+        {
+            DisposeUtils.DisposeIfDisposable(_workItemManager);
+        }
     }
 }

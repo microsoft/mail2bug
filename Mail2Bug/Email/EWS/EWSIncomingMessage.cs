@@ -53,6 +53,7 @@ namespace Mail2Bug.Email.EWS
         public IEnumerable<string> To { get { return _message.ToRecipients.Select(x => x.Address); } }
         public IEnumerable<string> Cc { get { return _message.CcRecipients.Select(x => x.Address); } }
         public DateTime SentOn { get { return _message.DateTimeSent; } }
+        public DateTime ReceivedOn { get { return _message.DateTimeReceived; } }
         public bool IsHtmlBody { get { return _message.Body.BodyType == BodyType.HTML; } }
 
         public string Location

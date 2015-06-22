@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Mail2Bug;
-using Mail2Bug.Email.Mocks;
 using Mail2Bug.MessageProcessingStrategies;
+using Mail2BugUnitTests.Mocks.Email;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Mail2BugUnitTests

@@ -47,10 +47,6 @@
     <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms">
       <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.16.204221202\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\TFS.API.11.0.50727.1\lib\Microsoft.TeamFoundation.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -99,24 +95,26 @@
     <Compile Include="Email\EWS\EWSIncomingFileAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingItemAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingMessage.cs" />
+    <Compile Include="Email\EWS\EWSMailFolder.cs" />
     <Compile Include="Email\EWS\FolderMailBoxManager.cs" />
     <Compile Include="Email\EWS\FolderNameResolver.cs" />
+    <Compile Include="Email\EWS\IMailFolder.cs" />
     <Compile Include="Email\EWS\IMessagePostProcessor.cs" />
     <Compile Include="Email\EWS\DeleterMessagePostProcessor.cs" />
     <Compile Include="Email\EWS\RecipientsMailboxManager.cs" />
+    <Compile Include="Email\EWS\RecipientsMailboxManagerRouter.cs" />
     <Compile Include="Email\IIncomingEmailAttachment.cs" />
     <Compile Include="Email\IIncomingEmailMessage.cs" />
     <Compile Include="Email\IMailboxManager.cs" />
     <Compile Include="Email\IMailSender.cs" />
     <Compile Include="Email\MailboxManagerFactory.cs" />
-    <Compile Include="Email\Mocks\IncomingAttachmentMock.cs" />
-    <Compile Include="Email\Mocks\IncomingEmailMessageMock.cs" />
-    <Compile Include="Email\Mocks\MailManagerMock.cs" />
     <Compile Include="ExceptionClasses\BadConfigException.cs" />
     <Compile Include="ExceptionClasses\MailFolderNotFoundException.cs" />
     <Compile Include="ExceptionClasses\WorkItemUpdateException.cs" />
+    <Compile Include="Helpers\DisposeUtils.cs" />
     <Compile Include="Helpers\DPAPIHelper.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="InstanceRunner.cs" />
     <Compile Include="MessageProcessingStrategies\DateBasedValueResolver.cs" />
     <Compile Include="MessageProcessingStrategies\IMessageProcessingStrategy.cs" />
     <Compile Include="MessageProcessingStrategies\INameResolver.cs" />

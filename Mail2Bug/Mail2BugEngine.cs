@@ -2,39 +2,36 @@
 using System.Linq;
 using log4net;
 using Mail2Bug.Email;
+using Mail2Bug.Helpers;
 using Mail2Bug.MessageProcessingStrategies;
 using Mail2Bug.WorkItemManagement;
 
 namespace Mail2Bug
 {
-	class Mail2BugEngine 
+	class Mail2BugEngine : IDisposable
 	{
 	    private readonly IMailboxManager _mailboxManager;
-		private readonly IMessageProcessingStrategy _messageProcessingStrategy;
 		private readonly Config.InstanceConfig _config;
 
-		public Mail2BugEngine(Config.InstanceConfig configInstance)
+        // We're using lazy initilization for the message processing strategy because it involves
+        // initializing the work-item cache, which can be time consuming. For servers that host a high
+        // number of instances and are using TemporaryInstanceRunner, there's a high likelihood that for
+        // each specific iteration, many of the instances would have no messages to process. In such cases
+        // the initialization of the work-item cache is redundant and slows down the process.
+        // 
+        // For cases where we're using PersistentInstanceRunner, this is still an improvement, albeit a much
+        // smaller one, since early intializations benefit future processing cycles.
+        private readonly Lazy<IMessageProcessingStrategy> _messageProcessingStrategy;
+
+		public Mail2BugEngine(Config.InstanceConfig configInstance, MailboxManagerFactory mailboxManagerFactory)
 		{
 		    _config = configInstance;
 
 		    Logger.InfoFormat("Initalizing MailboxManager");
-            _mailboxManager = MailboxManagerFactory.CreateMailboxManager(_config.EmailSettings);
+            _mailboxManager = mailboxManagerFactory.CreateMailboxManager(_config.EmailSettings);
 
 		    Logger.InfoFormat("Initializing WorkItemManager");
-            IWorkItemManager workItemManager;
-            if (configInstance.TfsServerConfig.SimulationMode)
-		    {
-                Logger.InfoFormat("Working in simulation mode. Using WorkItemManagerMock");
-		        workItemManager = new WorkItemManagerMock(_config.WorkItemSettings.ConversationIndexFieldName);
-		    }
-		    else
-		    {
-                Logger.InfoFormat("Working in standard mode, using TFSWorkItemManager");
-		        workItemManager = new TFSWorkItemManager(_config);
-		    }
-
-		    Logger.InfoFormat("Initializing MessageProcessingStrategy");
-		    _messageProcessingStrategy = new SimpleBugStrategy(_config, workItemManager);
+            _messageProcessingStrategy = new Lazy<IMessageProcessingStrategy>(InitProcessingStrategy);
 		}
 
 	    public void ProcessInbox()
@@ -79,7 +76,7 @@ namespace Mail2Bug
 			    {
 			        Logger.InfoFormat("Processing message {0}", message.Subject);
 			        Logger.DebugFormat("Message sent on {0}", message.SentOn.ToLocalTime());
-			        _messageProcessingStrategy.ProcessInboxMessage(message);
+			        _messageProcessingStrategy.Value.ProcessInboxMessage(message);
 			        Logger.InfoFormat("Message '{0}' processed successfully, moving to next message", message.Subject);
 			    }
 			    catch (Exception exception)
@@ -94,6 +91,28 @@ namespace Mail2Bug
 			}
 		}
 
+        private IMessageProcessingStrategy InitProcessingStrategy()
+        {
+            IWorkItemManager workItemManager;
+            if (_config.TfsServerConfig.SimulationMode)
+            {
+                Logger.InfoFormat("Working in simulation mode. Using WorkItemManagerMock");
+                workItemManager = new WorkItemManagerMock(_config.WorkItemSettings.ConversationIndexFieldName);
+            }
+            else
+            {
+                Logger.InfoFormat("Working in standard mode, using TFSWorkItemManager");
+                workItemManager = new TFSWorkItemManager(_config);
+            }
+
+            Logger.InfoFormat("Initializing MessageProcessingStrategy");
+            return new SimpleBugStrategy(_config, workItemManager);
+        }
+
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Mail2BugEngine));
-    }
+	    public void Dispose()
+	    {
+	        DisposeUtils.DisposeIfDisposable(_messageProcessingStrategy);
+	    }
+	}
 }

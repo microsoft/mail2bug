@@ -12,7 +12,7 @@ namespace Mail2Bug.Email
     /// </summary>
     class MailboxManagerFactory
     {
-        public static IMailboxManager CreateMailboxManager(Config.EmailSettings emailSettings)
+        public IMailboxManager CreateMailboxManager(Config.EmailSettings emailSettings)
         {
             var credentials = new EWSConnectionFactory.Credentials
             {
@@ -21,7 +21,7 @@ namespace Mail2Bug.Email
                 Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile)
             };
 
-            var exchangeService = ConnectionFactory.GetConnection(credentials);
+            var exchangeService = _connectionFactory.GetConnection(credentials);
             var postProcessor = GetPostProcesor(emailSettings, exchangeService);
 
             switch (emailSettings.ServiceType)
@@ -66,6 +66,6 @@ namespace Mail2Bug.Email
         }
 
         // Enable connection caching for performance improvement when hosting multiple instances
-        private static readonly EWSConnectionFactory ConnectionFactory = new EWSConnectionFactory(true);
+        private readonly EWSConnectionFactory _connectionFactory = new EWSConnectionFactory(true);
     }
 }

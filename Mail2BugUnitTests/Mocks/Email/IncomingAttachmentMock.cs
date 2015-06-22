@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
+using Mail2Bug.Email;
 
-namespace Mail2Bug.Email.Mocks
+namespace Mail2BugUnitTests.Mocks.Email
 {
     class IncomingAttachmentMock : IIncomingEmailAttachment
     {

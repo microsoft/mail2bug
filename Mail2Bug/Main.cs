@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
+using Mail2Bug.Email;
 
 [assembly: CLSCompliant(false)]
 
@@ -65,9 +66,9 @@ namespace Mail2Bug
 
                 InitInstances(configs);
 
-                var iterations = ReadIntFromAppConfig("Iterations");
-                var interval = TimeSpan.FromSeconds(ReadIntFromAppConfig("IntervalInSeconds"));
-                var useThreads = ReadBoolFromAppConfig("UseThreads");
+                var iterations = ReadIntFromAppConfig("Iterations", 200);
+                var interval = TimeSpan.FromSeconds(ReadIntFromAppConfig("IntervalInSeconds", 1));
+                var useThreads = ReadBoolFromAppConfig("UseThreads", false);
 
                 for (var i = 0; i < iterations; ++i )
                 {
@@ -138,7 +139,7 @@ namespace Mail2Bug
 
         private static void RunInstancesSingleThreaded()
         {
-            var task = new Task(() => _instances.ForEach(x => x.ProcessInbox()));
+            var task = new Task(() => _instances.ForEach(x => x.RunInstance()));
             task.Start();
             bool done = task.Wait(_timeoutPerIteration);
 
@@ -157,7 +158,7 @@ namespace Mail2Bug
             var sw = new Stopwatch();
             sw.Start();
 
-            _instances.ForEach(x => tasks.Add(new Task(x.ProcessInbox)));
+            _instances.ForEach(x => tasks.Add(new Task(x.RunInstance)));
             tasks.ForEach(x => x.Start());
             tasks.ForEach(x => x.Wait(GetRemainigTimeout(sw, _timeoutPerIteration)));
 
@@ -179,41 +180,50 @@ namespace Mail2Bug
 
         private static void InitInstances(IEnumerable<Config> configs)
         {
-            _instances = new List<Mail2BugEngine>();
+            _instances = new List<IInstanceRunner>();
+            var mailboxManagerFactory = new MailboxManagerFactory();
+
             foreach (var config in configs)
             {
                 foreach (var instance in config.Instances)
                 {
-                    InitSingleInstance(instance);
+                    try
+                    {
+                        var usePersistentInstances = ReadBoolFromAppConfig("UsePersistentInstances", true);
+                        Logger.InfoFormat("Initializing engine for instance '{0}' (Persistent? {1})", instance.Name, usePersistentInstances);
+                        
+                        if (usePersistentInstances)
+                        {
+                            _instances.Add(new PersistentInstanceRunner(instance, mailboxManagerFactory));
+                        }
+                        else
+                        {
+                            _instances.Add(new TemporaryInstanceRunner(instance, mailboxManagerFactory));
+                        }
+
+                        Logger.InfoFormat("Finished initialization of engine for instance '{0}'", instance.Name);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.ErrorFormat("Exception while initializing instance '{0}'\n{1}", instance.Name, ex);
+                    }
                 }
             }
         }
 
-        private static void InitSingleInstance(Config.InstanceConfig instance)
+        private static int ReadIntFromAppConfig(string setting, int defaultValue)
         {
-            try
-            {
-                Logger.InfoFormat("Initializing engine for instance '{0}'", instance.Name);
-                _instances.Add(new Mail2BugEngine(instance));
-                Logger.InfoFormat("Finished initialization of engine for instance '{0}'", instance.Name);
-            }
-            catch(Exception ex)
-            {
-                Logger.ErrorFormat("Exception while initializing instance '{0}'\n{1}", instance.Name, ex);
-            }
+            var value = ConfigurationManager.AppSettings[setting];
+            return string.IsNullOrEmpty(value) ? defaultValue : int.Parse(value);
         }
 
-        private static int ReadIntFromAppConfig(string setting)
+        private static bool ReadBoolFromAppConfig(string setting, bool defaultValue)
         {
-            return int.Parse(ConfigurationManager.AppSettings[setting]);
+            var value = ConfigurationManager.AppSettings[setting];
+            return string.IsNullOrEmpty(value) ? defaultValue : bool.Parse(value);
         }
 
-        private static bool ReadBoolFromAppConfig(string setting)
-        {
-            return bool.Parse(ConfigurationManager.AppSettings[setting]);
-        }
-
-        private static List<Mail2BugEngine> _instances;
+        private static List<IInstanceRunner> _instances;
         private static TimeSpan _timeoutPerIteration = TimeSpan.FromMinutes(30);
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof (MainApp));

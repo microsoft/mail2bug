@@ -4,12 +4,12 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Mail2Bug.Email;
-using Mail2Bug.Email.Mocks;
 using Mail2Bug.TestHelpers;
+using Mail2BugUnitTests.Mocks.Email;
 using Microsoft.Test.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace EmailBodyProcessingUtilsUnitTest
+namespace Mail2BugUnitTests
 {
     [TestClass]
     public class EmailBodyProcessingUtilsUnitTest

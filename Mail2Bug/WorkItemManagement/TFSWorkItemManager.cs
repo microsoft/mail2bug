@@ -1,22 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
 using log4net;
 using Mail2Bug.ExceptionClasses;
 using Mail2Bug.Helpers;
 using Mail2Bug.MessageProcessingStrategies;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.TeamFoundation.Client;
-using Microsoft.TeamFoundation.Common.Internal;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Mail2Bug.WorkItemManagement
 {
-    public class TFSWorkItemManager : IWorkItemManager
+    public class TFSWorkItemManager : IWorkItemManager, IDisposable
     {
         public SortedList<string, int> WorkItemsCache { get; private set; }
 
@@ -27,10 +26,10 @@ namespace Mail2Bug.WorkItemManagement
             _config = config;
 
             // Init TFS service objects
-            var tfsServer = ConnectToTfsCollection();
+            _tfsServer = ConnectToTfsCollection();
             Logger.InfoFormat("Connected to TFS. Getting TFS WorkItemStore");
 
-            _tfsStore = tfsServer.GetService<WorkItemStore>();
+            _tfsStore = _tfsServer.GetService<WorkItemStore>();
 
             if (_tfsStore == null)
             {
@@ -390,6 +389,16 @@ namespace Mail2Bug.WorkItemManagement
             return relevantValues.FirstOrDefault();
         }
 
+        public void Dispose()
+        {
+            _tfsServer.Dispose();
+        }
+
+        ~TFSWorkItemManager()
+        {
+            Dispose();
+        }
+
         #region Config validation
 
         private static void ValidateConfig(Config.InstanceConfig config)
@@ -431,5 +440,6 @@ namespace Mail2Bug.WorkItemManagement
         private readonly Config.InstanceConfig _config;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(TFSWorkItemManager));
+        private readonly TfsTeamProjectCollection _tfsServer;
     }
 }

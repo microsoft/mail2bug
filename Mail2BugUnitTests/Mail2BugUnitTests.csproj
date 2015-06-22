@@ -40,6 +40,9 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.2.1506.2016\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="TestApiCore">
       <HintPath>..\packages\Microsoft.TestApi.0.6.0.0\lib\net40\TestApiCore.dll</HintPath>
@@ -63,8 +66,12 @@
   <ItemGroup>
     <Compile Include="DateBasedValueResolverUnitTest.cs" />
     <Compile Include="EmailBodyProcessingUtilsUnitTest.cs" />
+    <Compile Include="Mocks\Email\IncomingAttachmentMock.cs" />
+    <Compile Include="Mocks\Email\IncomingEmailMessageMock.cs" />
+    <Compile Include="Mocks\Email\MailManagerMock.cs" />
     <Compile Include="OverridesExtractorUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecipientsMailboxManagerRouterUnitTest.cs" />
     <Compile Include="SimpleBugStrategyUnitTest.cs" />
     <Compile Include="TfsQueryParserUnitTest.cs" />
   </ItemGroup>

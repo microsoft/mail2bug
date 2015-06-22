@@ -24,6 +24,7 @@ namespace Mail2Bug.Email
         IEnumerable<string> To { get; }
         IEnumerable<string> Cc { get; }
         DateTime SentOn { get; }
+        DateTime ReceivedOn { get; }
 
         bool IsHtmlBody { get; }
 
