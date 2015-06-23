@@ -91,7 +91,7 @@
     <Compile Include="Email\AckEmailHandler.cs" />
     <Compile Include="Email\EmailBodyProcessingUtils.cs" />
     <Compile Include="Email\EWS\ArchiverMessagePostProcessor.cs" />
-    <Compile Include="Email\EWS\EWSConnectionFactory.cs" />
+    <Compile Include="Email\EWS\EWSConnectionManger.cs" />
     <Compile Include="Email\EWS\EWSIncomingFileAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingItemAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingMessage.cs" />

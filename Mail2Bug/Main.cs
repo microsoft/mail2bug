@@ -129,6 +129,21 @@ namespace Mail2Bug
 
         private static void RunInstances(bool useThreads)
         {
+            // At the beginning of each iteration, update the inboxes of EWS connections - specifically
+            // for instances relying on RecipientsMailboxManagerRouter.
+            // We cannot make the calls to process inboxes implicit in RecipientMailboxManagerRouter.GetMessages
+            // because then it would be called by each instance, which is exactly what we want to avoid.
+            // The alternatives are:
+            // * Expose a function to process inboxes and call it at the beginning of each iteration (which is the
+            //   solution implemented her)
+            // * Add logic to RecipientsMailboxManagerRouter to detect wheter a call to ProcessInbox is needed or 
+            //   not based on whether new messages were received or similar logic. I initially implemented this logic
+            //   but then decided it's adding too much complexity compared to the small benefit of a somewhat cleaner
+            //   abstraction.
+            //   If we decide otherwise in the future, we can simply add it in RecipientsMailboxManagerRouter and then
+            //   get rid of the ProcessInboxes public method and the call to it here.
+            _ewsConnectionManger.ProcessInboxes();
+
             if (!useThreads)
             {
                 RunInstancesSingleThreaded();
@@ -182,7 +197,8 @@ namespace Mail2Bug
         private static void InitInstances(IEnumerable<Config> configs)
         {
             _instances = new List<IInstanceRunner>();
-            var mailboxManagerFactory = new MailboxManagerFactory();
+            _ewsConnectionManger = new EWSConnectionManger(true);
+            var mailboxManagerFactory = new MailboxManagerFactory(_ewsConnectionManger);
 
             foreach (var config in configs)
             {
@@ -228,5 +244,6 @@ namespace Mail2Bug
         private static TimeSpan _timeoutPerIteration = TimeSpan.FromMinutes(30);
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof (MainApp));
+        private static EWSConnectionManger _ewsConnectionManger;
     }
 }

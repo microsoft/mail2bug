@@ -33,7 +33,7 @@ namespace Mail2Bug
             _engine.Dispose();
         }
 
-        private Mail2BugEngine _engine;
+        private readonly Mail2BugEngine _engine;
     }
 
     // This implementation initializes the instance every time it is run, then disposes of the objects
