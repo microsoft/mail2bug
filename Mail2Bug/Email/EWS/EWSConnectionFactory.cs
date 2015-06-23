@@ -24,17 +24,23 @@ namespace Mail2Bug.Email.EWS
             public string Password;
         }
 
+        public struct EWSConnection
+        {
+            public ExchangeService Service;
+            public RecipientsMailboxManagerRouter Router;
+        }
+
         public EWSConnectionFactory(bool enableConnectionCaching)
         {
             _enableConnectionCaching = enableConnectionCaching;
 
             if (_enableConnectionCaching)
             {
-                _cachedConnections = new Dictionary<Tuple<string, string, int>, ExchangeService>();
+                _cachedConnections = new Dictionary<Tuple<string, string, int>, EWSConnection>();
             }
         }
 
-        public ExchangeService GetConnection(Credentials credentials)
+        public EWSConnection GetConnection(Credentials credentials)
         {
             if (!_enableConnectionCaching)
             {
@@ -64,15 +70,16 @@ namespace Mail2Bug.Email.EWS
                 credentials.UserName, credentials.Password.GetHashCode());
         }
 
-        static private ExchangeService ConnectToEWS(Credentials credentials)
+        static private EWSConnection ConnectToEWS(Credentials credentials)
         {
             Logger.DebugFormat("Initializing FolderMailboxManager for email adderss {0}", credentials.EmailAddress);
-            var connection = new ExchangeService(ExchangeVersion.Exchange2010_SP1)
+            var exchangeService = new ExchangeService(ExchangeVersion.Exchange2010_SP1)
             {
                 Credentials = new WebCredentials(credentials.UserName, credentials.Password),
                 Timeout = 60000
             };
-            connection.AutodiscoverUrl(
+
+            exchangeService.AutodiscoverUrl(
                 credentials.EmailAddress,
                 x =>
                 {
@@ -81,13 +88,19 @@ namespace Mail2Bug.Email.EWS
                 }
                 );
 
-            Logger.DebugFormat("Service URL: {0}", connection.Url);
+            Logger.DebugFormat("Service URL: {0}", exchangeService.Url);
 
-            return connection;
+            return new EWSConnection()
+            {
+                Service = exchangeService,
+                Router =
+                    new RecipientsMailboxManagerRouter(
+                        new EWSMailFolder(Folder.Bind(exchangeService, WellKnownFolderName.Inbox)))
+            };
         }
 
 
-        private readonly Dictionary<Tuple<string, string, int>, ExchangeService> _cachedConnections;
+        private readonly Dictionary<Tuple<string, string, int>, EWSConnection> _cachedConnections;
         private readonly bool _enableConnectionCaching;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(EWSConnectionFactory));

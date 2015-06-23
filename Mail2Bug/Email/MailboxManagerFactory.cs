@@ -22,19 +22,20 @@ namespace Mail2Bug.Email
             };
 
             var exchangeService = _connectionFactory.GetConnection(credentials);
-            var postProcessor = GetPostProcesor(emailSettings, exchangeService);
+            var postProcessor = GetPostProcesor(emailSettings, exchangeService.Service);
 
             switch (emailSettings.ServiceType)
             {
                 case Config.EmailSettings.MailboxServiceType.EWSByFolder:
                     return new FolderMailboxManager(
-                        exchangeService, 
+                        exchangeService.Service, 
                         emailSettings.IncomingFolder,
                         postProcessor);
 
                 case Config.EmailSettings.MailboxServiceType.EWSByRecipients:
+
                     return new RecipientsMailboxManager(
-                        exchangeService,
+                        exchangeService.Router,
                         ParseDelimitedList(emailSettings.Recipients, ';'),
                         postProcessor);
 
@@ -59,7 +60,7 @@ namespace Mail2Bug.Email
         {
             if (string.IsNullOrEmpty(text))
             {
-                return new List<string>();
+                return new string[0];
             }
 
             return text.Split(delimiter);

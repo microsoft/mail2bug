@@ -264,9 +264,9 @@ namespace Mail2BugUnitTests
             var message = mailManager.AddMessage(false);
             
             // Add the alias that will be resolved
-            var newTo = message.To.ToList();
+            var newTo = message.ToAddresses.ToList();
             newTo.Add(BasicAlias.ToLower());
-            message.To = newTo;
+            message.ToAddresses = newTo;
 
             var extractor = new OverridesExtractor(message, config);
             var dictionary = extractor.GetOverrides();
@@ -356,9 +356,9 @@ namespace Mail2BugUnitTests
 
             if (!string.IsNullOrEmpty(alias))
             {
-                var newTo = message.To.ToList();
+                var newTo = message.ToAddresses.ToList();
                 newTo.Add(BasicAlias);
-                message.To = newTo;
+                message.ToAddresses = newTo;
             }
 
             return message;

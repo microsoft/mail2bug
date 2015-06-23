@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using Mail2Bug.Email;
+using Mail2Bug.Email.EWS;
 
 [assembly: CLSCompliant(false)]
 

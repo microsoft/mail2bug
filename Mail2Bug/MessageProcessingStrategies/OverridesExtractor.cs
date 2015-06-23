@@ -70,8 +70,8 @@ namespace Mail2Bug.MessageProcessingStrategies
         private IEnumerable<KeyValuePair<string, string>> GetRecipientOverrides()
         {
             var overrides = new List<KeyValuePair<string, string>>();
-            overrides.AddRange(_message.Cc.SelectMany(ExtractRecipientOverrides));
-            overrides.AddRange(_message.To.SelectMany(ExtractRecipientOverrides));
+            overrides.AddRange(_message.CcAddresses.SelectMany(ExtractRecipientOverrides));
+            overrides.AddRange(_message.ToAddresses.SelectMany(ExtractRecipientOverrides));
 
             return overrides;
         }

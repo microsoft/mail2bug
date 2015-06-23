@@ -50,8 +50,10 @@ namespace Mail2Bug.Email.EWS
         public string SenderName { get { return _message.Sender.Name; } }
         public string SenderAlias { get { return GetAliasFromEmailAddress(_message.Sender.Address); } }
         public string SenderAddress { get { return _message.Sender.Address; } }
-        public IEnumerable<string> To { get { return _message.ToRecipients.Select(x => x.Address); } }
-        public IEnumerable<string> Cc { get { return _message.CcRecipients.Select(x => x.Address); } }
+        public IEnumerable<string> ToAddresses { get { return _message.ToRecipients.Select(x => x.Address); } }
+        public IEnumerable<string> CcAddresses { get { return _message.CcRecipients.Select(x => x.Address); } }
+        public IEnumerable<string> ToNames { get { return _message.ToRecipients.Select(x => x.Name); } }
+        public IEnumerable<string> CcNames { get { return _message.CcRecipients.Select(x => x.Name); } }
         public DateTime SentOn { get { return _message.DateTimeSent; } }
         public DateTime ReceivedOn { get { return _message.DateTimeReceived; } }
         public bool IsHtmlBody { get { return _message.Body.BodyType == BodyType.HTML; } }

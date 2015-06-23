@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Exchange.WebServices.Data;
 
 namespace Mail2Bug.Email.EWS
 {
@@ -13,33 +12,21 @@ namespace Mail2Bug.Email.EWS
     /// </summary>
     public class RecipientsMailboxManager : IMailboxManager
     {
-        private readonly ExchangeService _service;
-        private readonly IEnumerable<string> _recipients;
         private readonly IMessagePostProcessor _postProcessor;
+        private readonly RecipientsMailboxManagerRouter _router;
+        private readonly int _clientId;
 
-        public RecipientsMailboxManager(ExchangeService connection, IEnumerable<string> recipients, IMessagePostProcessor postProcessor)
+        public RecipientsMailboxManager(RecipientsMailboxManagerRouter router, IEnumerable<string> recipients, IMessagePostProcessor postProcessor)
         {
-            _service = connection;
-            _recipients = recipients;
+            _router = router;
             _postProcessor = postProcessor;
+
+            _clientId = _router.RegisterMailbox(m => ShouldConsiderMessage(m, recipients.ToArray()));
         }
 
         public IEnumerable<IIncomingEmailMessage> ReadMessages()
         {
-            var inbox = Folder.Bind(_service, WellKnownFolderName.Inbox);
-            var view = new ItemView(Math.Max(inbox.TotalCount,100));
-
-            var items = inbox.FindItems(view);
-
-            return items
-                .Where(ShouldConsiderItem)
-                .OrderBy(message =>
-                {   
-                    message.Load(new PropertySet(ItemSchema.DateTimeReceived));
-                    return message.DateTimeReceived; 
-                })
-                .Select(message => new EWSIncomingMessage(message as EmailMessage))
-                .AsEnumerable();
+            return _router.GetMessages(_clientId);
         }
 
         public void OnProcessingFinished(IIncomingEmailMessage message, bool successful)
@@ -47,46 +34,32 @@ namespace Mail2Bug.Email.EWS
             _postProcessor.Process((EWSIncomingMessage)message, successful);
         }
 
-        private bool ShouldConsiderItem(Item item)
+        private static bool ShouldConsiderMessage(IIncomingEmailMessage message, string[] recipients)
         {
-            // Consider only email messages
-            var message = item as EmailMessage;
-            
             if (message == null)
             {
                 return false;
             }
 
             // If no recipients were mentioned, it means process all incoming emails
-            if (!_recipients.Any())
+            if (!recipients.Any())
             {
                 return true;
             }
 
-            // Load the properties we're going to use for evaluating the message
-            message.Load(new PropertySet(
-                    EmailMessageSchema.ToRecipients,
-                    EmailMessageSchema.CcRecipients
-                ));
-
             // If the recipient is in either the To or CC lines, then this message should be considered
-            return _recipients.Any(recipient =>
-                EmailAddressesMatch(message.ToRecipients, recipient) ||
-                EmailAddressesMatch(message.CcRecipients, recipient));
+            return recipients.Any(recipient =>
+                EmailAddressesMatch(message.ToAddresses, recipient) ||
+                EmailAddressesMatch(message.ToNames, recipient) ||
+                EmailAddressesMatch(message.CcAddresses, recipient) ||
+                EmailAddressesMatch(message.CcNames, recipient));
         }
 
-        private bool EmailAddressesMatch(IEnumerable<EmailAddress> emailAddresses, string recipient)
+        private static bool EmailAddressesMatch(IEnumerable<string> emailAddresses, string recipient)
         {
-            if (emailAddresses == null)
-            {
-                return false;
-            }
-
-            return
-                emailAddresses.Any(
-                    address =>
-                        address.Address.Equals(recipient, StringComparison.InvariantCultureIgnoreCase) ||
-                        address.Name.Equals(recipient, StringComparison.InvariantCultureIgnoreCase));
+            return emailAddresses != null && 
+                emailAddresses.Any(address =>
+                    address.Equals(recipient, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }
