@@ -67,6 +67,7 @@ namespace Mail2Bug.Email.EWS
         {
             foreach (var connection in _cachedConnections)
             {
+                Logger.InfoFormat("Processing inbox for connection {0}", connection.Key);
                 connection.Value.Router.ProcessInbox();
             }
         }

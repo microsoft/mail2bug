@@ -35,11 +35,23 @@ namespace Mail2Bug.Email.EWS
                 return new List<IIncomingEmailMessage>();
             }
 
-            return _clients[clientId].Messages;
+            Logger.InfoFormat("Getting messages for client {0}", clientId);
+            var incomingEmailMessages = _clients[clientId].Messages;
+            Logger.InfoFormat("{0} messages found for client ID {1}", incomingEmailMessages.Count, clientId);
+
+            return incomingEmailMessages;
         }
 
         public void ProcessInbox()
         {
+            Logger.InfoFormat("Processing inbox for RecipientsMailboxManagerRouter");
+
+            if (_clients.Count == 0)
+            {
+                Logger.Info("No clients registered for RecipientsMailboxManagerRouter - returning");
+                return;
+            }
+
             var messages = _folder.GetMessages();
 
             foreach (var clientData in _clients)
@@ -69,7 +81,8 @@ namespace Mail2Bug.Email.EWS
 
                         Logger.InfoFormat("Message doesn't fit to any client. Subject: {0}", message.Subject);
                     });
-            
+
+            Logger.InfoFormat("Finished processing inbox for RecipientsMailboxManagerRouter");
         }
 
         private struct ClientData
