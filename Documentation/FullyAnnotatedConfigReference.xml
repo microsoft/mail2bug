@@ -29,6 +29,24 @@
              this element if you're using default credentials -->
         <ServiceIdentityPasswordFile>.\Resources\mail2bug.bin</ServiceIdentityPasswordFile>
 
+        <!-- The following three items (OAuthContext, OAuthResourceId, OAuthClientId) are only relevant for VSO
+             These are used for ADAL based authentication to VSO. This method replaces the legacy ServiceIdentity and is
+             the recommended way for authentication for VSO.
+             OAuthContext is the URI for the authentication authority
+             OAuthResourceId and OAuthClientId represent the resource for which we're asking for autherntication, and a
+             client ID that was provisioned for authenticating our app.
+
+             The username and password defined with ServiceIdentityUsername and ServiceidentityPasswordFile are used as 
+             the credentials to authenticate with, so these are still needed even when using ADAL authentication.
+
+             For more details on ADAL and OAuth, check out:
+             http://www.cloudidentity.com/blog/2013/09/12/active-directory-authentication-library-adal-v1-for-net-general-availability/ 
+
+        <OAuthContext></OAuthContext> 
+        <OAuthResourceId></OAuthResourceId>
+        <OAuthClientId></OAuthClientId>
+        -->
+
         <!-- 'Project' - The name of the project within the collection -->
         <Project>HelloWorldProject</Project>
 
@@ -144,6 +162,13 @@
             <DefaultValue>Iteration 40</DefaultValue>
           </DateBasedFieldOverrides>
         </DateBasedOverrides>
+
+        <!-- 'ApplyOverridesDuringUpdate' - 'true' means that explicit overrides and mnemonics in reply messages will be
+             processed, allowing users to make changes to an existing work item with reply messages
+            
+             One recommneded way for using this is to define mnemonics for common actions like resolving/closing/reactivating
+             a work item, so that users can, for example, resolve a bug by replying with a mnemonic like '@@@Resolve' -->
+        <ApplyOverridesDuringUpdate>true</ApplyOverridesDuringUpdate>
 
         <!-- 'AttachOriginalMessage' - 'true' means we should attached the email message that triggered the creation
              of the work item -->

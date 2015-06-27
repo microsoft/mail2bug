@@ -87,9 +87,9 @@ namespace Mail2Bug.WorkItemManagement
         private IEnumerable<TfsClientCredentials> GetTfsCredentials()
         {
             var credentials = new List<TfsClientCredentials>();
-            
-            credentials.AddRange(GetServiceIdentityCredentials());
+
             credentials.AddRange(GetOAuthCredentials());
+            credentials.AddRange(GetServiceIdentityCredentials());
             credentials.Add(new TfsClientCredentials(true));
 
             return credentials;
