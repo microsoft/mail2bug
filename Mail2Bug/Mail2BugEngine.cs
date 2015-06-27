@@ -56,14 +56,14 @@ namespace Mail2Bug
         /// </summary>
 		private void ProcessInboxInternal()
 		{
-			Logger.InfoFormat("Reading messages from inbox ({0})", _config.EmailSettings.IncomingFolder);
+			Logger.DebugFormat("Reading messages from inbox ({0})", _config.EmailSettings.IncomingFolder);
 
             // Retreive the messages from the relevant mail folder
 			var inboxItemsList = _mailboxManager.ReadMessages().ToList();
 
             if (inboxItemsList.Count == 0)
             {
-                Logger.InfoFormat("No messages found for instance {0}", _config.Name);
+                Logger.DebugFormat("No messages found for instance {0}", _config.Name);
                 return;
             }
 
