@@ -23,8 +23,8 @@ namespace Mail2BugUnitTests
             var message = mailManager.AddMessage(false);
             message.PlainTextBody += string.Format("@@@{0}", BasicMnemonic.ToLower());
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue, dictionary[BasicField], "Validate the right value was assigned as part of mnemonic resolution");
@@ -46,8 +46,8 @@ namespace Mail2BugUnitTests
             var mailManager = new MailManagerMock();
             var message = mailManager.AddMessage(false);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue2, dictionary[BasicField], "Validate the right value was assigned as part of mnemonic resolution");
@@ -73,8 +73,8 @@ namespace Mail2BugUnitTests
             var mailManager = new MailManagerMock();
             var message = mailManager.AddMessage(false);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue, dictionary[BasicField], "Validate the right value was assigned as part of mnemonic resolution");
@@ -111,8 +111,8 @@ namespace Mail2BugUnitTests
             var mailManager = new MailManagerMock();
             var message = mailManager.AddMessage(false);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue2, dictionary[BasicField], "Validate the right value was assigned as part of mnemonic resolution");
@@ -143,8 +143,8 @@ namespace Mail2BugUnitTests
             var mailManager = new MailManagerMock();
             var message = mailManager.AddMessage(false);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue2, dictionary[BasicField], "Validate the right value was assigned as part of mnemonic resolution");
@@ -182,8 +182,8 @@ namespace Mail2BugUnitTests
             var mailManager = new MailManagerMock();
             var message = mailManager.AddMessage(false);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue2, dictionary[BasicField], "Validate the right value was assigned as part of mnemonic resolution");
@@ -204,8 +204,8 @@ namespace Mail2BugUnitTests
             var message = mailManager.AddMessage(false);
             message.PlainTextBody += string.Format("@@@{0}", BasicMnemonic.ToLower());
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.IsTrue(dictionary.ContainsKey(BasicField2), string.Format("Validate override for field {0} exists", BasicField2));
@@ -228,8 +228,8 @@ namespace Mail2BugUnitTests
             var message = mailManager.AddMessage(false);
             message.PlainTextBody += string.Format("@@@{0} @@@{1}", BasicMnemonic.ToLower(), BasicMnemonic2.ToLower());
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.IsTrue(dictionary.ContainsKey(BasicField2), string.Format("Validate override for field {0} exists", BasicField2));
@@ -246,8 +246,8 @@ namespace Mail2BugUnitTests
             var message = mailManager.AddMessage(false);
             message.PlainTextBody += string.Format("###{0}:{1}", BasicField, BasicValue);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue, dictionary[BasicField], "Validate the right value was assigned as part of explicit overrides resolution");
@@ -268,8 +268,8 @@ namespace Mail2BugUnitTests
             newTo.Add(BasicAlias.ToLower());
             message.ToAddresses = newTo;
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists", BasicField));
             Assert.AreEqual(BasicValue, dictionary[BasicField], "Validate the right value was assigned as part of recipient overrides resolution");
@@ -291,8 +291,8 @@ namespace Mail2BugUnitTests
 
             var message = GetMessageWithOverrides(BasicAlias, BasicMnemonic, explicitField, explicitValue);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(mnemonicField), string.Format("Validate override for field {0} exists (mnemonic)", BasicField));
             Assert.IsTrue(dictionary.ContainsKey(explicitField), string.Format("Validate override for field {0} exists (explicit)", BasicField));
@@ -314,8 +314,8 @@ namespace Mail2BugUnitTests
 
             var message = GetMessageWithOverrides(BasicAlias, BasicMnemonic, BasicField, explicitValue);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists (mnemonic)", BasicField));
             Assert.AreEqual(explicitValue, dictionary[BasicField], "Validate the right value was assigned as part of explicit overrides resolution");
@@ -332,8 +332,8 @@ namespace Mail2BugUnitTests
 
             var message = GetMessageWithOverrides(BasicAlias, BasicMnemonic, null, null);
 
-            var extractor = new OverridesExtractor(message, config);
-            var dictionary = extractor.GetOverrides();
+            var extractor = new OverridesExtractor(config);
+            var dictionary = extractor.GetOverrides(message);
 
             Assert.IsTrue(dictionary.ContainsKey(BasicField), string.Format("Validate override for field {0} exists (mnemonic)", BasicField));
             Assert.AreEqual(mnemonicValue, dictionary[BasicField], "Validate the right value was assigned as part of explicit overrides resolution");

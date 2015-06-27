@@ -35,7 +35,7 @@ namespace Mail2Bug.Email.EWS
                 return new List<IIncomingEmailMessage>();
             }
 
-            Logger.InfoFormat("Getting messages for client {0}", clientId);
+            Logger.DebugFormat("Getting messages for client {0}", clientId);
             var incomingEmailMessages = _clients[clientId].Messages;
             Logger.InfoFormat("{0} messages found for client ID {1}", incomingEmailMessages.Count, clientId);
 

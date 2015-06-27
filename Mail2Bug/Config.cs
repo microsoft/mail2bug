@@ -74,16 +74,16 @@ namespace Mail2Bug
 		{
             public enum ProcessingStrategyType
             {
-                SimpleBugStrategy,
-                UpdateItemMetadataStrategy
+                SimpleBugStrategy
             }
 
 			public string ConversationIndexFieldName { get; set; }
 			public List<DefaultValueDefinition> DefaultFieldValues { get; set; }
             public List<MnemonicDefinition> Mnemonics { get; set; }
             public List<RecipientOverrideDefinition> RecipientOverrides { get; set; }
-            public List<DateBasedFieldOverrides> DateBasedOverrides { get; set; } 
+            public List<DateBasedFieldOverrides> DateBasedOverrides { get; set; }
 
+		    public bool ApplyOverridesDuringUpdate { get; set; }
             public bool AttachOriginalMessage { get; set; }
 
             public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;

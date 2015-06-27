@@ -56,7 +56,7 @@ namespace Mail2Bug
         /// </summary>
 		private void ProcessInboxInternal()
 		{
-			Logger.InfoFormat("Reading messages from inbox ({0})", _config.EmailSettings.IncomingFolder);
+			Logger.DebugFormat("Reading messages from inbox ({0})", _config.EmailSettings.IncomingFolder);
 
             // Retreive the messages from the relevant mail folder
 			var inboxItemsList = _mailboxManager.ReadMessages().ToList();

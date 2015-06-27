@@ -56,7 +56,8 @@ namespace Mail2Bug.MessageProcessingStrategies
             try
             {
                 // Since the work item *has* been created, failures in this stage are not treated as critical
-                TryApplyFieldOverrides(message, workItemId);
+                var overrides = new OverridesExtractor(_config).GetOverrides(message);
+                TryApplyFieldOverrides(overrides, workItemId);
                 ProcessAttachments(message, workItemId);
                 
                 if (_config.WorkItemSettings.AttachOriginalMessage)
@@ -87,10 +88,8 @@ namespace Mail2Bug.MessageProcessingStrategies
     		}
     	}
 
-        private void TryApplyFieldOverrides(IIncomingEmailMessage message, int workItemId)
+        private void TryApplyFieldOverrides(Dictionary<string, string> overrides, int workItemId)
         {
-            var overrides = new OverridesExtractor(message, _config).GetOverrides();
-
             if (overrides.Count == 0)
             {
                 Logger.DebugFormat("No overrides found. Skipping applying overrides.");
@@ -115,6 +114,16 @@ namespace Mail2Bug.MessageProcessingStrategies
 
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
             var workItemUpdates = new Dictionary<string, string> { { "Changed By", resolver.Sender } };
+
+            if (_config.WorkItemSettings.ApplyOverridesDuringUpdate)
+            {
+                var extractor = new OverridesExtractor(_config);
+                var overrides = extractor.GetOverrides(message.GetLastMessageText());
+
+                Logger.DebugFormat("Found {0} overrides for update message", overrides.Count);
+
+                overrides.ToList().ForEach(x => workItemUpdates[x.Key] = x.Value);
+            }
 
             // Construct the text to be appended
             _workItemManager.ModifyWorkItem(workItemId, message.GetLastMessageText(), workItemUpdates);

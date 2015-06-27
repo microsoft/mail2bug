@@ -15,13 +15,11 @@ namespace Mail2Bug.MessageProcessingStrategies
     /// </summary>
     public class OverridesExtractor
     {
-        private readonly IIncomingEmailMessage _message;
         private readonly Config.InstanceConfig _config;
         private Dictionary<string, DateBasedValueResolver> _dateBasedResolvers;
 
-        public OverridesExtractor(IIncomingEmailMessage message, Config.InstanceConfig config)
+        public OverridesExtractor(Config.InstanceConfig config)
         {
-            _message = message;
             _config = config;
 
             InitDateBasedResolvers();
@@ -45,13 +43,22 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
         }
 
-        public Dictionary<string, string> GetOverrides()
+        public Dictionary<string, string> GetOverrides(IIncomingEmailMessage message)
         {
             var result = new Dictionary<string, string>();
-            AddToDictionary(GetRecipientOverrides(), result);
+            AddToDictionary(GetRecipientOverrides(message), result);
             AddToDictionary(GetDatebasedOverrides(), result);
-            AddToDictionary(GetMnemonicOverrides(), result);
-            AddToDictionary(GetExplicitOverrides(), result);
+            AddToDictionary(GetMnemonicOverrides(GetMessageFullText(message)), result);
+            AddToDictionary(GetExplicitOverrides(GetMessageFullText(message)), result);
+
+            return result;
+        }
+
+        public Dictionary<string, string> GetOverrides(string text)
+        {
+            var result = new Dictionary<string, string>();
+            AddToDictionary(GetMnemonicOverrides(text), result);
+            AddToDictionary(GetExplicitOverrides(text), result);
 
             return result;
         }
@@ -67,11 +74,11 @@ namespace Mail2Bug.MessageProcessingStrategies
             return overrides;
         }
 
-        private IEnumerable<KeyValuePair<string, string>> GetRecipientOverrides()
+        private IEnumerable<KeyValuePair<string, string>> GetRecipientOverrides(IIncomingEmailMessage message)
         {
             var overrides = new List<KeyValuePair<string, string>>();
-            overrides.AddRange(_message.CcAddresses.SelectMany(ExtractRecipientOverrides));
-            overrides.AddRange(_message.ToAddresses.SelectMany(ExtractRecipientOverrides));
+            overrides.AddRange(message.CcAddresses.SelectMany(ExtractRecipientOverrides));
+            overrides.AddRange(message.ToAddresses.SelectMany(ExtractRecipientOverrides));
 
             return overrides;
         }
@@ -110,17 +117,15 @@ namespace Mail2Bug.MessageProcessingStrategies
         /// Gets the list of key-value pairs for fields overridden by mnemonics
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<KeyValuePair<string, string>> GetMnemonicOverrides()
+        private IEnumerable<KeyValuePair<string, string>> GetMnemonicOverrides(string text)
         {
-            GetMessageFullText();
-
-            return GetMnemonics(GetMessageFullText()).SelectMany(ResolveMnemonic);
+            return GetMnemonics(text).SelectMany(ResolveMnemonic);
         }
 
-        private string GetMessageFullText()
+        private string GetMessageFullText(IIncomingEmailMessage message)
         {
             var sb = new StringBuilder();
-            sb.AppendLine(_message.Subject).AppendLine(_message.PlainTextBody);
+            sb.AppendLine(message.Subject).AppendLine(message.PlainTextBody);
             return sb.ToString();
         }
 
@@ -154,12 +159,12 @@ namespace Mail2Bug.MessageProcessingStrategies
         /// <summary>
         /// Gets a list of all the explicit overrides in the message
         /// </summary>
-        private IEnumerable<KeyValuePair<string, string>> GetExplicitOverrides()
+        private IEnumerable<KeyValuePair<string, string>> GetExplicitOverrides(string text)
         {
             var overridesRegex = new Regex(_config.EmailSettings.ExplicitOverridesRegex);
 
             var overrides =
-                from Match match in overridesRegex.Matches(GetMessageFullText())
+                from Match match in overridesRegex.Matches(text)
                 select ExtractOverride(match);
 
             return overrides;
