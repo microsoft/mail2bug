@@ -59,7 +59,7 @@ namespace Mail2Bug.Email.EWS
         {
             return emailAddresses != null && 
                 emailAddresses.Any(address =>
-                    address.Equals(recipient, StringComparison.InvariantCultureIgnoreCase));
+                    address != null && address.Equals(recipient, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }
