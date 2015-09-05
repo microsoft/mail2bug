@@ -162,7 +162,18 @@ namespace Mail2BugUnitTests
         }
 
         [TestMethod]
-        public void TestProcessingEmailThread()
+        public void TestProcessingEmailThreadOverrideChangedBy()
+        {
+            TestProcessingEmailThreadImpl(true);
+        }
+
+        [TestMethod]
+        public void TestProcessingEmailThreadDontOverrideChangedBy()
+        {
+            TestProcessingEmailThreadImpl(false);
+        }
+
+        public void TestProcessingEmailThreadImpl(bool overrideChangedBy)
         {
             var seed = _rand.Next();
 
@@ -174,6 +185,7 @@ namespace Mail2BugUnitTests
             var message3 = mailManager.AddReply(message2, RandomDataHelper.GetBody(seed));
 
             var instanceConfig = GetConfig().Instances.First();
+            instanceConfig.WorkItemSettings.OverrideChangedBy = overrideChangedBy;
 
             var workItemManagerMock = new WorkItemManagerMock(instanceConfig.WorkItemSettings.ConversationIndexFieldName);
             ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
@@ -185,7 +197,10 @@ namespace Mail2BugUnitTests
             var expectedValues = new Dictionary<string,string>();
             instanceConfig.WorkItemSettings.DefaultFieldValues.ForEach(x=> expectedValues[x.Field] = x.Value);
 
-            expectedValues["Changed By"] = message3.SenderName;
+            if (overrideChangedBy)
+            {
+                expectedValues["Changed By"] = message3.SenderName;
+            }
             expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
 
             ValidateBugValues(expectedValues, bugFields);

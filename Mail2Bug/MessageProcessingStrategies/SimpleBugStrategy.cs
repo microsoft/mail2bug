@@ -113,7 +113,12 @@ namespace Mail2Bug.MessageProcessingStrategies
             Logger.InfoFormat("Modifying work item {0} subject: {1}", workItemId, message.Subject);
 
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
-            var workItemUpdates = new Dictionary<string, string> { { "Changed By", resolver.Sender } };
+            var workItemUpdates = new Dictionary<string, string>();
+
+            if (_config.WorkItemSettings.OverrideChangedBy)
+            {
+                workItemUpdates["Changed By"] = resolver.Sender;
+            }
 
             if (_config.WorkItemSettings.ApplyOverridesDuringUpdate)
             {

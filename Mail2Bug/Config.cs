@@ -72,6 +72,14 @@ namespace Mail2Bug
 
 		public class WorkItemSettings
 		{
+            // C'tor for assignign defaults
+            public WorkItemSettings()
+		    {
+		        OverrideChangedBy = true;
+		        ApplyOverridesDuringUpdate = true;
+		        AttachOriginalMessage = true;
+		    }
+
             public enum ProcessingStrategyType
             {
                 SimpleBugStrategy
@@ -83,7 +91,8 @@ namespace Mail2Bug
             public List<RecipientOverrideDefinition> RecipientOverrides { get; set; }
             public List<DateBasedFieldOverrides> DateBasedOverrides { get; set; }
 
-		    public bool ApplyOverridesDuringUpdate { get; set; }
+            public bool OverrideChangedBy { get; set; }
+            public bool ApplyOverridesDuringUpdate { get; set; }
             public bool AttachOriginalMessage { get; set; }
 
             public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
