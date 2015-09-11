@@ -78,6 +78,7 @@ namespace Mail2Bug
 		        OverrideChangedBy = true;
 		        ApplyOverridesDuringUpdate = true;
 		        AttachOriginalMessage = true;
+                AttachUpdateMessages = false;
 		    }
 
             public enum ProcessingStrategyType
@@ -94,8 +95,9 @@ namespace Mail2Bug
             public bool OverrideChangedBy { get; set; }
             public bool ApplyOverridesDuringUpdate { get; set; }
             public bool AttachOriginalMessage { get; set; }
+		    public bool AttachUpdateMessages { get; set; }
 
-            public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
+		    public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
 		}
 
 		public class DefaultValueDefinition

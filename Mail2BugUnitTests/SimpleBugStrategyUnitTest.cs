@@ -258,6 +258,41 @@ namespace Mail2BugUnitTests
         }
 
         [TestMethod]
+        public void TestAttachingUpdateMessages()
+        {
+            var seed = _rand.Next();
+
+            Logger.InfoFormat("Using seed {0}", seed);
+
+            var mailManager = new MailManagerMock();
+            var message1 = mailManager.AddMessage(false);
+            var message2 = mailManager.AddReply(message1, "message 1");
+            var message3 = mailManager.AddReply(message2, "message 2");
+
+            var instanceConfig = GetConfig().Instances.First();
+            instanceConfig.WorkItemSettings.AttachUpdateMessages = true;
+
+            var workItemManagerMock = new WorkItemManagerMock(instanceConfig.WorkItemSettings.ConversationIndexFieldName);
+            ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
+
+            Assert.AreEqual(1, workItemManagerMock.Bugs.Count, "Only one bug should exist");
+            var bug = workItemManagerMock.Bugs.First();
+            var bugFields = bug.Value;
+
+            var expectedValues = new Dictionary<string,string>();
+            instanceConfig.WorkItemSettings.DefaultFieldValues.ForEach(x=> expectedValues[x.Field] = x.Value);
+
+            expectedValues["Changed By"] = message3.SenderName;
+            expectedValues[WorkItemManagerMock.HistoryField] = 
+                TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
+
+            ValidateBugValues(expectedValues, bugFields);
+
+            Assert.IsTrue(workItemManagerMock.Attachments.ContainsKey(bug.Key));
+            Assert.AreEqual(workItemManagerMock.Attachments[bug.Key].Count, 3);
+        }
+
+        [TestMethod]
         public void TestAppendOnlyMessageBody()
         {
             var seed = _rand.Next();

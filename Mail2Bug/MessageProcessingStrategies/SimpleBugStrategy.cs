@@ -2,6 +2,7 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using log4net;
 using Mail2Bug.Email;
@@ -62,8 +63,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 
                 if (_config.WorkItemSettings.AttachOriginalMessage)
                 {
-                    string originalMessageFile = message.SaveToFile();
-                    _workItemManager.AttachFiles(workItemId, new List<string> {originalMessageFile} );
+                    AttachMessageToWorkItem(message, workItemId, "OriginalMessage");
                 }
             }
             catch (Exception ex)
@@ -71,6 +71,22 @@ namespace Mail2Bug.MessageProcessingStrategies
                 Logger.ErrorFormat("Exception caught while applying settings to work item {0}\n{1}", workItemId, ex);
             }
             _ackEmailHandler.SendAckEmail(message, workItemId.ToString(CultureInfo.InvariantCulture));
+        }
+
+        private void AttachMessageToWorkItem(IIncomingEmailMessage message, int workItemId, string prefix)
+        {
+            using (var tfc = new TempFileCollection())
+            {
+                var fileName = string.Format("{0}_{1}_{2}.eml", prefix, DateTime.Now.ToString("yyyyMMdd_hhmmss"), new Random().Next());
+                var filePath = Path.Combine(Path.GetTempPath(), fileName);
+                
+                message.SaveToFile(filePath);
+
+                // Remove the file once we're done attaching it
+                tfc.AddFile(filePath, false);
+
+                _workItemManager.AttachFiles(workItemId, new List<string> { filePath });
+            }
         }
 
         private void InitWorkItemFields(IIncomingEmailMessage message, Dictionary<string, string> workItemUpdates)
@@ -134,6 +150,11 @@ namespace Mail2Bug.MessageProcessingStrategies
             _workItemManager.ModifyWorkItem(workItemId, message.GetLastMessageText(), workItemUpdates);
 
             ProcessAttachments(message, workItemId);
+
+            if (_config.WorkItemSettings.AttachUpdateMessages)
+            {
+                AttachMessageToWorkItem(message, workItemId, "ReplyMessage");
+            }
         }
 
         private void ProcessAttachments(IIncomingEmailMessage message, int workItemId)
