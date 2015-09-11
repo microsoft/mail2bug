@@ -170,9 +170,20 @@
              a work item, so that users can, for example, resolve a bug by replying with a mnemonic like '@@@Resolve' -->
         <ApplyOverridesDuringUpdate>true</ApplyOverridesDuringUpdate>
 
-        <!-- 'AttachOriginalMessage' - 'true' means we should attached the email message that triggered the creation
+        <!-- 'OverrideChangedBy' - 'true' means we should set the value of "Changed By" to the user who send the email,
+             such that the change would appear as "on behalf of ...". Since this field may be read only (depending on
+             the server side configuration), this config allows you to turn it off, to avoid causing the the work item
+             to fail.  -->
+        <OverrideChangedBy>true</OverrideChangedBy>
+
+        <!-- 'AttachOriginalMessage' - 'true' means we should attach the email message that triggered the creation
              of the work item -->
         <AttachOriginalMessage>true</AttachOriginalMessage>
+
+        <!-- 'AttachUpdateMessages' - 'true' means we should attach "reply" emails that update the work item 
+             The default is 'false', since this can add considerable data size load to the work item -->
+        <AttachUpdateMessages>false</AttachUpdateMessages>
+
       </WorkItemSettings>
 
       <!-- 'EmailSettings' - contains settings related to accessing the email account and processing individual emails -->
