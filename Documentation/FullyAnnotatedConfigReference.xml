@@ -46,6 +46,13 @@
         <OAuthResourceId></OAuthResourceId>
         <OAuthClientId></OAuthClientId>
         -->
+        
+        <!--
+            ServiceIdentityPatFile - path to the DPAPI encrypted file containing the Personal Acces Token for the
+            user you wish to use to connect to VSO. Due to the nature of PATs, it is enough to only provide the token.
+            
+        <ServiceIdentityPatFile>.\Resources\your-m2b-user-token.bin</ServiceIdentityPatFile>
+        -->
 
         <!-- 'Project' - The name of the project within the collection -->
         <Project>HelloWorldProject</Project>
