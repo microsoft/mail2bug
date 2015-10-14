@@ -16,7 +16,7 @@
              you'll create a dedicated field for this rather than overloading an existing one, to avoid
              other people/tools overwriting it with unrelated data. Also, by making it dedicated, you can
              also make the decision to make it invisible (since no one should be editing it manually)-->
-        <ConversationIndexFieldName>ConverstionID</ConversationIndexFieldName>
+        <ConversationIndexFieldName>ConversationID</ConversationIndexFieldName>
         <DefaultFieldValues>
           <!-- The important part is to include a default value for every mandatory field, otherwise work
                item creation will fail. The only automatically defined default is the 'Title' field, that gets
