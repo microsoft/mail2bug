@@ -82,6 +82,8 @@ namespace Mail2Bug.WorkItemManagement
         /// then, though, they can be wrapped in different ways (e.g. SimpleWebTokenCredneitals, WindowsCredentials), and different servers
         /// may prefer one over the other.
         ///
+        /// We also will try to use basic alternate authentication credentials
+        /// 
         /// As a last resort, we always try the default credentials as well
         /// </summary>
         private IEnumerable<TfsClientCredentials> GetTfsCredentials()
@@ -90,16 +92,36 @@ namespace Mail2Bug.WorkItemManagement
 
             credentials.AddRange(GetOAuthCredentials());
             credentials.AddRange(GetServiceIdentityCredentials());
+            credentials.AddRange(GetBasicAuthCredentials());
             credentials.Add(new TfsClientCredentials(true));
 
             return credentials;
+        }
+
+        private IEnumerable<TfsClientCredentials> GetBasicAuthCredentials()
+        {
+            var usernameAndPassword = GetAltAuthUsernameAndPasswordFromConfig();
+            if (usernameAndPassword == null)
+            {
+                return new List<TfsClientCredentials>();
+            }
+
+            NetworkCredential netCred = new NetworkCredential(usernameAndPassword.Item1, usernameAndPassword.Item2);
+            BasicAuthCredential basicCred = new BasicAuthCredential(netCred);
+            TfsClientCredentials tfsCred = new TfsClientCredentials(basicCred);
+            tfsCred.AllowInteractive = false;
+
+            return new List<TfsClientCredentials>
+            {
+                tfsCred
+            };
         }
 
         private IEnumerable<TfsClientCredentials> GetOAuthCredentials()
         {
             try
             {
-                var usernameAndPassword = GetUsernameAndPasswordFromConfig();
+                var usernameAndPassword = GetServiceIdentityUsernameAndPasswordFromConfig();
 
                 if (usernameAndPassword == null || 
                     string.IsNullOrEmpty(_config.TfsServerConfig.OAuthClientId) ||
@@ -127,7 +149,7 @@ namespace Mail2Bug.WorkItemManagement
 
         private IEnumerable<TfsClientCredentials> GetServiceIdentityCredentials()
         {
-            var usernameAndPassword = GetUsernameAndPasswordFromConfig();
+            var usernameAndPassword = GetServiceIdentityUsernameAndPasswordFromConfig();
             if (usernameAndPassword == null)
             {
                 return new List<TfsClientCredentials>();
@@ -143,7 +165,24 @@ namespace Mail2Bug.WorkItemManagement
             };
         }
 
-        private Tuple<string,string> GetUsernameAndPasswordFromConfig()
+        private Tuple<string, string> GetAltAuthUsernameAndPasswordFromConfig()
+        {
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.AltAuthUsername)
+                || string.IsNullOrWhiteSpace(_config.TfsServerConfig.AltAuthPasswordFile))
+            {
+                return null;
+            }
+
+            if (!File.Exists(_config.TfsServerConfig.AltAuthPasswordFile))
+            {
+                throw new BadConfigException("AltAuthPasswordFile", "Alt password file doesn't exist");
+            }
+
+            return new Tuple<string, string>(_config.TfsServerConfig.AltAuthUsername,
+                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.AltAuthPasswordFile));
+        }
+
+        private Tuple<string,string> GetServiceIdentityUsernameAndPasswordFromConfig()
         {
             if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityUsername)
                 || string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPasswordFile))
@@ -153,7 +192,7 @@ namespace Mail2Bug.WorkItemManagement
 
             if (!File.Exists(_config.TfsServerConfig.ServiceIdentityPasswordFile))
             {
-                throw new BadConfigException("ServiceIdentityPasswordFile", "Password file doesn't exist");
+                throw new BadConfigException("ServiceIdentityPasswordFile", "Service identity password file doesn't exist");
             }
 
             return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, 

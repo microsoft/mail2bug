@@ -35,6 +35,9 @@ namespace Mail2Bug
             public string ServiceIdentityUsername { get; set; }
             public string ServiceIdentityPasswordFile { get; set; }
 
+            public string AltAuthUsername { get; set; }
+            public string AltAuthPasswordFile { get; set; }
+
 			// The TFS project to connect to
 			public string Project { get; set; }
 
