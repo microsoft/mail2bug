@@ -35,6 +35,9 @@ namespace Mail2Bug
             public string ServiceIdentityUsername { get; set; }
             public string ServiceIdentityPasswordFile { get; set; }
 
+            // Personal access token for the service user
+            public string ServiceIdentityPatFile { get; set; }
+
             public string AltAuthUsername { get; set; }
             public string AltAuthPasswordFile { get; set; }
 
