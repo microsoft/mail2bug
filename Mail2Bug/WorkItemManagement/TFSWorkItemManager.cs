@@ -90,6 +90,7 @@ namespace Mail2Bug.WorkItemManagement
 
             credentials.AddRange(GetOAuthCredentials());
             credentials.AddRange(GetServiceIdentityCredentials());
+            credentials.AddRange(GetServiceIdentityPatCredentials());
             credentials.Add(new TfsClientCredentials(true));
 
             return credentials;
@@ -158,6 +159,35 @@ namespace Mail2Bug.WorkItemManagement
 
             return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, 
                 DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile));
+        }
+
+        private IEnumerable<TfsClientCredentials> GetServiceIdentityPatCredentials()
+        {
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile))
+            {
+                return new List<TfsClientCredentials>();
+            }
+
+            var netCred = new NetworkCredential("", GetPatFromConfig());
+            var basicCred = new BasicAuthCredential(netCred);
+            var patCred = new TfsClientCredentials(basicCred) {AllowInteractive = false};
+
+            return new List<TfsClientCredentials> {patCred};
+        }
+
+        private string GetPatFromConfig()
+        {
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile))
+            {
+                return null;
+            }
+
+            if (!File.Exists(_config.TfsServerConfig.ServiceIdentityPatFile))
+            {
+                throw new BadConfigException("ServiceIdentityPatFile", "Personal Access Token file doesn't exist");
+            }
+
+            return DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPatFile);
         }
 
         public void AttachFiles(int workItemId, List<string> fileList)
