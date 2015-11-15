@@ -80,7 +80,7 @@
              - Ideally you'll create a dedicated field for this rather than overloading an existing one, to avoid other
                people/tools overwriting it with unrelated data. You should also consider not adding the field to the work
                item editing form (since no one should be editing it manually) -->
-        <ConversationIndexFieldName>ConverstionID</ConversationIndexFieldName>
+        <ConversationIndexFieldName>ConversationID</ConversationIndexFieldName>
 
         <!-- 'DefaultFieldValues' defines all the deafult values that should be assigned to the work item fields, one
              DefaultValueDefinition item per field.
