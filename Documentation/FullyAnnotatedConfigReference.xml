@@ -103,9 +103,12 @@
                - Subject - The email subject
                - MessageBody - The body of the email message converted to plain text (i.e. if the body was HTML,
                                it would be stripped to plain text)
-               - MessageBodyWithSender - Similar to MessageBody, but with an added line at the bottom mentioning the
+               - MessageBodyWithSender - Similar to MessageBody, but with an added line at the top mentioning the
                  display name and email address of the sender. Useful to include indication of the person whose email
                  triggered the work item creation
+               - MessageLastReply - Last reply of the thread
+               - MessageLastReplyWithSender - Similar to MessageLastReply, but with an added line at the top mentioning the
+                 display name and email address of the sender.
                - RawMessageBody - The raw body of the email - i.e. if it's an HTML message, this would be the full
                  message HTML
                - Now - Current date time in general ("g") date time format (see 
@@ -126,6 +129,16 @@
           <DefaultValueDefinition Field="Iteration Path" Value="HelloWorldProject\Iteration 42" />
           <DefaultValueDefinition Field="Description" Value="##MessageBody" />
         </DefaultFieldValues>
+        
+        
+        <!--
+            DefaultFieldValuesOnUpdate is analogous to DefaultFieldValues, the values are used when an update is made
+            to an existing work item. There are no mandatory fields for this setting.
+        -->
+        <DefaultFieldValuesOnUpdate>
+            <!-- Last reply is set as comment, together with the information about the sender -->
+            <DefaultValueDefinition Field="History" Value="##MessageLastReplyWithSender" />
+        </DefaultFieldValuesOnUpdate>
         <!--  Mnemonics allow you to define short strings that users can put in the email to set specific fields to
               predefined values without the need for verbose explicit overrides. A single mnemonic can set one specific
               field, or several fieds. To have a single mnemonic set several fields, just add multiple MnemonicDefinition

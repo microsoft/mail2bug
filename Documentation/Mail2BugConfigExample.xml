@@ -27,6 +27,9 @@
           <DefaultValueDefinition Field="Iteration Path" Value="HelloWorldProject\Iteration 42" />
           <DefaultValueDefinition Field="Description" Value="##MessageBody" />
         </DefaultFieldValues>
+        
+        <DefaultFieldValuesOnUpdate>
+        </DefaultFieldValuesOnUpdate>
         <!-- 'true' means we should attached the email message that triggered the creation of the work item -->
         <AttachOriginalMessage>true</AttachOriginalMessage>
       </WorkItemSettings>
