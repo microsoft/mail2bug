@@ -51,6 +51,9 @@
             ServiceIdentityPatFile - path to the DPAPI encrypted file containing the Personal Acces Token for the
             user you wish to use to connect to VSO. Due to the nature of PATs, it is enough to only provide the token.
             
+            Personal access tokens can be generated from the profile of the desired user in VSO.
+            https://www.visualstudio.com/en-us/news/2015-jul-7-vso.aspx 
+            Click on the user name in the top right, select My Profile and then Security -> Personal Acces Tokens
         <ServiceIdentityPatFile>.\Resources\your-m2b-user-token.bin</ServiceIdentityPatFile>
         -->
 
