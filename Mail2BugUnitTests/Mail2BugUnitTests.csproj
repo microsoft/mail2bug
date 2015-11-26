@@ -76,6 +76,7 @@
     <Compile Include="TfsQueryParserUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="RegressionMessages\Basic.expected">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

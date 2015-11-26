@@ -32,7 +32,7 @@ Once Mail2Bug is deployed and configured, just add the appropriate email address
 * The actual format for specifying overrides, mnemonics, and append-only threads is configurable - the format specified above is the standard default configuration
 
 # How to build Mail2Bug
-  * Requires Visual Studio 2012
+  * Requires Visual Studio 2012 or newer Visual Studio
   * Clone the repository locally
   * Open the solution file (Mail2Bug.sln) in Visual Studio 
   * Make sure that NuGet is allowed to download packages automatically

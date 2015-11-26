@@ -38,6 +38,9 @@ namespace Mail2Bug
             // Personal access token for the service user
             public string ServiceIdentityPatFile { get; set; }
 
+            public string AltAuthUsername { get; set; }
+            public string AltAuthPasswordFile { get; set; }
+
 			// The TFS project to connect to
 			public string Project { get; set; }
 

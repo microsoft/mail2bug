@@ -17,7 +17,7 @@
 
         <!-- ServiceIdentityUsername - the username to use for logging in to TFS
              - To use default credentials - i.e. login as the user running mail2bug - omit this element 
-             - For VS online, you must provision a Service Identity and use it here. This can be done by following the
+             - For VS online, it is recommended to provision a Service Identity and use it here. This can be done by following the
                instructions [here] (http://nakedalm.com/getting-service-account-vso-tfs-service-credential-viewer/)
              - Note also that for VS online, there will be changes coming soon, since the ServiceIdentity method of
                authentication is going to be deprecated by VSO in favor of AAD, so if you're using VS online, stay tuned
@@ -28,6 +28,16 @@
         <!-- ServiceIdentityPasswordFile - the path to a DPAPI encrypted password file (created using the DpapiTool) - omit
              this element if you're using default credentials -->
         <ServiceIdentityPasswordFile>.\Resources\mail2bug.bin</ServiceIdentityPasswordFile>
+        
+        <!-- AltAuthUsername - the username to use for logging in to VSO
+             - To use Service Identity credentials - omit this element 
+             - For VS online, you must set your alternate authentication credentials first. This can be done by following the
+               instructions [here] (https://www.visualstudio.com/en-us/integrate/get-started/auth/overview) -->
+        <AltAuthUsername>mail2bug</AltAuthUsername>
+        
+        <!-- AltAuthPasswordFile - the path to a DPAPI encrypted password file (created using the DpapiTool) - omit
+             this element if you're using Service Identity credentials -->
+        <AltAuthPasswordFile>.\Resources\mail2bug.bin</AltAuthPasswordFile>
 
         <!-- The following three items (OAuthContext, OAuthResourceId, OAuthClientId) are only relevant for VSO
              These are used for ADAL based authentication to VSO. This method replaces the legacy ServiceIdentity and is
