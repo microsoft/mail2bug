@@ -84,7 +84,7 @@ namespace Mail2BugUnitTests
             ValidateBugValue(bugValues, nowField, DateTime.Now.ToString("g"));
             ValidateBugValue(bugValues, todayField, DateTime.Now.ToString("d"));
             ValidateBugValue(bugValues, messageBodyField, message.PlainTextBody);
-            ValidateBugValue(bugValues, messageBodyWithSenderField, String.Format("{0}\n\nCreated by: {1} ({2})", message.PlainTextBody, message.SenderName, message.SenderAddress));
+            ValidateBugValue(bugValues, messageBodyWithSenderField, String.Format("Created by: {1} ({2})\n\n{0}", message.PlainTextBody, message.SenderName, message.SenderAddress));
             ValidateBugValue(bugValues, senderField, message.SenderName);
             ValidateBugValue(bugValues, subjectField, message.ConversationTopic);
         }
@@ -201,7 +201,7 @@ namespace Mail2BugUnitTests
             {
                 expectedValues["Changed By"] = message3.SenderName;
             }
-            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
+            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message3.GetLastMessageText());
 
             ValidateBugValues(expectedValues, bugFields);
         }
@@ -249,7 +249,7 @@ namespace Mail2BugUnitTests
 
             expectedValues["Changed By"] = message4.SenderName;
             expectedValues[WorkItemManagerMock.HistoryField] = 
-                TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText() + message4.GetLastMessageText());
+                TextUtils.FixLineBreaks(message4.GetLastMessageText());
             expectedValues[mnemonicDef.Field] = mnemonicDef.Value;
             expectedValues[explicitOverride1.Key] = explicitOverride1.Value;
 
@@ -284,7 +284,7 @@ namespace Mail2BugUnitTests
 
             expectedValues["Changed By"] = message3.SenderName;
             expectedValues[WorkItemManagerMock.HistoryField] = 
-                TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
+                TextUtils.FixLineBreaks(message3.GetLastMessageText());
 
             ValidateBugValues(expectedValues, bugFields);
 

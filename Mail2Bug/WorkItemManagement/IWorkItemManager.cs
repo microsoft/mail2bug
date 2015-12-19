@@ -16,9 +16,8 @@ namespace Mail2Bug.WorkItemManagement
         int CreateWorkItem(Dictionary<string, string> values);
 
         /// <param name="workItemId">The ID of the bug to modify </param>
-        /// <param name="comment">Comment to add to description</param>
         /// <param name="values">List of fields to change</param>
-        void ModifyWorkItem(int workItemId, string comment, Dictionary<string, string> values);
+        void ModifyWorkItem(int workItemId, Dictionary<string, string> values);
 
         INameResolver GetNameResolver();
     }

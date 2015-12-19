@@ -104,6 +104,14 @@ namespace Mail2Bug.MessageProcessingStrategies
     		}
     	}
 
+        private void InitWorkItemUpdateFields(SpecialValueResolver resolver, IDictionary<string, string> workItemUpdates)
+        {
+            foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValuesOnUpdate)
+            {
+                workItemUpdates[defaultFieldValue.Field] = resolver.Resolve(defaultFieldValue.Value);
+            }
+        }
+
         private void TryApplyFieldOverrides(Dictionary<string, string> overrides, int workItemId)
         {
             if (overrides.Count == 0)
@@ -115,7 +123,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             try
             {
                 Logger.DebugFormat("Overrides found. Calling 'ModifyWorkItem'");
-                _workItemManager.ModifyWorkItem(workItemId, "", overrides);
+                _workItemManager.ModifyWorkItem(workItemId, overrides);
             }
             catch (Exception ex)
             {
@@ -130,6 +138,8 @@ namespace Mail2Bug.MessageProcessingStrategies
 
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
             var workItemUpdates = new Dictionary<string, string>();
+
+            InitWorkItemUpdateFields(resolver, workItemUpdates);
 
             if (_config.WorkItemSettings.OverrideChangedBy)
             {
@@ -146,8 +156,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 overrides.ToList().ForEach(x => workItemUpdates[x.Key] = x.Value);
             }
 
-            // Construct the text to be appended
-            _workItemManager.ModifyWorkItem(workItemId, message.GetLastMessageText(), workItemUpdates);
+            _workItemManager.ModifyWorkItem(workItemId, workItemUpdates);
 
             ProcessAttachments(message, workItemId);
 

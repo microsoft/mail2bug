@@ -94,6 +94,7 @@ namespace Mail2Bug
 
 			public string ConversationIndexFieldName { get; set; }
 			public List<DefaultValueDefinition> DefaultFieldValues { get; set; }
+            public List<DefaultValueDefinition> DefaultFieldValuesOnUpdate { get; set; }
             public List<MnemonicDefinition> Mnemonics { get; set; }
             public List<RecipientOverrideDefinition> RecipientOverrides { get; set; }
             public List<DateBasedFieldOverrides> DateBasedOverrides { get; set; }

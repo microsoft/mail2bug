@@ -13,6 +13,8 @@ namespace Mail2Bug.MessageProcessingStrategies
 
         public const string SubjectKeyword = "##Subject";
         public const string SenderKeyword = "##Sender";
+        public const string MessageLastReplyKeyword = "##MessageLastReply";
+        public const string MessageLastReplyWithSenderKeyword = "##MessageLastReplyWithSender";
         public const string MessageBodyKeyword = "##MessageBody";
         public const string MessageBodyWithSenderKeyword = "##MessageBodyWithSender";
         public const string RawMessageBodyKeyword = "##RawMessageBody";
@@ -30,12 +32,12 @@ namespace Mail2Bug.MessageProcessingStrategies
             _valueResolutionMap = new Dictionary<string, string>();
             _valueResolutionMap[SubjectKeyword] = GetValidSubject(message);
             _valueResolutionMap[SenderKeyword] = GetSender(message);
+            _valueResolutionMap[MessageLastReplyKeyword] = TextUtils.FixLineBreaks(message.GetLastMessageText());
+            _valueResolutionMap[MessageLastReplyWithSenderKeyword] =
+                GetMessageWithSender(_valueResolutionMap[MessageLastReplyKeyword], message.SenderName, message.SenderAddress);
             _valueResolutionMap[MessageBodyKeyword] = TextUtils.FixLineBreaks(message.PlainTextBody);
             _valueResolutionMap[MessageBodyWithSenderKeyword] =
-                String.Format("{0}\n\nCreated by: {1} ({2})", 
-                _valueResolutionMap[MessageBodyKeyword], 
-                message.SenderName, 
-                message.SenderAddress);
+                GetMessageWithSender(_valueResolutionMap[MessageBodyKeyword], message.SenderName, message.SenderAddress);
             _valueResolutionMap[RawMessageBodyKeyword] = TextUtils.FixLineBreaks(message.RawBody);
             _valueResolutionMap[NowKeyword] = DateTime.Now.ToString("g");
             _valueResolutionMap[TodayKeyword] = DateTime.Now.ToString("d");
@@ -89,6 +91,13 @@ namespace Mail2Bug.MessageProcessingStrategies
         private static string GetValidSubject(IIncomingEmailMessage message)
         {
             return !string.IsNullOrEmpty(message.ConversationTopic) ? message.ConversationTopic : "NO SUBJECT";
+        }
+
+        private static string GetMessageWithSender(string message, string sender, string senderAddress)
+        {
+            var formatted = string.Format("Created by: {1} ({2})\n\n{0}", message, sender, senderAddress);
+
+            return formatted;
         }
 
         private string GetValidTimeString(DateTime? dateTime)

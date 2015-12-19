@@ -74,7 +74,7 @@ namespace Mail2Bug.WorkItemManagement
             return id;
         }
 
-        public void ModifyWorkItem(int workItemId, string comment, Dictionary<string, string> values)
+        public void ModifyWorkItem(int workItemId, Dictionary<string, string> values)
         {
             if (ThrowOnModifyBug != null) throw ThrowOnModifyBug;
 
@@ -89,13 +89,6 @@ namespace Mail2Bug.WorkItemManagement
             {
                 bugEntry[key] = values[key];
             }
-
-            if (!bugEntry.ContainsKey(HistoryField))
-            {
-                bugEntry[HistoryField] = "";
-            }
-
-            bugEntry[HistoryField] += comment;
         }
 
         public INameResolver GetNameResolver()
