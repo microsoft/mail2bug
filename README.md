@@ -7,7 +7,7 @@ Mail2Bug is a service that allows you to create a bug from an e-mail thread simp
 ## Why Mail2Bug? 
 Simply put, the idea is to reduce friction and effort. Ever been on an e-mail thread where some issue was discussed, when at some point someone asked you to “Please open a bug for this issue”? Mail2Bug tries to reduce the effort associated with that scenario by allowing you to easily create a bug with all the information from the thread with the simple action of adding the relevant alias to the thread. It also keeps the TFS item up to date with any new information from the thread, making sure that information is not lost and is easy to find by looking at the bug
 
-Another common scenario is for support organizations - for automatically creating a ticket for incoming emails, and keeping further communiations on the email thread updated in the ticket.
+Another common scenario is for support organizations - for automatically creating a ticket for incoming emails, and keeping further communications on the email thread updated in the ticket.
 
 # Key Features 
 * Creates work items from email threads
