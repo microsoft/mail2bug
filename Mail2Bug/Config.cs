@@ -85,7 +85,8 @@ namespace Mail2Bug
 		        ApplyOverridesDuringUpdate = true;
 		        AttachOriginalMessage = true;
                 AttachUpdateMessages = false;
-		    }
+                AddFromHeadertoTextOnUpdate = false;
+            }
 
             public enum ProcessingStrategyType
             {
@@ -102,8 +103,10 @@ namespace Mail2Bug
             public bool ApplyOverridesDuringUpdate { get; set; }
             public bool AttachOriginalMessage { get; set; }
 		    public bool AttachUpdateMessages { get; set; }
+            public bool AddFromHeadertoTextOnUpdate { get; set; }
 
-		    public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
+
+            public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
 		}
 
 		public class DefaultValueDefinition

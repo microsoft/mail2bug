@@ -121,6 +121,8 @@
                  triggered the work item creation
                - RawMessageBody - The raw body of the email - i.e. if it's an HTML message, this would be the full
                  message HTML
+               - RawMessageBodyWithSender - The raw body of the email prepended with the display name and email address - i.e. if it's an HTML message, this would be the full
+                 message HTML
                - Now - Current date time in general ("g") date time format (see 
                  https://msdn.microsoft.com/en-us/library/az4se3k1%28v=vs.110%29.aspx for date time format specification)
                - Today - Current date in short date format ("d")
@@ -203,6 +205,11 @@
         <!-- 'AttachUpdateMessages' - 'true' means we should attach "reply" emails that update the work item 
              The default is 'false', since this can add considerable data size load to the work item -->
         <AttachUpdateMessages>false</AttachUpdateMessages>
+
+        <!-- 'AddFromHeadertoTextOnUpdate ' - 'true' means we should prepend "'sender name' ('alias') said:" during updates to work item 
+             The default is 'false'-->
+        <AddFromHeadertoTextOnUpdate >false</AddFromHeadertoTextOnUpdate >
+
 
       </WorkItemSettings>
 
