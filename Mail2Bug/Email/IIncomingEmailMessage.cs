@@ -14,6 +14,7 @@ namespace Mail2Bug.Email
     {
         string Subject { get; }
         string RawBody { get; }
+        string RawReplyBody { get; }
         string PlainTextBody { get; }
         string ConversationIndex { get; }
         string ConversationTopic { get; }

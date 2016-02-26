@@ -42,6 +42,8 @@ namespace Mail2Bug.Email.EWS
         public string RawBody { get { return _message.Body.Text ?? string.Empty; } }
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
 
+        public string RawReplyBody { get { var reply = _message.CreateReply(false); var replyMessage = reply.Save(WellKnownFolderName.Drafts);  replyMessage.Load();  replyMessage.Delete(DeleteMode.HardDelete);  return replyMessage.Body.Text ?? string.Empty; } }
+
         public string ConversationIndex
         {
             get { return string.Join("", _message.ConversationIndex.Select(b => b.ToString("X2"))); }

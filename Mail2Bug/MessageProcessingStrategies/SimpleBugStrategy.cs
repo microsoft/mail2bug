@@ -130,7 +130,7 @@ namespace Mail2Bug.MessageProcessingStrategies
 
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
             var workItemUpdates = new Dictionary<string, string>();
-
+       
             if (_config.WorkItemSettings.OverrideChangedBy)
             {
                 workItemUpdates["Changed By"] = resolver.Sender;
@@ -143,11 +143,22 @@ namespace Mail2Bug.MessageProcessingStrategies
 
                 Logger.DebugFormat("Found {0} overrides for update message", overrides.Count);
 
-                overrides.ToList().ForEach(x => workItemUpdates[x.Key] = x.Value);
+                overrides.ToList().ForEach(x => workItemUpdates[x.Key] = resolver.Resolve(x.Value));
             }
 
             // Construct the text to be appended
-            _workItemManager.ModifyWorkItem(workItemId, message.GetLastMessageText(), workItemUpdates);
+            var updatetext = message.GetLastMessageText();
+
+            if (_config.WorkItemSettings.AddFromHeadertoTextOnUpdate)
+            {
+                updatetext =
+                String.Format("{1} ({2}) said:\n{0}",
+                    message.GetLastMessageText(),
+                    message.SenderName,
+                    message.SenderAddress);
+            }
+
+            _workItemManager.ModifyWorkItem(workItemId, updatetext , workItemUpdates);
 
             ProcessAttachments(message, workItemId);
 

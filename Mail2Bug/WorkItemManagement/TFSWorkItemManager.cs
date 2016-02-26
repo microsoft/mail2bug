@@ -412,9 +412,10 @@ namespace Mail2Bug.WorkItemManagement
                     return;
                 }
 
-                if (field.FieldDefinition.FieldType == FieldType.Html)
+                if (field.FieldDefinition.FieldType == FieldType.Html
+                     && !value.StartsWith("<html"))  // don't replace \n in a value with real html content, it must not be interpreted!
                 {
-                    value = value.Replace("\n", "<br>");
+                      value = value.Replace("\n", "<br>");
                 }
 
                 field.Value = value;
