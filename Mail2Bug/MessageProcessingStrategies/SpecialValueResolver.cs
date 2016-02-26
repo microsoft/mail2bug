@@ -16,7 +16,7 @@ namespace Mail2Bug.MessageProcessingStrategies
         public const string MessageBodyKeyword = "##MessageBody";
         public const string MessageBodyWithSenderKeyword = "##MessageBodyWithSender";
         public const string RawMessageBodyKeyword = "##RawMessageBody";
-        public const string RawMessageBodyWithSenderKeyword = "##RawMessageBodyWithSender";
+        public const string RawMessageBodyFromReply = "##RawMessageBodyFromReply";
         public const string NowKeyword = "##Now";
         public const string TodayKeyword = "##Today";
         public const string LocationKeyword = "##Location";
@@ -38,11 +38,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 message.SenderName, 
                 message.SenderAddress);
             _valueResolutionMap[RawMessageBodyKeyword] = TextUtils.FixLineBreaks(message.RawBody);
-            _valueResolutionMap[RawMessageBodyWithSenderKeyword] =
-             String.Format("Created by: {1} ({2})\n\n{0}",
-             TextUtils.FixLineBreaks(message.RawBody),
-             message.SenderName,
-             message.SenderAddress);
+            _valueResolutionMap[RawMessageBodyFromReply] = TextUtils.FixLineBreaks(message.RawReplyBody);
             _valueResolutionMap[NowKeyword] = DateTime.Now.ToString("g");
             _valueResolutionMap[TodayKeyword] = DateTime.Now.ToString("d");
             _valueResolutionMap[LocationKeyword] = message.Location;
