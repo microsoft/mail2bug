@@ -33,7 +33,7 @@ namespace Mail2Bug.WorkItemManagement
                 ? new WorkItemStore(_tfsServer, WorkItemStoreFlags.BypassRules)
                 : _tfsServer.GetService<WorkItemStore>();
 
-                if (_tfsStore == null)
+            if (_tfsStore == null)
             {
                 Logger.ErrorFormat("Cannot initialize TFS Store");
                 throw new Exception("Cannot initialize TFS Store");
