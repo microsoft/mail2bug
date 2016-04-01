@@ -105,7 +105,7 @@ namespace Mail2Bug.MessageProcessingStrategies
 
             if (_config.WorkItemSettings.OverrideCreatedBy)
             {
-                workItemUpdates["Created By"] = message.SenderAddress;
+                workItemUpdates["Created By"] = resolver.Sender;
             }
         }
 
