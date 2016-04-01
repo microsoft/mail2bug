@@ -196,6 +196,12 @@
              to fail.  -->
         <OverrideChangedBy>true</OverrideChangedBy>
 
+        <!-- 'OverrideCreatedBy' - 'true' means we should set the value of "Created By" to the user who sent the email,
+             such that work item would appear as "created by ...". Since this field may be read only (depending on
+             the server side configuration), this config allows you to turn it off, to avoid causing the the work item
+             to fail.  -->
+        <OverrideCreatedBy>true</OverrideCreatedBy>
+
         <!-- 'AttachOriginalMessage' - 'true' means we should attach the email message that triggered the creation
              of the work item -->
         <AttachOriginalMessage>true</AttachOriginalMessage>

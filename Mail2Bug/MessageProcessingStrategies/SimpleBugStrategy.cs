@@ -50,8 +50,8 @@ namespace Mail2Bug.MessageProcessingStrategies
 
             InitWorkItemFields(message, workItemUpdates);
 
-        	var workItemId = _workItemManager.CreateWorkItem(workItemUpdates);
-            Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})", 
+            var workItemId = _workItemManager.CreateWorkItem(workItemUpdates);
+            Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})",
                 workItemId, message.Subject, message.ConversationIndex);
 
             try
@@ -60,7 +60,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 var overrides = new OverridesExtractor(_config).GetOverrides(message);
                 TryApplyFieldOverrides(overrides, workItemId);
                 ProcessAttachments(message, workItemId);
-                
+
                 if (_config.WorkItemSettings.AttachOriginalMessage)
                 {
                     AttachMessageToWorkItem(message, workItemId, "OriginalMessage");
@@ -90,19 +90,24 @@ namespace Mail2Bug.MessageProcessingStrategies
         }
 
         private void InitWorkItemFields(IIncomingEmailMessage message, Dictionary<string, string> workItemUpdates)
-    	{
+        {
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
 
-    		workItemUpdates["Title"] = resolver.Subject;
+            workItemUpdates["Title"] = resolver.Subject;
             var rawConversationIndex = message.ConversationIndex;
-            workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] = 
+            workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] =
                 rawConversationIndex.Substring(0, Math.Min(rawConversationIndex.Length, TfsTextFieldMaxLength));
 
-    		foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
-    		{
-    		    workItemUpdates[defaultFieldValue.Field] = resolver.Resolve(defaultFieldValue.Value);
-    		}
-    	}
+            foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
+            {
+                workItemUpdates[defaultFieldValue.Field] = resolver.Resolve(defaultFieldValue.Value);
+            }
+
+            if (_config.WorkItemSettings.OverrideCreatedBy)
+            {
+                workItemUpdates["Created By"] = message.SenderAddress;
+            }
+        }
 
         private void TryApplyFieldOverrides(Dictionary<string, string> overrides, int workItemId)
         {
