@@ -96,6 +96,7 @@ namespace Mail2Bug.WorkItemManagement
             credentials.AddRange(GetServiceIdentityCredentials());
             credentials.AddRange(GetServiceIdentityPatCredentials());
             credentials.AddRange(GetBasicAuthCredentials());
+            credentials.Add(new TfsClientCredentials(new WindowsCredential(false), false));
             credentials.Add(new TfsClientCredentials(true));
 
             return credentials;
