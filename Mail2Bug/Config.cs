@@ -28,6 +28,10 @@ namespace Mail2Bug
             // https://name.visualstudio.com/DefaultCollection/ (VS Online)
             public string CollectionUri { get; set; }
 
+            // Connect to TFS with BypassRules flag, which allows service account to edit read-only fields.
+            // https://vosseburchttechblog.azurewebsites.net/index.php/2013/09/01/editing-changed-by-and-changed-date-fields-using-the-tfs-api/
+            public bool BypassRules { get; set; }
+
             // To connect to VS Online, you must provision a Service Identity.
             // Windows Authentication does not work in non-interactive mode.
             // Use http://msdn.microsoft.com/en-us/library/hh719796.aspx

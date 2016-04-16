@@ -29,7 +29,9 @@ namespace Mail2Bug.WorkItemManagement
             _tfsServer = ConnectToTfsCollection();
             Logger.InfoFormat("Connected to TFS. Getting TFS WorkItemStore");
 
-            _tfsStore = _tfsServer.GetService<WorkItemStore>();
+            _tfsStore = _config.TfsServerConfig.BypassRules
+                ? new WorkItemStore(_tfsServer, WorkItemStoreFlags.BypassRules)
+                : _tfsServer.GetService<WorkItemStore>();
 
             if (_tfsStore == null)
             {
