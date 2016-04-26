@@ -19,7 +19,7 @@ namespace Mail2Bug.MessageProcessingStrategies
 
         public DateBasedValueResolver(string defaultValue, SortedList<DateTime,string> iterationsByStartDate )
         {
-            if (defaultValue == null) throw new ArgumentException("defaultValue can't be null", "defaultValue");
+            if (defaultValue == null) throw new ArgumentException("defaultValue can't be null", nameof(defaultValue));
 
             _valuesByStartDate = iterationsByStartDate ?? new SortedList<DateTime, string>();
 

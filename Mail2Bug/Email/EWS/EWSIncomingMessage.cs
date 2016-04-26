@@ -169,7 +169,7 @@ namespace Mail2Bug.Email.EWS
             if (string.IsNullOrEmpty(address))
             {
                 Logger.ErrorFormat("GetAliasFromEmailAddress: Can't get alias from empty address");
-                throw new ArgumentException("Can't extract alias from empty address", "address");
+                throw new ArgumentException("Can't extract alias from empty address", nameof(address));
             }
 
             Logger.DebugFormat("address={0}",address);

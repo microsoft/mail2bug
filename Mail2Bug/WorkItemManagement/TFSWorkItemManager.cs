@@ -256,7 +256,7 @@ namespace Mail2Bug.WorkItemManagement
         {
             if (values == null)
             {
-                throw new ArgumentNullException("values", "Must supply field values when creating new work item");
+                throw new ArgumentNullException(nameof(values), "Must supply field values when creating new work item");
             }
 
             //create a work item
@@ -475,7 +475,7 @@ namespace Mail2Bug.WorkItemManagement
 
         private static void ValidateConfig(Config.InstanceConfig config)
         {
-            if (config == null) throw new ArgumentNullException("config");
+            if (config == null) throw new ArgumentNullException(nameof(config));
 
             // Temp variable used for shorthand writing below
             var tfsConfig = config.TfsServerConfig;
