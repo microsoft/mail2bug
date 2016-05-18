@@ -26,10 +26,10 @@ namespace Mail2Bug.MessageProcessingStrategies
 		    _ackEmailHandler = new AckEmailHandler(config);
             _messageToWorkItemMapper = 
                 new MessageToWorkItemMapper(
-                    this._config.EmailSettings.AppendOnlyEmailTitleRegex, 
-                    this._config.EmailSettings.AppendOnlyEmailBodyRegex,
-                    this._workItemManager.WorkItemsCache,
-                    this._config.WorkItemSettings.UseConversationGuidOnly);
+                    _config.EmailSettings.AppendOnlyEmailTitleRegex, 
+                    _config.EmailSettings.AppendOnlyEmailBodyRegex,
+                    _workItemManager.WorkItemsCache,
+                    _config.WorkItemSettings.UseConversationGuidOnly);
         }
 
         public void ProcessInboxMessage(IIncomingEmailMessage message)
