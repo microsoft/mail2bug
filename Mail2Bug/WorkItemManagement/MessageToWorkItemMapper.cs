@@ -54,12 +54,13 @@ namespace Mail2Bug.WorkItemManagement
             }
 
             // Just a standard conversation - look up the cache based on the conversation ID (or guid)
-            if (_useConversationGuid)
+            int? workItemId = GetWorkItemIdFromConversationId(message.ConversationGuid, _workItemsCache);
+            if (workItemId == null)
             {
-                return GetWorkItemIdFromConversationId(message.ConversationGuid, _workItemsCache);
+                workItemId = GetWorkItemIdFromConversationId(message.ConversationIndex, _workItemsCache);
             }
 
-            return GetWorkItemIdFromConversationId(message.ConversationIndex, _workItemsCache);
+            return workItemId;
         }
 
         private int? IsAppendOnlyMessage(IIncomingEmailMessage message)
@@ -118,7 +119,7 @@ namespace Mail2Bug.WorkItemManagement
                     continue;
                 }
 
-                if (conversationId.StartsWith(bugConversationId) || bugConversationId.Contains(conversationId))
+                if (conversationId.StartsWith(bugConversationId))
                 {
                     return bugs[bugConversationId];
                 }

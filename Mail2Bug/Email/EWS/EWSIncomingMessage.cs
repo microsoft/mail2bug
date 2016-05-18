@@ -18,7 +18,8 @@ namespace Mail2Bug.Email.EWS
             message.Load(new PropertySet(
                     ItemSchema.Subject,
                     ItemSchema.Body, 
-                    EmailMessageSchema.ConversationIndex, 
+                    EmailMessageSchema.ConversationIndex,
+                    ItemSchema.ConversationId,
                     EmailMessageSchema.Sender,
                     EmailMessageSchema.From,
                     EmailMessageSchema.ToRecipients,
@@ -41,7 +42,7 @@ namespace Mail2Bug.Email.EWS
         public string ConversationTopic { get { return _message.ConversationTopic; } }
         public string RawBody { get { return _message.Body.Text ?? string.Empty; } }
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
-        public string ConversationGuid { get { return this.ConversationIndex.Substring(12, 32); } }
+        public string ConversationGuid { get { return _message.ConversationId.UniqueId; } }
 
         public string ConversationIndex
         {
