@@ -65,6 +65,7 @@ namespace Mail2BugUnitTests.Mocks.Email
         public string Subject { get; set; }
         public string RawBody { get; set; }
         public string PlainTextBody { get; set; }
+        public string ConversationGuid { get { return this.ConversationIndex.Substring(12, 32); } }
         public string ConversationIndex { get; set; }
         public string ConversationTopic { get; set; }
         public string SenderName { get; set; }

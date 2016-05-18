@@ -394,6 +394,58 @@ namespace Mail2BugUnitTests
             ValidateBugValues(expectedValues, workItemManagerMock.Bugs[newBugId]);
         }
 
+        [TestMethod]
+        public void TestUseConversationGuidOnly()
+        {
+            var seed = _rand.Next();
+
+            Logger.InfoFormat("Using seed {0}", seed);
+
+            var mailManager = new MailManagerMock();
+            var instanceConfig = GetConfig().Instances.First();
+            instanceConfig.WorkItemSettings.UseConversationGuidOnly = true;
+            var workItemManagerMock = new WorkItemManagerMock(instanceConfig.WorkItemSettings.ConversationIndexFieldName);
+
+            var message1 = mailManager.AddMessage(false);
+            var message2 = mailManager.AddMessage(false);
+
+            // Message 1 and 2 share the same guid, but different timestamps
+            message2.ConversationIndex = string.Concat(message2.ConversationIndex.Substring(0, 12), message1.ConversationGuid);
+
+            var message3 = mailManager.AddReply(message1, RandomDataHelper.GetBody(seed));
+            var message4 = mailManager.AddReply(message2, RandomDataHelper.GetBody(seed));
+
+            ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
+
+            Assert.AreEqual(1, workItemManagerMock.Bugs.Count, "Only one bug should exist");
+        }
+
+        [TestMethod]
+        public void TestUseConversationGuidOnlyWithExistingConversationIndex()
+        {
+            var seed = _rand.Next();
+
+            Logger.InfoFormat("Using seed {0}", seed);
+
+            var mailManager = new MailManagerMock();
+            var instanceConfig = GetConfig().Instances.First();
+            instanceConfig.WorkItemSettings.UseConversationGuidOnly = false;
+            var workItemManagerMock = new WorkItemManagerMock(instanceConfig.WorkItemSettings.ConversationIndexFieldName);
+
+            var message1 = mailManager.AddMessage(false);
+            var message2 = mailManager.AddReply(message1, RandomDataHelper.GetBody(seed));
+
+            ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
+            instanceConfig.WorkItemSettings.UseConversationGuidOnly = true;
+
+            var message3 = mailManager.AddReply(message2, RandomDataHelper.GetBody(seed));
+            var message4 = mailManager.AddReply(message3, RandomDataHelper.GetBody(seed));
+
+            ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
+
+            Assert.AreEqual(1, workItemManagerMock.Bugs.Count, "Only one bug should exist");
+        }
+
         private static void ValidateBugValues(Dictionary<string, string> expectedValues, Dictionary<string, string> bugFields)
         {
             foreach (var expectedValue in expectedValues)

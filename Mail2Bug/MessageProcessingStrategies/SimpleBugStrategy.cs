@@ -26,9 +26,10 @@ namespace Mail2Bug.MessageProcessingStrategies
 		    _ackEmailHandler = new AckEmailHandler(config);
             _messageToWorkItemMapper = 
                 new MessageToWorkItemMapper(
-                    _config.EmailSettings.AppendOnlyEmailTitleRegex, 
-                    _config.EmailSettings.AppendOnlyEmailBodyRegex,
-                    _workItemManager.WorkItemsCache);
+                    this._config.EmailSettings.AppendOnlyEmailTitleRegex, 
+                    this._config.EmailSettings.AppendOnlyEmailBodyRegex,
+                    this._workItemManager.WorkItemsCache,
+                    this._config.WorkItemSettings.UseConversationGuidOnly);
         }
 
         public void ProcessInboxMessage(IIncomingEmailMessage message)
@@ -94,7 +95,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
 
     		workItemUpdates["Title"] = resolver.Subject;
-            var rawConversationIndex = message.ConversationIndex;
+            var rawConversationIndex = _config.WorkItemSettings.UseConversationGuidOnly ? message.ConversationGuid : message.ConversationIndex;
             workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] = 
                 rawConversationIndex.Substring(0, Math.Min(rawConversationIndex.Length, TfsTextFieldMaxLength));
 
