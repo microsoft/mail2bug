@@ -10,6 +10,7 @@ namespace Mail2Bug.Email.EWS
     public class EWSIncomingMessage : IIncomingEmailMessage
     {
         private readonly EmailMessage _message;
+        private readonly byte[] _conversationId;
 
         public EWSIncomingMessage(EmailMessage message)
         {
@@ -42,7 +43,11 @@ namespace Mail2Bug.Email.EWS
         public string ConversationTopic { get { return _message.ConversationTopic; } }
         public string RawBody { get { return _message.Body.Text ?? string.Empty; } }
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
-        public string ConversationGuid { get { return _message.ConversationId.UniqueId; } }
+
+        public string ConversationGuid
+        {
+            get { return string.Join("", _conversationId.Select(b => b.ToString("X2"))); }
+        }
 
         public string ConversationIndex
         {
