@@ -28,8 +28,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 new MessageToWorkItemMapper(
                     _config.EmailSettings.AppendOnlyEmailTitleRegex, 
                     _config.EmailSettings.AppendOnlyEmailBodyRegex,
-                    _workItemManager.WorkItemsCache,
-                    _config.WorkItemSettings.UseConversationGuidOnly);
+                    _workItemManager.WorkItemsCache);
         }
 
         public void ProcessInboxMessage(IIncomingEmailMessage message)

@@ -25,18 +25,14 @@ namespace Mail2Bug.WorkItemManagement
 	    /// a message's body text</param>
 	    /// <param name="workItemsCache">The work items cache, mapping from conversation IDs to work
 	    /// item IDs</param>
-	    /// <param name="useConversationGuid">Instead of using the conversation index, use the 
-	    /// conversation guid</param>
 	    public MessageToWorkItemMapper(
             string appendOnlyEmailTitleRegex, 
             string appendOnlyEmailBodyRegex, 
-            SortedList<string,int> workItemsCache,
-            bool useConversationGuid)
+            SortedList<string,int> workItemsCache)
         {
             _appendOnlyEmailTitleRegex = appendOnlyEmailTitleRegex;
             _appendOnlyEmailBodyRegex = appendOnlyEmailBodyRegex;
             _workItemsCache = workItemsCache;
-            _useConversationGuid = useConversationGuid;
         }
 
         /// <summary>
