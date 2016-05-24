@@ -15,12 +15,13 @@ namespace Mail2Bug.Email.EWS
         public EWSIncomingMessage(EmailMessage message)
         {
             _message = message;
+            ExtendedPropertyDefinition conversationId = new ExtendedPropertyDefinition(0x3013, MapiPropertyType.Binary);
 
             message.Load(new PropertySet(
                     ItemSchema.Subject,
                     ItemSchema.Body, 
                     EmailMessageSchema.ConversationIndex,
-                    ItemSchema.ConversationId,
+                    conversationId,
                     EmailMessageSchema.Sender,
                     EmailMessageSchema.From,
                     EmailMessageSchema.ToRecipients,
@@ -35,7 +36,9 @@ namespace Mail2Bug.Email.EWS
                     MeetingRequestSchema.Start,
                     MeetingRequestSchema.End
                 ));
-            
+
+            message.TryGetProperty(conversationId, out _conversationId);
+
             Attachments = BuildAttachmentList(message);
         }
 
