@@ -49,7 +49,12 @@ namespace Mail2Bug.Email.EWS
 
         public string ConversationGuid
         {
-            get { return string.Join("", _conversationId.Select(b => b.ToString("X2"))); }
+            get
+            {
+                return _conversationId == null
+                           ? ConversationIndex.Substring(12, 32)
+                           : string.Join("", _conversationId.Select(b => b.ToString("X2")));
+            }
         }
 
         public string ConversationIndex
