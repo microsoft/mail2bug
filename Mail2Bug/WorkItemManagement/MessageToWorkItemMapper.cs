@@ -14,21 +14,21 @@ namespace Mail2Bug.WorkItemManagement
         private readonly SortedList<string, int> _workItemsCache;
         private readonly bool _useConversationGuid;
 
-	    /// <summary>
-	    /// This class is used for mapping incoming messages to work item IDs, either based on the
-	    /// message contents (title, body), or based on the work items cache, which maps conversation
-	    /// IDs to work item IDs.
-	    /// </summary>
-	    /// <param name="appendOnlyEmailTitleRegex">A regex for retrieving work item ID indication from
-	    /// a message's title</param>
-	    /// <param name="appendOnlyEmailBodyRegex">A regex for retrieving work item ID indication from
-	    /// a message's body text</param>
-	    /// <param name="workItemsCache">The work items cache, mapping from conversation IDs to work
-	    /// item IDs</param>
-	    public MessageToWorkItemMapper(
+        /// <summary>
+        /// This class is used for mapping incoming messages to work item IDs, either based on the
+        /// message contents (title, body), or based on the work items cache, which maps conversation
+        /// IDs to work item IDs.
+        /// </summary>
+        /// <param name="appendOnlyEmailTitleRegex">A regex for retrieving work item ID indication from
+        /// a message's title</param>
+        /// <param name="appendOnlyEmailBodyRegex">A regex for retrieving work item ID indication from
+        /// a message's body text</param>
+        /// <param name="workItemsCache">The work items cache, mapping from conversation IDs to work
+        /// item IDs</param>
+        public MessageToWorkItemMapper(
             string appendOnlyEmailTitleRegex, 
             string appendOnlyEmailBodyRegex, 
-            SortedList<string,int> workItemsCache)
+            SortedList<string,int> workItemsCache )
         {
             _appendOnlyEmailTitleRegex = appendOnlyEmailTitleRegex;
             _appendOnlyEmailBodyRegex = appendOnlyEmailBodyRegex;
