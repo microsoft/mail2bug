@@ -86,6 +86,7 @@ namespace Mail2Bug
             public WorkItemSettings()
 		    {
 		        OverrideChangedBy = true;
+                OverrideCreatedBy = true;
 		        ApplyOverridesDuringUpdate = true;
 		        AttachOriginalMessage = true;
                 AttachUpdateMessages = false;
@@ -103,6 +104,7 @@ namespace Mail2Bug
             public List<DateBasedFieldOverrides> DateBasedOverrides { get; set; }
 
             public bool OverrideChangedBy { get; set; }
+            public bool OverrideCreatedBy { get; set; }
             public bool ApplyOverridesDuringUpdate { get; set; }
             public bool AttachOriginalMessage { get; set; }
 		    public bool AttachUpdateMessages { get; set; }

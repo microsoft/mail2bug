@@ -168,12 +168,18 @@ namespace Mail2BugUnitTests
         }
 
         [TestMethod]
+        public void TestProcessingEmailThreadOverrideCreatedBy()
+        {
+            TestProcessingEmailThreadImpl(false, true);
+        }
+
+        [TestMethod]
         public void TestProcessingEmailThreadDontOverrideChangedBy()
         {
             TestProcessingEmailThreadImpl(false);
         }
 
-        public void TestProcessingEmailThreadImpl(bool overrideChangedBy)
+        public void TestProcessingEmailThreadImpl(bool overrideChangedBy, bool overrideCreatedBy = false)
         {
             var seed = _rand.Next();
 
@@ -201,6 +207,12 @@ namespace Mail2BugUnitTests
             {
                 expectedValues["Changed By"] = message3.SenderName;
             }
+
+            if (overrideCreatedBy)
+            {
+                expectedValues["Created By"] = message1.SenderAddress;
+            }
+
             expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
 
             ValidateBugValues(expectedValues, bugFields);
