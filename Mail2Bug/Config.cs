@@ -97,7 +97,13 @@ namespace Mail2Bug
             }
 
 			public string ConversationIndexFieldName { get; set; }
-			public bool UseConversationGuidOnly { get; set; }
+
+            // Instead of using the whole ConversationIndex, use the ConversationID, which is
+            // the guid portion of the ConversationIndex, bytes 6 through 22. The ConversationID does not
+            // contain timestamps or additional reply information.
+            // See https://msdn.microsoft.com/en-us/library/ee202481(v=exchg.80).aspx for more information
+            public bool UseConversationGuidOnly { get; set; }
+
 			public List<DefaultValueDefinition> DefaultFieldValues { get; set; }
             public List<MnemonicDefinition> Mnemonics { get; set; }
             public List<RecipientOverrideDefinition> RecipientOverrides { get; set; }

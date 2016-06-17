@@ -9,13 +9,19 @@ namespace Mail2Bug.Email.EWS
 {
     public class EWSIncomingMessage : IIncomingEmailMessage
     {
+        private const int PidTagConversationIdTag = 0x3013;
+
         private readonly EmailMessage _message;
         private readonly byte[] _conversationId;
 
         public EWSIncomingMessage(EmailMessage message)
         {
             _message = message;
-            ExtendedPropertyDefinition conversationId = new ExtendedPropertyDefinition(0x3013, MapiPropertyType.Binary);
+
+            // Extended property for PidTagConversationId, which is the GUID portion of the ConversationIndex
+            // See https://msdn.microsoft.com/en-us/library/cc433490(v=EXCHG.80).aspx and
+            // https://msdn.microsoft.com/en-us/library/ee204279(v=exchg.80).aspxfor more information
+            ExtendedPropertyDefinition conversationId = new ExtendedPropertyDefinition(PidTagConversationIdTag, MapiPropertyType.Binary);
 
             message.Load(new PropertySet(
                     ItemSchema.Subject,
@@ -51,6 +57,9 @@ namespace Mail2Bug.Email.EWS
         {
             get
             {
+                // If the extended property for the conversation index is null, fall back to taking
+                // the ConversationID from the ConversationIndex directly, which is 16 bytes, starting at byte 6.
+                // See https://msdn.microsoft.com/en-us/library/ee202481(v=exchg.80).aspx for more information.
                 return _conversationId == null
                            ? ConversationIndex.Substring(12, 32)
                            : string.Join("", _conversationId.Select(b => b.ToString("X2")));

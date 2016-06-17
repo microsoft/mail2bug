@@ -15,7 +15,13 @@ namespace Mail2Bug.Email
         string Subject { get; }
         string RawBody { get; }
         string PlainTextBody { get; }
+
+        // Instead of using the whole ConversationIndex, use the ConversationID, which is
+        // the guid portion of the ConversationIndex, bytes 6 through 22. The ConversationID does not
+        // contain timestamps or additional reply information.
+        // See https://msdn.microsoft.com/en-us/library/ee202481(v=exchg.80).aspx for more information
         string ConversationGuid { get; }
+
         string ConversationIndex { get; }
         string ConversationTopic { get; }
         

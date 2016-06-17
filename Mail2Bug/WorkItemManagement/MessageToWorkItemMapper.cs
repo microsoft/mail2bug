@@ -25,15 +25,19 @@ namespace Mail2Bug.WorkItemManagement
         /// a message's body text</param>
         /// <param name="workItemsCache">The work items cache, mapping from conversation IDs to work
         /// item IDs</param>
+        /// <param name="useConversationGuid">Use conversationID rather than whole conversationIndex
+        /// </param>
         public MessageToWorkItemMapper(
-            string appendOnlyEmailTitleRegex, 
-            string appendOnlyEmailBodyRegex, 
-            SortedList<string,int> workItemsCache )
+            string appendOnlyEmailTitleRegex,
+            string appendOnlyEmailBodyRegex,
+            SortedList<string,int> workItemsCache,
+            bool useConversationGuid)
         {
             _appendOnlyEmailTitleRegex = appendOnlyEmailTitleRegex;
             _appendOnlyEmailBodyRegex = appendOnlyEmailBodyRegex;
             _workItemsCache = workItemsCache;
-        }
+            _useConversationGuid = useConversationGuid;
+    }
 
         /// <summary>
         /// If a work item already exists for this message, returns its ID. Otherwise, returns null.
@@ -50,7 +54,16 @@ namespace Mail2Bug.WorkItemManagement
             }
 
             // Just a standard conversation - look up the cache based on the conversation ID (or guid)
-            int? workItemId = GetWorkItemIdFromConversationId(message.ConversationGuid, _workItemsCache);
+            int? workItemId = null;
+
+            // If using only the ConversationID, check for it first
+            if (_useConversationGuid)
+            {
+                workItemId = GetWorkItemIdFromConversationId(message.ConversationGuid, _workItemsCache);
+            }
+
+            // So we maintain backwards compatibility, and so we don't lose track of all existing items,
+            // fall back to using the whole ConversationIndex
             if (workItemId == null)
             {
                 workItemId = GetWorkItemIdFromConversationId(message.ConversationIndex, _workItemsCache);
