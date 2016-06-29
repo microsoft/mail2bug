@@ -13,14 +13,16 @@ namespace Mail2Bug.Email.EWS
 
         private readonly EmailMessage _message;
         private readonly byte[] _conversationId;
+        private readonly bool _useConversationGuidOnly;
 
-        public EWSIncomingMessage(EmailMessage message)
+        public EWSIncomingMessage(EmailMessage message, bool useConversationGuidOnly = false)
         {
             _message = message;
+            _useConversationGuidOnly = useConversationGuidOnly;
 
             // Extended property for PidTagConversationId, which is the GUID portion of the ConversationIndex
             // See https://msdn.microsoft.com/en-us/library/cc433490(v=EXCHG.80).aspx and
-            // https://msdn.microsoft.com/en-us/library/ee204279(v=exchg.80).aspxfor more information
+            // https://msdn.microsoft.com/en-us/library/ee204279(v=exchg.80).aspx for more information
             ExtendedPropertyDefinition conversationId = new ExtendedPropertyDefinition(PidTagConversationIdTag, MapiPropertyType.Binary);
 
             message.Load(new PropertySet(
@@ -53,22 +55,12 @@ namespace Mail2Bug.Email.EWS
         public string RawBody { get { return _message.Body.Text ?? string.Empty; } }
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
 
-        public string ConversationGuid
+        public string ConversationId
         {
             get
             {
-                // If the extended property for the conversation index is null, fall back to taking
-                // the ConversationID from the ConversationIndex directly, which is 16 bytes, starting at byte 6.
-                // See https://msdn.microsoft.com/en-us/library/ee202481(v=exchg.80).aspx for more information.
-                return _conversationId == null
-                           ? ConversationIndex.Substring(12, 32)
-                           : string.Join("", _conversationId.Select(b => b.ToString("X2")));
+                return _useConversationGuidOnly ? GetConversationGuid() : GetConversationIndex();
             }
-        }
-
-        public string ConversationIndex
-        {
-            get { return string.Join("", _message.ConversationIndex.Select(b => b.ToString("X2"))); }
         }
 
         public string SenderName { get { return _message.Sender.Name; } }
@@ -137,6 +129,24 @@ namespace Mail2Bug.Email.EWS
         }
 
         public IEnumerable<IIncomingEmailAttachment> Attachments { get; private set; }
+
+        /// <summary>
+        /// If the extended property for the conversation index is null, fall back to taking
+        /// the ConversationID from the ConversationIndex directly, which is 16 bytes, starting at byte 6.
+        /// See https://msdn.microsoft.com/en-us/library/ee202481(v=exchg.80).aspx for more information.
+        /// </summary>
+        /// <returns></returns>
+        public string GetConversationGuid()
+        {
+            return _conversationId == null
+               ? this.ConversationId.Substring(12, 32)
+               : string.Join("", _conversationId.Select(b => b.ToString("X2")));
+        }
+
+        public string GetConversationIndex()
+        {
+            return string.Join("", _message.ConversationIndex.Select(b => b.ToString("X2")));
+        }
 
         /// <summary>
         /// Send a reply over the original email.

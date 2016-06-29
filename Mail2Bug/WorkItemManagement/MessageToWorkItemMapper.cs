@@ -12,7 +12,6 @@ namespace Mail2Bug.WorkItemManagement
         private readonly string _appendOnlyEmailTitleRegex;
         private readonly string _appendOnlyEmailBodyRegex;
         private readonly SortedList<string, int> _workItemsCache;
-        private readonly bool _useConversationGuid;
 
         /// <summary>
         /// This class is used for mapping incoming messages to work item IDs, either based on the
@@ -30,13 +29,11 @@ namespace Mail2Bug.WorkItemManagement
         public MessageToWorkItemMapper(
             string appendOnlyEmailTitleRegex,
             string appendOnlyEmailBodyRegex,
-            SortedList<string,int> workItemsCache,
-            bool useConversationGuid)
+            SortedList<string,int> workItemsCache)
         {
             _appendOnlyEmailTitleRegex = appendOnlyEmailTitleRegex;
             _appendOnlyEmailBodyRegex = appendOnlyEmailBodyRegex;
             _workItemsCache = workItemsCache;
-            _useConversationGuid = useConversationGuid;
     }
 
         /// <summary>
@@ -54,22 +51,7 @@ namespace Mail2Bug.WorkItemManagement
             }
 
             // Just a standard conversation - look up the cache based on the conversation ID (or guid)
-            int? workItemId = null;
-
-            // If using only the ConversationID, check for it first
-            if (_useConversationGuid)
-            {
-                workItemId = GetWorkItemIdFromConversationId(message.ConversationGuid, _workItemsCache);
-            }
-
-            // So we maintain backwards compatibility, and so we don't lose track of all existing items,
-            // fall back to using the whole ConversationIndex
-            if (workItemId == null)
-            {
-                workItemId = GetWorkItemIdFromConversationId(message.ConversationIndex, _workItemsCache);
-            }
-
-            return workItemId;
+            return GetWorkItemIdFromConversationId(message.ConversationId, _workItemsCache);
         }
 
         private int? IsAppendOnlyMessage(IIncomingEmailMessage message)
