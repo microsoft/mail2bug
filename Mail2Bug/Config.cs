@@ -21,7 +21,14 @@ namespace Mail2Bug
 			public EmailSettings EmailSettings { get; set; }
 		}
 
-		public class TfsServerConfig
+        public class KeyVaultSecret
+        {
+            public string KeyVaultPath { get; set; }
+            public string ApplicationIdEnvironmentVariableName { get; set; }
+            public string ApplicationSecretEnvironmentVariableName { get; set; }
+        }
+
+        public class TfsServerConfig
 		{
             // The TFS collection URL to connect to. e.g:
             // http://server:8080/tfs/YourColllection/ (on-prem)
@@ -38,9 +45,11 @@ namespace Mail2Bug
             // Don't forget to add it to the correct groups so that it has access to save work items
             public string ServiceIdentityUsername { get; set; }
             public string ServiceIdentityPasswordFile { get; set; }
+            public KeyVaultSecret ServiceIdentityKeyVaultSecret { get; set; }
 
             // Personal access token for the service user
             public string ServiceIdentityPatFile { get; set; }
+            public KeyVaultSecret ServiceIdentityPatKeyVaultSecret { get; set; }
 
             public string AltAuthUsername { get; set; }
             public string AltAuthPasswordFile { get; set; }
@@ -176,10 +185,11 @@ namespace Mail2Bug
 		    public string EWSMailboxAddress { get; set; }
             public string EWSUsername { get; set; }
             public string EWSPasswordFile { get; set; }
+            public KeyVaultSecret EWSKeyVaultSecret { get; set; }
 
-		    #endregion
+            #endregion
 
-			public bool SendAckEmails { get; set; }
+            public bool SendAckEmails { get; set; }
             
             // Should the ack email be sent to all recipients of the original message?
             // 'true' indicates send to all original recipients

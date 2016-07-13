@@ -188,48 +188,43 @@ namespace Mail2Bug.WorkItemManagement
 
         private Tuple<string,string> GetServiceIdentityUsernameAndPasswordFromConfig()
         {
-            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityUsername)
-                || string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPasswordFile))
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPasswordFile) &&
+                _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret == null)
             {
                 return null;
             }
 
-            if (!File.Exists(_config.TfsServerConfig.ServiceIdentityPasswordFile))
-            {
-                throw new BadConfigException("ServiceIdentityPasswordFile", "Service identity password file doesn't exist");
-            }
+            string password = new CredentialsHelper().GetPassword(
+            _config.TfsServerConfig.ServiceIdentityPasswordFile,
+            _config.TfsServerConfig.ServiceIdentityKeyVaultSecret);
 
-            return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, 
-                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile));
+            return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, password);
         }
 
         private IEnumerable<TfsClientCredentials> GetServiceIdentityPatCredentials()
         {
-            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile))
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile) && _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret == null)
             {
                 return new List<TfsClientCredentials>();
             }
 
             var netCred = new NetworkCredential("", GetPatFromConfig());
             var basicCred = new BasicAuthCredential(netCred);
-            var patCred = new TfsClientCredentials(basicCred) {AllowInteractive = false};
+            var patCred = new TfsClientCredentials(basicCred) { AllowInteractive = false };
 
-            return new List<TfsClientCredentials> {patCred};
+            return new List<TfsClientCredentials> { patCred };
         }
 
         private string GetPatFromConfig()
         {
-            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile))
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile) && _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret == null)
             {
                 return null;
             }
 
-            if (!File.Exists(_config.TfsServerConfig.ServiceIdentityPatFile))
-            {
-                throw new BadConfigException("ServiceIdentityPatFile", "Personal Access Token file doesn't exist");
-            }
-
-            return DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPatFile);
+            return new Helpers.CredentialsHelper().GetPassword(
+                _config.TfsServerConfig.ServiceIdentityPatFile,
+                _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret);
         }
 
         public void AttachFiles(int workItemId, List<string> fileList)
