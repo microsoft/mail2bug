@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using log4net;
 using Microsoft.Exchange.WebServices.Data;
 
@@ -9,7 +10,10 @@ namespace Mail2Bug.Email.EWS
 {
     public class EWSIncomingMessage : IIncomingEmailMessage
     {
+        private const int PidTagBodyHtmlTag = 0x1013;
+
         private readonly EmailMessage _message;
+        private static readonly ExtendedPropertyDefinition PidTagBodyHtml = new ExtendedPropertyDefinition(PidTagBodyHtmlTag, MapiPropertyType.Binary);
 
         public EWSIncomingMessage(EmailMessage message)
         {
@@ -17,7 +21,8 @@ namespace Mail2Bug.Email.EWS
 
             message.Load(new PropertySet(
                     ItemSchema.Subject,
-                    ItemSchema.Body, 
+                    ItemSchema.Body,
+                    PidTagBodyHtml,
                     EmailMessageSchema.ConversationIndex, 
                     EmailMessageSchema.Sender,
                     EmailMessageSchema.From,
@@ -32,14 +37,27 @@ namespace Mail2Bug.Email.EWS
                     MeetingRequestSchema.Location,
                     MeetingRequestSchema.Start,
                     MeetingRequestSchema.End
-                ));
+                ) { RequestedBodyType = BodyType.Text });
             
             Attachments = BuildAttachmentList(message);
         }
 
         public string Subject { get { return _message.Subject; } }
         public string ConversationTopic { get { return _message.ConversationTopic; } }
-        public string RawBody { get { return _message.Body.Text ?? string.Empty; } }
+
+        public string RawBody
+        {
+            get
+            {
+                byte[] bodyHtml;
+                if (_message.TryGetProperty(PidTagBodyHtml, out bodyHtml))
+                {
+                    return Encoding.Default.GetString(bodyHtml);
+                }
+
+                return _message.Body.Text ?? string.Empty;
+            }
+        }
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
 
         public string ConversationIndex
