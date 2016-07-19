@@ -53,156 +53,152 @@
       <HintPath>..\packages\WindowsAzure.ServiceBus.2.5.1.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Build.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Build.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Build.Common.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Build.Common">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Build.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Build2.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Build2.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.Build2.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Chat.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Chat.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.Chat.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Common.dll</HintPath>
+      <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Core.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Core.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.Core.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.DeleteTeamProject, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.DeleteTeamProject.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.DeleteTeamProject">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.DeleteTeamProject.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Diff, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Diff.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Diff">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Diff.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Discussion.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Discussion.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Discussion.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Discussion.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Discussion.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Discussion.WebApi.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Git.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Git.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Git.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Git.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Lab.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Lab.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Lab.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Lab.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Lab.Common">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Lab.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Lab.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Lab.Common.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Lab.TestIntegration.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Lab.TestIntegration.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Lab.TestIntegration.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Lab.TestIntegration.Client.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Lab.WorkflowIntegration.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.Lab.WorkflowIntegration.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Lab.WorkflowIntegration.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Lab.WorkflowIntegration.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Policy.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Policy.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.Policy.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.ProjectManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.ProjectManagement.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.ProjectManagement">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.ProjectManagement.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.SharePointReporting.Integration, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.SharePointReporting.Integration.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.SharePointReporting.Integration">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.SharePointReporting.Integration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.SourceControl.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.SourceControl.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.SourceControl.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Test.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Test.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.Test.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.TestImpact.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.TestImpact.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.TestImpact.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.TestImpact.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.TestManagement.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.TestManagement.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.TestManagement.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.TestManagement.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.TestManagement.Common.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.TestManagement.Common">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.TestManagement.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.TestManagement.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.TestManagement.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.TestManagement.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.VersionControl.Common.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.VersionControl.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common.Integration, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.VersionControl.Common.Integration.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common.Integration">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.VersionControl.Common.Integration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Work.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.Work.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.Work.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client.QueryLanguage, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Client.QueryLanguage.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client.QueryLanguage">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Client.QueryLanguage.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Common.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Common">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Proxy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Proxy.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Proxy">
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.Proxy.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.83.2\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.14.89.0\lib\net45\Microsoft.TeamFoundation.WorkItemTracking.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Services.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Services.InteractiveClient.14.83.2\lib\net45\Microsoft.VisualStudio.Services.Client.dll</HintPath>
+      <HintPath>..\packages\Microsoft.VisualStudio.Services.InteractiveClient.14.89.0\lib\net45\Microsoft.VisualStudio.Services.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Services.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.14.83.2\lib\net45\Microsoft.VisualStudio.Services.Common.dll</HintPath>
+      <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.14.89.0\lib\net45\Microsoft.VisualStudio.Services.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Services.WebApi, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.14.83.2\lib\net45\Microsoft.VisualStudio.Services.WebApi.dll</HintPath>
+      <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.14.89.0\lib\net45\Microsoft.VisualStudio.Services.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -210,7 +206,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -305,15 +301,17 @@
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\build\Microsoft.TeamFoundationServer.ExtendedClient.targets" Condition="Exists('..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\build\Microsoft.TeamFoundationServer.ExtendedClient.targets')" />
+  <Import Project="..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\build\Microsoft.TeamFoundationServer.ExtendedClient.targets" Condition="Exists('..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\build\Microsoft.TeamFoundationServer.ExtendedClient.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\build\Microsoft.TeamFoundationServer.ExtendedClient.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.83.2\build\Microsoft.TeamFoundationServer.ExtendedClient.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\build\Microsoft.TeamFoundationServer.ExtendedClient.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\build\Microsoft.TeamFoundationServer.ExtendedClient.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

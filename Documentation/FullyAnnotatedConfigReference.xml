@@ -15,6 +15,11 @@
              - For VS Online, the URI will look something like: `https://name.visualstudio.com/DefaultCollection/` -->
         <CollectionUri>http://tfsServer.madeUpDomain.com:8080/tfs/something</CollectionUri>
 
+        <!-- 'BypassRules' - set to 'true' if you want to skip rules validation. This allows modifying 'Changed By' field, even if it's read-only.
+             - Account you're using needs to be added to the list of service accounts for this to work.
+             - See https://vosseburchttechblog.azurewebsites.net/index.php/2013/09/01/editing-changed-by-and-changed-date-fields-using-the-tfs-api/ for more details. -->
+        <BypassRules>false</BypassRules>
+
         <!-- ServiceIdentityUsername - the username to use for logging in to TFS
              - To use default credentials - i.e. login as the user running mail2bug - omit this element 
              - For VS online, it is recommended to provision a Service Identity and use it here. This can be done by following the

@@ -43,3 +43,5 @@ Once Mail2Bug is deployed and configured, just add the appropriate email address
     * For Mail2Bug itself, all binaries are under `<projectRoot>\Mail2Bug\Bin\(Debug|Release)\...`
     * For the DpapiTool, binaries are under `<projectRoot>\Tools\DpapiTool\Bin\(Debug|Release)\...`
   * See basic setup and configuration instructions in the wiki - [Basic Setup](https://github.com/Microsoft/mail2bug/wiki/Basic-Setup)
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
