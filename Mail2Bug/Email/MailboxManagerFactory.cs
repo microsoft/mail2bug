@@ -26,7 +26,7 @@ namespace Mail2Bug.Email
                 Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile)
             };
 
-            var exchangeService = _connectionManger.GetConnection(credentials, emailSettings.UseConversationGuidOnly);
+            var exchangeService = _connectionManger.GetConnection(credentials);
             var postProcessor = GetPostProcesor(emailSettings, exchangeService.Service);
 
             switch (emailSettings.ServiceType)
