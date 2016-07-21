@@ -8,10 +8,12 @@ namespace Mail2Bug.Email.EWS
     class EWSMailFolder : IMailFolder
     {
         private readonly Folder _folder;
+        private readonly bool _useConversationGuidOnly;
 
-        public EWSMailFolder(Folder folder)
+        public EWSMailFolder(Folder folder, bool useConversationGuidOnly)
         {
             _folder = folder;
+            _useConversationGuidOnly = useConversationGuidOnly;
         }
 
         public int GetTotalCount()
@@ -32,7 +34,7 @@ namespace Mail2Bug.Email.EWS
 
             return items
                     .Where(item => item is EmailMessage) // Return only email message items - ignore any other items
-                    .Select(item => new EWSIncomingMessage((EmailMessage) item)); // And wrap them with EWSIncomingMessage
+                    .Select(item => new EWSIncomingMessage((EmailMessage) item, _useConversationGuidOnly)); // And wrap them with EWSIncomingMessage
         }
     }
 }

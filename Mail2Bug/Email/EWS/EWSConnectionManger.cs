@@ -36,20 +36,20 @@ namespace Mail2Bug.Email.EWS
 
             if (_enableConnectionCaching)
             {
-                _cachedConnections = new Dictionary<Tuple<string, string, int>, EWSConnection>();
+                _cachedConnections = new Dictionary<Tuple<string, string, int, bool>, EWSConnection>();
             }
         }
 
-        public EWSConnection GetConnection(Credentials credentials)
+        public EWSConnection GetConnection(Credentials credentials, bool useConversationGuidOnly)
         {
             if (!_enableConnectionCaching)
             {
-                return ConnectToEWS(credentials);
+                return ConnectToEWS(credentials, useConversationGuidOnly);
             }
 
             lock (_cachedConnections)
             {
-                var key = GetKeyFromCredentials(credentials);
+                var key = GetKeyFromCredentials(credentials, useConversationGuidOnly);
 
                 if (_cachedConnections.ContainsKey(key))
                 {
@@ -58,7 +58,7 @@ namespace Mail2Bug.Email.EWS
                 }
 
                 Logger.InfoFormat("Creating FolderMailboxManager for {0}", key);
-                _cachedConnections[key] = ConnectToEWS(credentials);
+                _cachedConnections[key] = ConnectToEWS(credentials, useConversationGuidOnly);
                 return _cachedConnections[key];
             }
         }
@@ -72,14 +72,14 @@ namespace Mail2Bug.Email.EWS
             }
         }
 
-        static private Tuple<string, string, int> GetKeyFromCredentials(Credentials credentials)
+        static private Tuple<string, string, int, bool> GetKeyFromCredentials(Credentials credentials, bool useConversationGuid)
         {
-            return new Tuple<string, string, int>(
+            return new Tuple<string, string, int, bool>(
                 credentials.EmailAddress,
-                credentials.UserName, credentials.Password.GetHashCode());
+                credentials.UserName, credentials.Password.GetHashCode(), useConversationGuid);
         }
 
-        static private EWSConnection ConnectToEWS(Credentials credentials)
+        static private EWSConnection ConnectToEWS(Credentials credentials, bool useConversationGuidOnly)
         {
             Logger.DebugFormat("Initializing FolderMailboxManager for email adderss {0}", credentials.EmailAddress);
             var exchangeService = new ExchangeService(ExchangeVersion.Exchange2010_SP1)
@@ -104,12 +104,12 @@ namespace Mail2Bug.Email.EWS
                 Service = exchangeService,
                 Router =
                     new RecipientsMailboxManagerRouter(
-                        new EWSMailFolder(Folder.Bind(exchangeService, WellKnownFolderName.Inbox)))
+                        new EWSMailFolder(Folder.Bind(exchangeService, WellKnownFolderName.Inbox), useConversationGuidOnly))
             };
         }
 
 
-        private readonly Dictionary<Tuple<string, string, int>, EWSConnection> _cachedConnections;
+        private readonly Dictionary<Tuple<string, string, int, bool>, EWSConnection> _cachedConnections;
         private readonly bool _enableConnectionCaching;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(EWSConnectionManger));
