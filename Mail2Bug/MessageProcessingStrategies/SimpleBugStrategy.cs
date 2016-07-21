@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using log4net;
 using Mail2Bug.Email;
+using Mail2Bug.Email.EWS;
 using Mail2Bug.Helpers;
 using Mail2Bug.WorkItemManagement;
 
@@ -33,6 +34,14 @@ namespace Mail2Bug.MessageProcessingStrategies
 
         public void ProcessInboxMessage(IIncomingEmailMessage message)
         {
+            var ewsMessage = message as EWSIncomingMessage;
+
+            if (ewsMessage != null)
+            {
+                ewsMessage.UseConversationGuidOnly = _config.EmailSettings.UseConversationGuidOnly;
+                message = ewsMessage;
+            }
+
             var workItemId = _messageToWorkItemMapper.GetWorkItemId(message);
 
             if (!workItemId.HasValue) // thread not found, new work item
@@ -52,7 +61,7 @@ namespace Mail2Bug.MessageProcessingStrategies
 
         	var workItemId = _workItemManager.CreateWorkItem(workItemUpdates);
             Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})", 
-                workItemId, message.Subject, message.ConversationIndex);
+                workItemId, message.Subject, message.ConversationId);
 
             try
             {
@@ -94,7 +103,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
 
     		workItemUpdates["Title"] = resolver.Subject;
-            var rawConversationIndex = message.ConversationIndex;
+            var rawConversationIndex = message.ConversationId;
             workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] = 
                 rawConversationIndex.Substring(0, Math.Min(rawConversationIndex.Length, TfsTextFieldMaxLength));
 
