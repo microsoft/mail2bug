@@ -13,13 +13,12 @@ namespace Mail2Bug.Email.EWS
 
         private readonly EmailMessage _message;
         private readonly byte[] _conversationId;
-
-        public bool UseConversationGuidOnly;
+        private readonly bool _useConversationGuidOnly;
 
         public EWSIncomingMessage(EmailMessage message, bool useConversationGuidOnly = false)
         {
             _message = message;
-            UseConversationGuidOnly = useConversationGuidOnly;
+            _useConversationGuidOnly = useConversationGuidOnly;
 
             // Extended property for PidTagConversationId, which is the GUID portion of the ConversationIndex
             // See https://msdn.microsoft.com/en-us/library/cc433490(v=EXCHG.80).aspx and
@@ -60,7 +59,7 @@ namespace Mail2Bug.Email.EWS
         {
             get
             {
-                return UseConversationGuidOnly ? GetConversationGuid() : GetConversationIndex();
+                return _useConversationGuidOnly ? GetConversationGuid() : GetConversationIndex();
             }
         }
 

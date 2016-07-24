@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using log4net;
 using Mail2Bug.Email;
-using Mail2Bug.Email.EWS;
 using Mail2Bug.Helpers;
 using Mail2Bug.WorkItemManagement;
 
@@ -34,14 +33,6 @@ namespace Mail2Bug.MessageProcessingStrategies
 
         public void ProcessInboxMessage(IIncomingEmailMessage message)
         {
-            var ewsMessage = message as EWSIncomingMessage;
-
-            if (ewsMessage != null)
-            {
-                ewsMessage.UseConversationGuidOnly = _config.EmailSettings.UseConversationGuidOnly;
-                message = ewsMessage;
-            }
-
             var workItemId = _messageToWorkItemMapper.GetWorkItemId(message);
 
             if (!workItemId.HasValue) // thread not found, new work item
