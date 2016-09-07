@@ -11,12 +11,14 @@ namespace Mail2Bug.Email.EWS
     public class EWSIncomingMessage : IIncomingEmailMessage
     {
         private const int PidTagBodyHtmlTag = 0x1013;
-
         private const int PidTagConversationIdTag = 0x3013;
 
         private readonly EmailMessage _message;
         private readonly byte[] _conversationId;
         private readonly bool _useConversationGuidOnly;
+
+        // Extended property for PidTagBodyHtmlTag, which is the HTML body of the Message object
+        // See https://msdn.microsoft.com/en-us/library/ee202050(v=exchg.80).aspx
         private static readonly ExtendedPropertyDefinition PidTagBodyHtml = new ExtendedPropertyDefinition(PidTagBodyHtmlTag, MapiPropertyType.Binary);
 
         public EWSIncomingMessage(EmailMessage message, bool useConversationGuidOnly = false)
