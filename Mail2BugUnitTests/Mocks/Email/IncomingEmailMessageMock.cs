@@ -37,7 +37,7 @@ namespace Mail2BugUnitTests.Mocks.Email
                     Subject = RandomDataHelper.GetSubject(_seed++),
                     RawBody = RandomDataHelper.GetBody(_seed++),
                     PlainTextBody = RandomDataHelper.GetBody(_seed++),
-                    ConversationIndex = RandomDataHelper.GetConversationId(_seed++),
+                    ConversationId = RandomDataHelper.GetConversationId(_seed++),
                     ConversationTopic = RandomDataHelper.GetSubject(_seed++),
                     SenderName = RandomDataHelper.GetName(_seed++),
                     SenderAlias = RandomDataHelper.GetAlias(_seed++)
@@ -65,7 +65,7 @@ namespace Mail2BugUnitTests.Mocks.Email
         public string Subject { get; set; }
         public string RawBody { get; set; }
         public string PlainTextBody { get; set; }
-        public string ConversationIndex { get; set; }
+        public string ConversationId { get; set; }
         public string ConversationTopic { get; set; }
         public string SenderName { get; set; }
         public string SenderAlias { get; set; }

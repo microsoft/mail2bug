@@ -319,7 +319,7 @@ namespace Mail2BugUnitTests
             // Message has a conversation index that suggests it's related to a thread with some work item ID x, but it has 
             // a subject that connects it to work item ID x+1
             // Should end up applying to the latter work-item (x+1)
-            appendOnlyMessage.ConversationIndex = message1.ConversationIndex + "AAAA";
+            appendOnlyMessage.ConversationId = message1.ConversationId + "AAAA";
 
             ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
 
@@ -382,7 +382,7 @@ namespace Mail2BugUnitTests
             // Message has a conversation index that suggests it's related to a thread with some work item ID x, but it has 
             // a subject that connects it to work item ID x+1
             // Should end up applying to the latter work-item (x+1)
-            appendOnlyMessage.ConversationIndex = message1.ConversationIndex + "AAAA";
+            appendOnlyMessage.ConversationId = message1.ConversationId + "AAAA";
 
             ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
 

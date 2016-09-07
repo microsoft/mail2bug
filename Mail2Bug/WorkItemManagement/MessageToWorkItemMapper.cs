@@ -12,7 +12,7 @@ namespace Mail2Bug.WorkItemManagement
         private readonly string _appendOnlyEmailTitleRegex;
         private readonly string _appendOnlyEmailBodyRegex;
         private readonly SortedList<string, int> _workItemsCache;
-        
+
         /// <summary>
         /// This class is used for mapping incoming messages to work item IDs, either based on the
         /// message contents (title, body), or based on the work items cache, which maps conversation
@@ -24,15 +24,17 @@ namespace Mail2Bug.WorkItemManagement
         /// a message's body text</param>
         /// <param name="workItemsCache">The work items cache, mapping from conversation IDs to work
         /// item IDs</param>
+        /// <param name="useConversationGuid">Use conversationID rather than whole conversationIndex
+        /// </param>
         public MessageToWorkItemMapper(
-            string appendOnlyEmailTitleRegex, 
-            string appendOnlyEmailBodyRegex, 
-            SortedList<string,int> workItemsCache )
+            string appendOnlyEmailTitleRegex,
+            string appendOnlyEmailBodyRegex,
+            SortedList<string,int> workItemsCache)
         {
             _appendOnlyEmailTitleRegex = appendOnlyEmailTitleRegex;
             _appendOnlyEmailBodyRegex = appendOnlyEmailBodyRegex;
             _workItemsCache = workItemsCache;
-        }
+    }
 
         /// <summary>
         /// If a work item already exists for this message, returns its ID. Otherwise, returns null.
@@ -48,8 +50,8 @@ namespace Mail2Bug.WorkItemManagement
                 return appendOnlyId.Value;
             }
 
-            // Just a standard conversation - look up the cache based on the conversation ID
-            return GetWorkItemIdFromConversationId(message.ConversationIndex, _workItemsCache);
+            // Just a standard conversation - look up the cache based on the conversation ID (or guid)
+            return GetWorkItemIdFromConversationId(message.ConversationId, _workItemsCache);
         }
 
         private int? IsAppendOnlyMessage(IIncomingEmailMessage message)
