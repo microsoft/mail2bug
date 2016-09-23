@@ -3,10 +3,11 @@ using System.Linq;
 using System.Reflection;
 using Mail2Bug.Helpers;
 using Microsoft.Test.CommandLineParsing;
+using System.Security.Cryptography;
 
 namespace DpapiHelperUtil
 {
-    class DpapiHelperUtilMain
+    public class DpapiHelperUtilMain
     {
         public class DpapiUtilWriteCommand : Command
         {
@@ -20,9 +21,19 @@ namespace DpapiHelperUtil
             /// </summary>
             public string Out { get; set; }
 
+            /// <summary>
+            /// The scope of the DataProtection that will be used
+            /// </summary>
+            public DataProtectionScope Scope { get; private set; }
+
             public override void Execute()
             {
-                DPAPIHelper.WriteDataToFile(Data, Out);
+                DPAPIHelper.WriteDataToFile(Data, Out, Scope);
+            }
+
+            public DpapiUtilWriteCommand(DataProtectionScope scope)
+            {
+                this.Scope = scope;
             }
         }
 
@@ -33,48 +44,52 @@ namespace DpapiHelperUtil
             /// </summary>
             public string Filename { get; set; }
 
+            /// The scope of the DataProtection that was
+            public DataProtectionScope Scope { get; private set; }
+
             public override void Execute()
             {
-                string readDataFromFile = DPAPIHelper.ReadDataFromFile(Filename);
+                string readDataFromFile = DPAPIHelper.ReadDataFromFile(Filename, Scope);
                 Console.WriteLine("Data:'{0}'", readDataFromFile);
+            }
+            public DpapiUtilReadCommand(DataProtectionScope scope)
+            {
+                this.Scope = scope;
             }
         }
 
 
         static void Main(string[] args)
         {
-            if(args.Length < 1)
+            if (args.Length < 1)
             {
                 PrintUsage();
                 return;
             }
 
-            Command c = null;
-            if (args[0].Equals("read", StringComparison.InvariantCultureIgnoreCase))
-            {
-                c = new DpapiUtilReadCommand();
-            }
+            // parse user intent
+            var command = ArgumentParserHelper.ParseArguments(args);
 
-            if (args[0].Equals("write", StringComparison.InvariantCultureIgnoreCase))
-            {
-                c = new DpapiUtilWriteCommand();
-            }
-
-            if (c == null)
+            // if null, user intent is unclear or arguments were missed
+            if (command == null)
             {
                 PrintUsage();
                 return;
             }
 
-            c.ParseArguments(args.Skip(1));
-            c.Execute();
+            // execute command
+            command.Execute();
         }
 
         private static void PrintUsage()
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("DpapiHelperUtil read /Filename=<filename>");
-            Console.WriteLine("DpapiHelperUtil write /Data=<data> /Out=<filename>");
+            Console.WriteLine("DpapiHelperUtil read [user|machine] /Filename=<filename>");
+            Console.WriteLine("DpapiHelperUtil write [user|machine] /Data=<data> /Out=<filename>");
+            Console.WriteLine("");
+            Console.WriteLine("Note: user|machine is the password encryption scope and is optional.");
+            Console.WriteLine("\tuser - Default. Will encrypt with current executing user scope");
+            Console.WriteLine("\tmachine - Will encrypt with current machine scope");
         }
     }
 }

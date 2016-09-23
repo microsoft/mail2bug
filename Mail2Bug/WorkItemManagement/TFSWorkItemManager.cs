@@ -182,8 +182,10 @@ namespace Mail2Bug.WorkItemManagement
                 throw new BadConfigException("AltAuthPasswordFile", "Alt password file doesn't exist");
             }
 
+            var scope = _config.TfsServerConfig.UseMachineScopeEncryption ? System.Security.Cryptography.DataProtectionScope.LocalMachine : System.Security.Cryptography.DataProtectionScope.CurrentUser;
+
             return new Tuple<string, string>(_config.TfsServerConfig.AltAuthUsername,
-                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.AltAuthPasswordFile));
+                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.AltAuthPasswordFile, scope));
         }
 
         private Tuple<string,string> GetServiceIdentityUsernameAndPasswordFromConfig()
@@ -199,8 +201,10 @@ namespace Mail2Bug.WorkItemManagement
                 throw new BadConfigException("ServiceIdentityPasswordFile", "Service identity password file doesn't exist");
             }
 
+            var scope = _config.TfsServerConfig.UseMachineScopeEncryption ? System.Security.Cryptography.DataProtectionScope.LocalMachine : System.Security.Cryptography.DataProtectionScope.CurrentUser;
+
             return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, 
-                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile));
+                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile, scope));
         }
 
         private IEnumerable<TfsClientCredentials> GetServiceIdentityPatCredentials()
@@ -229,7 +233,9 @@ namespace Mail2Bug.WorkItemManagement
                 throw new BadConfigException("ServiceIdentityPatFile", "Personal Access Token file doesn't exist");
             }
 
-            return DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPatFile);
+            var scope = _config.TfsServerConfig.UseMachineScopeEncryption ? System.Security.Cryptography.DataProtectionScope.LocalMachine : System.Security.Cryptography.DataProtectionScope.CurrentUser;
+
+            return DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPatFile, scope);
         }
 
         public void AttachFiles(int workItemId, List<string> fileList)

@@ -19,11 +19,12 @@ namespace Mail2Bug.Email
 
         public IMailboxManager CreateMailboxManager(Config.EmailSettings emailSettings)
         {
+            var scope = emailSettings.UseMachineScopeEncryption ? System.Security.Cryptography.DataProtectionScope.LocalMachine : System.Security.Cryptography.DataProtectionScope.CurrentUser;
             var credentials = new EWSConnectionManger.Credentials
             {
                 EmailAddress = emailSettings.EWSMailboxAddress,
                 UserName = emailSettings.EWSUsername,
-                Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile)
+                Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile, scope)
             };
 
             var exchangeService = _connectionManger.GetConnection(credentials, emailSettings.UseConversationGuidOnly);

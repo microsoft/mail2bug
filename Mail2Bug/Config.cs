@@ -78,7 +78,12 @@ namespace Mail2Bug
 		    public string OAuthContext { get; set; }
 		    public string OAuthResourceId { get; set; }
 		    public string OAuthClientId { get; set; }
-		}
+
+            /// <summary>
+            /// If true we will need to use the machine scope
+            /// </summary>
+            public bool UseMachineScopeEncryption { get; set; }
+        }
 
 		public class WorkItemSettings
 		{
@@ -224,6 +229,11 @@ namespace Mail2Bug
             // contain timestamps or additional reply information.
             // See https://msdn.microsoft.com/en-us/library/ee202481(v=exchg.80).aspx for more information
             public bool UseConversationGuidOnly { get; set; }
+
+            /// <summary>
+            /// If true we will need to use the machine scope
+            /// </summary>
+            public bool UseMachineScopeEncryption { get; set; }
 
             private string _replyTemplate;
 		}

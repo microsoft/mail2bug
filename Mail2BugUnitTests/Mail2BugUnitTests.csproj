@@ -44,6 +44,7 @@
       <HintPath>..\packages\Moq.4.2.1506.2016\lib\net40\Moq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Security" />
     <Reference Include="TestApiCore">
       <HintPath>..\packages\Microsoft.TestApi.0.6.0.0\lib\net40\TestApiCore.dll</HintPath>
     </Reference>
@@ -59,7 +60,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -74,6 +77,7 @@
     <Compile Include="RecipientsMailboxManagerRouterUnitTest.cs" />
     <Compile Include="SimpleBugStrategyUnitTest.cs" />
     <Compile Include="TfsQueryParserUnitTest.cs" />
+    <Compile Include="DPAPIUnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -101,6 +105,10 @@
     <ProjectReference Include="..\Mail2Bug\Mail2Bug.csproj">
       <Project>{22cb93ef-6d91-40b7-a6c9-e5f67595160e}</Project>
       <Name>Mail2Bug</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tools\DpapiTool\DpapiTool.csproj">
+      <Project>{4788593c-88fa-4f93-85ed-681e8b165760}</Project>
+      <Name>DpapiTool</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
