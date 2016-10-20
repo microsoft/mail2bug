@@ -26,7 +26,7 @@ namespace Mail2BugUnitTests.Mocks.Email
             
             var newMessage = AddMessage("RE: " + message.Subject, bodyBuilder.ToString());
             newMessage.SentOn = message.SentOn.AddSeconds(1);
-            newMessage.ConversationIndex = GenerateReplyIndex(message.ConversationIndex);
+            newMessage.ConversationId = GenerateReplyIndex(message.ConversationId);
 
             return newMessage;
         }
