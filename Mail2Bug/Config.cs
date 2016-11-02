@@ -9,20 +9,20 @@ namespace Mail2Bug
 {
     public class Config
     {
-    	public List<InstanceConfig> Instances; 
+        public List<InstanceConfig> Instances; 
 
-		public class InstanceConfig
-		{
-			[XmlAttribute]
-			public string Name { get; set; }
+        public class InstanceConfig
+        {
+            [XmlAttribute]
+            public string Name { get; set; }
 
-			public TfsServerConfig TfsServerConfig { get; set; }
-			public WorkItemSettings WorkItemSettings { get; set; }
-			public EmailSettings EmailSettings { get; set; }
-		}
+            public TfsServerConfig TfsServerConfig { get; set; }
+            public WorkItemSettings WorkItemSettings { get; set; }
+            public EmailSettings EmailSettings { get; set; }
+        }
 
-		public class TfsServerConfig
-		{
+        public class TfsServerConfig
+        {
             // The TFS collection URL to connect to. e.g:
             // http://server:8080/tfs/YourColllection/ (on-prem)
             // https://name.visualstudio.com/DefaultCollection/ (VS Online)
@@ -45,65 +45,74 @@ namespace Mail2Bug
             public string AltAuthUsername { get; set; }
             public string AltAuthPasswordFile { get; set; }
 
-			// The TFS project to connect to
-			public string Project { get; set; }
+            // The TFS project to connect to
+            public string Project { get; set; }
 
-			// The type of work item that would be created
-			public string WorkItemTemplate { get; set; }
+            // The type of work item that would be created
+            public string WorkItemTemplate { get; set; }
 
-			// The query to be used for populating the cache used for connecting outlook conversations to bugs.
-			// If a work item is not captured by the query, the connection between conversation and work item would 
+            // The query to be used for populating the cache used for connecting outlook conversations to bugs.
+            // If a work item is not captured by the query, the connection between conversation and work item would 
             // fail (and a new work item will be created instead of updating the existing one)
-			public string CacheQueryFile { get; set; }
+            public string CacheQueryFile { get; set; }
 
-			// If this setting is set to 'true', changes to work items won't be saved (and no new items will be created)
-			public bool SimulationMode { get; set; }
+            // If this setting is set to 'true', changes to work items won't be saved (and no new items will be created)
+            public bool SimulationMode { get; set; }
 
-			// The name of the field which contains all the allowed names in its allowed values list (usually "Assigned To")
-			public string NamesListFieldName { get; set; }
+            // The name of the field which contains all the allowed names in its allowed values list (usually "Assigned To")
+            public string NamesListFieldName { get; set; }
 
-			[XmlIgnore]
-			public string CacheQuery
-			{
-			    get
-			    {
-			        if (String.IsNullOrEmpty(CacheQueryFile))
-			        {
-			            throw new BadConfigException("CacheQueryFile","Query file must be specified");
-			        }
-			        return TFSQueryParser.ParseQueryFile(FileToString(CacheQueryFile));
-			    }
-			}
+            [XmlIgnore]
+            public string CacheQuery
+            {
+                get
+                {
+                    if (String.IsNullOrEmpty(CacheQueryFile))
+                    {
+                        throw new BadConfigException("CacheQueryFile","Query file must be specified");
+                    }
+                    return TFSQueryParser.ParseQueryFile(FileToString(CacheQueryFile));
+                }
+            }
 
-		    public string OAuthContext { get; set; }
-		    public string OAuthResourceId { get; set; }
-		    public string OAuthClientId { get; set; }
+            public string OAuthContext { get; set; }
+            public string OAuthResourceId { get; set; }
+            public string OAuthClientId { get; set; }
 
             /// <summary>
             /// If true we will need to use the machine scope
             /// </summary>
             public bool UseMachineScopeEncryption { get; set; }
+
+            [XmlIgnore]
+            public System.Security.Cryptography.DataProtectionScope EncryptionScope
+            {
+                get
+                {
+                    return GetEncryptionScope(UseMachineScopeEncryption);
+                }
+            }
         }
 
-		public class WorkItemSettings
-		{
+        public class WorkItemSettings
+        {
             // C'tor for assignign defaults
             public WorkItemSettings()
-		    {
-		        OverrideChangedBy = true;
-		        ApplyOverridesDuringUpdate = true;
-		        AttachOriginalMessage = true;
+            {
+                OverrideChangedBy = true;
+                ApplyOverridesDuringUpdate = true;
+                AttachOriginalMessage = true;
                 AttachUpdateMessages = false;
-		    }
+            }
 
             public enum ProcessingStrategyType
             {
                 SimpleBugStrategy
             }
 
-			public string ConversationIndexFieldName { get; set; }
+            public string ConversationIndexFieldName { get; set; }
 
-			public List<DefaultValueDefinition> DefaultFieldValues { get; set; }
+            public List<DefaultValueDefinition> DefaultFieldValues { get; set; }
             public List<MnemonicDefinition> Mnemonics { get; set; }
             public List<RecipientOverrideDefinition> RecipientOverrides { get; set; }
             public List<DateBasedFieldOverrides> DateBasedOverrides { get; set; }
@@ -111,30 +120,30 @@ namespace Mail2Bug
             public bool OverrideChangedBy { get; set; }
             public bool ApplyOverridesDuringUpdate { get; set; }
             public bool AttachOriginalMessage { get; set; }
-		    public bool AttachUpdateMessages { get; set; }
+            public bool AttachUpdateMessages { get; set; }
 
-		    public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
-		}
+            public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
+        }
 
-		public class DefaultValueDefinition
-		{
-			[XmlAttribute]
-			public string Field { get; set; }
-			[XmlAttribute]
-			public string Value { get; set; }
-		}
-
-		public class MnemonicDefinition
-		{
-			[XmlAttribute]
-			public string Mnemonic { get; set; }
-			
+        public class DefaultValueDefinition
+        {
             [XmlAttribute]
-			public string Field { get; set; }
+            public string Field { get; set; }
+            [XmlAttribute]
+            public string Value { get; set; }
+        }
+
+        public class MnemonicDefinition
+        {
+            [XmlAttribute]
+            public string Mnemonic { get; set; }
+            
+            [XmlAttribute]
+            public string Field { get; set; }
 
             [XmlAttribute]
             public string Value { get; set; }
-		}
+        }
 
         public class RecipientOverrideDefinition
         {
@@ -167,8 +176,8 @@ namespace Mail2Bug
             public string Value { get; set; }
         }
 
-		public class EmailSettings
-		{
+        public class EmailSettings
+        {
             public enum MailboxServiceType
             {
                 EWSByFolder,
@@ -177,15 +186,15 @@ namespace Mail2Bug
 
             public MailboxServiceType ServiceType { get; set; }
 
-		    #region EWSSettings
+            #region EWSSettings
 
-		    public string EWSMailboxAddress { get; set; }
+            public string EWSMailboxAddress { get; set; }
             public string EWSUsername { get; set; }
             public string EWSPasswordFile { get; set; }
 
-		    #endregion
+            #endregion
 
-			public bool SendAckEmails { get; set; }
+            public bool SendAckEmails { get; set; }
             
             // Should the ack email be sent to all recipients of the original message?
             // 'true' indicates send to all original recipients
@@ -195,10 +204,10 @@ namespace Mail2Bug
             /// <summary>
             /// Incoming Folder is used for EWSByFolder MailboxServiceType
             /// </summary>
-			public string IncomingFolder { get; set; }
+            public string IncomingFolder { get; set; }
 
-			public string CompletedFolder { get; set; }
-			public string ErrorFolder { get; set; }
+            public string CompletedFolder { get; set; }
+            public string ErrorFolder { get; set; }
 
             /// <summary>
             /// Following settings are used for EWSByRecipieints MailboxServiceType
@@ -213,16 +222,16 @@ namespace Mail2Bug
             /// </summary>
             public string Recipients { get; set; }
 
-			public string AppendOnlyEmailTitleRegex { get; set; }
+            public string AppendOnlyEmailTitleRegex { get; set; }
             public string AppendOnlyEmailBodyRegex { get; set; }
             public string ExplicitOverridesRegex { get; set; }
 
-			public string ReplyTemplate { get; set; }
+            public string ReplyTemplate { get; set; }
 
-			public string GetReplyTemplate()
-			{
-			    return _replyTemplate ?? (_replyTemplate = FileToString(ReplyTemplate));
-			}
+            public string GetReplyTemplate()
+            {
+                return _replyTemplate ?? (_replyTemplate = FileToString(ReplyTemplate));
+            }
 
             // Instead of using the whole ConversationIndex, use the ConversationID, which is
             // the guid portion of the ConversationIndex, bytes 6 through 22. The ConversationID does not
@@ -235,22 +244,31 @@ namespace Mail2Bug
             /// </summary>
             public bool UseMachineScopeEncryption { get; set; }
 
+            [XmlIgnore]
+            public System.Security.Cryptography.DataProtectionScope EncryptionScope
+            {
+                get
+                {
+                    return GetEncryptionScope(UseMachineScopeEncryption);
+                }
+            }
+
             private string _replyTemplate;
-		}
+        }
 
-		public Config()
-		{
-			Instances = new List<InstanceConfig>();
-		}
+        public Config()
+        {
+            Instances = new List<InstanceConfig>();
+        }
 
-		public static Config GetConfig(string configFilePath)
-    	{
-    		using (var fs = new FileStream(configFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-    		{
-				var serializer = new XmlSerializer(typeof(Config));
-				return (Config)serializer.Deserialize(fs);
-    		}
-    	}
+        public static Config GetConfig(string configFilePath)
+        {
+            using (var fs = new FileStream(configFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                var serializer = new XmlSerializer(typeof(Config));
+                return (Config)serializer.Deserialize(fs);
+            }
+        }
 
         /// <summary>
         /// Load the file contents and return as a string
@@ -265,6 +283,11 @@ namespace Mail2Bug
             {
                 return r.ReadToEnd();
             }
+        }
+
+        public static System.Security.Cryptography.DataProtectionScope GetEncryptionScope(bool useMachineScope) 
+        {
+            return useMachineScope ? System.Security.Cryptography.DataProtectionScope.LocalMachine : System.Security.Cryptography.DataProtectionScope.CurrentUser;
         }
     }
 }
