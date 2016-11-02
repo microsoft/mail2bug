@@ -182,8 +182,10 @@ namespace Mail2Bug.WorkItemManagement
                 throw new BadConfigException("AltAuthPasswordFile", "Alt password file doesn't exist");
             }
 
+            var scope = _config.TfsServerConfig.EncryptionScope;
+
             return new Tuple<string, string>(_config.TfsServerConfig.AltAuthUsername,
-                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.AltAuthPasswordFile));
+                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.AltAuthPasswordFile, _config.TfsServerConfig.EncryptionScope));
         }
 
         private Tuple<string,string> GetServiceIdentityUsernameAndPasswordFromConfig()
@@ -200,7 +202,7 @@ namespace Mail2Bug.WorkItemManagement
             }
 
             return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, 
-                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile));
+                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile, _config.TfsServerConfig.EncryptionScope));
         }
 
         private IEnumerable<TfsClientCredentials> GetServiceIdentityPatCredentials()
@@ -229,7 +231,7 @@ namespace Mail2Bug.WorkItemManagement
                 throw new BadConfigException("ServiceIdentityPatFile", "Personal Access Token file doesn't exist");
             }
 
-            return DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPatFile);
+            return DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPatFile, _config.TfsServerConfig.EncryptionScope);
         }
 
         public void AttachFiles(int workItemId, List<string> fileList)

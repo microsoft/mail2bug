@@ -23,7 +23,7 @@ namespace Mail2Bug.Email
             {
                 EmailAddress = emailSettings.EWSMailboxAddress,
                 UserName = emailSettings.EWSUsername,
-                Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile)
+                Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile, emailSettings.EncryptionScope)
             };
 
             var exchangeService = _connectionManger.GetConnection(credentials, emailSettings.UseConversationGuidOnly);
