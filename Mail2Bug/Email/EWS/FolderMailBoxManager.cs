@@ -15,12 +15,14 @@ namespace Mail2Bug.Email.EWS
         private readonly ExchangeService _service;
         private readonly string _mailFolder;
         private readonly IMessagePostProcessor _postProcessor;
+        private readonly bool _useConversationGuidOnly;
 
-        public FolderMailboxManager(ExchangeService connection, string incomingFolder, IMessagePostProcessor postProcessor)
+        public FolderMailboxManager(ExchangeService connection, string incomingFolder, IMessagePostProcessor postProcessor, bool useConversationGuidOnly)
         {
             _service = connection;
             _mailFolder = incomingFolder;
             _postProcessor = postProcessor;
+            _useConversationGuidOnly = useConversationGuidOnly;
         }
 
         public IEnumerable<IIncomingEmailMessage> ReadMessages()
@@ -44,7 +46,7 @@ namespace Mail2Bug.Email.EWS
             return items
                 .Where(item => item is EmailMessage)
                 .OrderBy(message => message.DateTimeReceived)
-                .Select(message => new EWSIncomingMessage(message as EmailMessage))
+                .Select(message => new EWSIncomingMessage(message as EmailMessage, this._useConversationGuidOnly))
                 .AsEnumerable();
         }
 
