@@ -52,6 +52,10 @@
              run under the same credentials that mail2bug will run with, otherwise it won't be able to decrypt the
              contents. -->
         <EWSPasswordFile>.\Resources\mail2bug.bin</EWSPasswordFile>
+
+        <!-- Warning: Changing this on an existing instance will break links with bugs that it already created. -->
+        <UseConversationGuidOnly>true</UseConversationGuidOnly>
+
         <SendAckEmails>true</SendAckEmails>
         <AckEmailsRecipientsAll>true</AckEmailsRecipientsAll>
 

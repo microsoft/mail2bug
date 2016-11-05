@@ -267,6 +267,13 @@
              contents. -->
         <EWSPasswordFile>.\Resources\mail2bug.bin</EWSPasswordFile>
 
+        <!-- Instead of using the whole ConversationIndex, use only the ConversationID, which is the guid portion of
+             the ConversationIndex, to identify a conversation. This should help avoid the possibility of replies
+             inadvertently spawning new bugs. See https://msdn.microsoft.com/en-us/library/ee202481(v=exchg.80).aspx
+             for more information.
+             Warning: Changing this on an existing instance will break links with bugs that it already created. -->
+        <UseConversationGuidOnly>true</UseConversationGuidOnly>
+
         <!-- 'SendAckEmails' - Should mail2bug send replies when creating new work items? -->
         <SendAckEmails>true</SendAckEmails>
 
