@@ -98,6 +98,27 @@ namespace Mail2Bug.WorkItemManagement
             bugEntry[HistoryField] += comment;
         }
 
+        public SimpleWorkItem GetWorkItem(int workItemId)
+        {
+            if (!Bugs.ContainsKey(workItemId))
+            {
+                Logger.WarnFormat("Trying to modify non-existing bug {0}", workItemId);
+                return null;
+            }
+            
+            var bugEntry = Bugs[workItemId];
+            var workItem = new SimpleWorkItem()
+            {
+                Id = workItemId,
+                Title = $"WorkItem ${workItemId}",
+                AssignedTo = $"Owner ${workItemId}",
+                State = "New",
+                Fields = bugEntry
+            };
+
+            return workItem;
+        }
+
         public INameResolver GetNameResolver()
         {
             if (ThrowOnGetNameResolver != null) throw ThrowOnGetNameResolver;

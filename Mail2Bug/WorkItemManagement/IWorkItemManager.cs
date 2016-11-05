@@ -21,5 +21,12 @@ namespace Mail2Bug.WorkItemManagement
         void ModifyWorkItem(int workItemId, string comment, Dictionary<string, string> values);
 
         INameResolver GetNameResolver();
+
+        /// <summary>
+        /// Get work item for the given ID.
+        /// </summary>
+        /// <param name="workItemId">the work item ID</param>
+        /// <returns>work item corresponding to the ID</returns>
+        SimpleWorkItem GetWorkItem(int workItemId);
     }
 }

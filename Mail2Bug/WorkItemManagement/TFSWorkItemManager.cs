@@ -304,6 +304,35 @@ namespace Mail2Bug.WorkItemManagement
             workItem.Save();
         }
 
+        public SimpleWorkItem GetWorkItem(int workItemId)
+        {
+            if (workItemId <= 0) return null;
+            var tfsWorkItem = _tfsStore.GetWorkItem(workItemId);
+
+            var workItem = new SimpleWorkItem()
+            {
+                Id = tfsWorkItem.Id,
+                Title = tfsWorkItem.Title,
+                AssignedTo = tfsWorkItem.Fields["Assigned To"].Value as string,
+                State = tfsWorkItem.State,
+                Fields = AsDictionary(tfsWorkItem.Fields)
+            };
+
+            return workItem;
+        }
+
+        private Dictionary<string, string> AsDictionary(FieldCollection fields)
+        {
+            var values = new Dictionary<string, string>(fields.Count);
+
+            foreach (Field field in fields)
+            {
+                values.Add(field.Name, field.Value?.ToString());
+            }
+
+            return values;
+        }
+
         #region Work item caching
 
         public void CacheWorkItem(int workItemId)

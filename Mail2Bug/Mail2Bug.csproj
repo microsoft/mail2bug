@@ -288,6 +288,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\RandomDataHelper.cs" />
+    <Compile Include="WorkItemManagement\SimpleWorkItem.cs" />
     <Compile Include="WorkItemManagement\IWorkItemManager.cs" />
     <Compile Include="WorkItemManagement\MessageToWorkItemMapper.cs" />
     <Compile Include="WorkItemManagement\TFSQueryParser.cs" />

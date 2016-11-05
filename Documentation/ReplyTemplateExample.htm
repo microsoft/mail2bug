@@ -1,50 +1,108 @@
-<html>
+﻿<html>
 <head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<title></title>
-
+    <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+    <title></title>
 </head>
+<body>
+    <style>
+        body, td {
+            font-family: Segoe UI Emoji, Segoe UI, Calibri;
+            font-size: 0.9em;
+        }
 
-<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+        .card {
+            max-width: 350px;
+        }
 
-<style>
-body{
-	font-family:Verdana
-	font-size: 14px;
-	color: #0072C6;
-}
+        .workitem {
+            border: 1px solid #f0f0f0;
+            border-left-width: 10px;
+            border-left-color: #000;
+            padding: 20px;
+        }
 
-.bodyContent a{
-  text-decoration: none;
-  color: #0072C6;
-  cursor: pointer;
-  font-size: 20px;
-  font-weight: bold
-}
+        .workitem a {
+            text-decoration: none;
+            color: black;
+        }
 
-.bodyContent ul li{
-  color: #0072C6;
-}
+        .bug {
+            border-left-color: #cc293d;
+        }
 
-.bodyContent{
-	border-left: 4px solid #0072C6;
-	padding: 20px;
-	color: #0072C6;
-}
-</style>
+        .subtitle {
+            font-size: 0.85em;
+            color: gray;
+            text-transform: uppercase;
+        }
 
-<div class = "bodyContent">
-	<a href="http://server:8080/tfs/MyCollection/WorkItems/_workitems#_a=edit&id=[BUGID]">Bug #[BUGID] created to track the issue.</a>
-	<br/>
-	<br/>
-Note:
-<ul>
-<li>Further messages on the original thread will be added to the bug description as long as mail2bug@org.com is in the recipients list.</li>
-<li>Bugs are created with default values unless valid explicit overrides and mnemonics are specified.</li>
-</ul>
-</div>
-<br />
+        h1 {
+            font-size: 2em;
+            font-weight: normal;
+            margin: 0px;
+            padding: 0px;
+        }
 
+        h2 {
+            font-size: 1.45em;
+            font-weight: normal;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        h3 {
+            font-size: 1.1em;
+            font-weight: normal;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .info {
+            font-size: 0.9em;
+            background-color: #f0f0f0;
+            padding: 15px 25px;
+            color: gray;
+        }
+
+        .info a {
+            color: black;
+        }
+    </style>
+    <table cellspacing="0" cellpadding="0" border="0" class="card">
+        <tr>
+            <td class="workitem bug">
+                <div class="subtitle">
+                    [TFSProject]
+                    &middot; [BugType]
+                </div>
+
+                <h1>
+                    <a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&id=[BUGID]">
+                        [BUGID]
+                    </a>
+                </h1>
+
+                <h2>
+                    <a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&id=[BUGID]">
+                        [BugTitle]
+                    </a>
+                </h2>
+                <h3>
+                    [BugOwner]
+                </h3>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="info">
+                <p>
+                    The above work item has been created to track this issue.
+                    New messages in this conversation will be automatically added to the work item as long as [Mail2BugAlias] is a recipient.
+                </p>
+            </td>
+        </tr>
+    </table>
+    <br>&nbsp;
+    <br>&nbsp;
 </body>
-
 </html>
