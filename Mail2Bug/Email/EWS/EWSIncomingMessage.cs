@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using log4net;
 using Microsoft.Exchange.WebServices.Data;
 
@@ -9,11 +10,16 @@ namespace Mail2Bug.Email.EWS
 {
     public class EWSIncomingMessage : IIncomingEmailMessage
     {
+        private const int PidTagBodyHtmlTag = 0x1013;
         private const int PidTagConversationIdTag = 0x3013;
 
         private readonly EmailMessage _message;
         private readonly byte[] _conversationId;
         private readonly bool _useConversationGuidOnly;
+
+        // Extended property for PidTagBodyHtmlTag, which is the HTML body of the Message object
+        // See https://msdn.microsoft.com/en-us/library/ee202050(v=exchg.80).aspx
+        private static readonly ExtendedPropertyDefinition PidTagBodyHtml = new ExtendedPropertyDefinition(PidTagBodyHtmlTag, MapiPropertyType.Binary);
 
         public EWSIncomingMessage(EmailMessage message, bool useConversationGuidOnly = false)
         {
@@ -28,7 +34,8 @@ namespace Mail2Bug.Email.EWS
             message.Load(new PropertySet(
                     ItemSchema.Subject,
                     ItemSchema.Body, 
-                    EmailMessageSchema.ConversationIndex,
+                    PidTagBodyHtml,
+                    EmailMessageSchema.ConversationIndex, 
                     conversationId,
                     EmailMessageSchema.Sender,
                     EmailMessageSchema.From,
@@ -43,8 +50,8 @@ namespace Mail2Bug.Email.EWS
                     MeetingRequestSchema.Location,
                     MeetingRequestSchema.Start,
                     MeetingRequestSchema.End
-                ));
-
+                ) { RequestedBodyType = BodyType.Text });
+            
             message.TryGetProperty(conversationId, out _conversationId);
 
             Attachments = BuildAttachmentList(message);
@@ -52,7 +59,20 @@ namespace Mail2Bug.Email.EWS
 
         public string Subject { get { return _message.Subject; } }
         public string ConversationTopic { get { return _message.ConversationTopic; } }
-        public string RawBody { get { return _message.Body.Text ?? string.Empty; } }
+
+        public string RawBody
+        {
+            get
+            {
+                byte[] bodyHtml;
+                if (_message.TryGetProperty(PidTagBodyHtml, out bodyHtml))
+                {
+                    return Encoding.Default.GetString(bodyHtml);
+                }
+
+                return _message.Body.Text ?? string.Empty;
+            }
+        }
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
 
         public string ConversationId
