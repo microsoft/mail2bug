@@ -277,7 +277,7 @@ namespace Mail2Bug
         /// <returns>contents</returns>
         public static string FileToString(string fileName)
         {
-            if (string.IsNullOrEmpty(fileName)) throw new ArgumentException("fileName can't be empty/null", "fileName");
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentException("fileName can't be empty/null", nameof(fileName));
             
             using (var r = new StreamReader(fileName))
             {
