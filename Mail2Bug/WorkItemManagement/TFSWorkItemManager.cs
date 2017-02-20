@@ -42,6 +42,16 @@ namespace Mail2Bug.WorkItemManagement
             Logger.InfoFormat("Geting TFS Project");
             _tfsProject = _tfsStore.Projects[config.TfsServerConfig.Project];
 
+
+            Logger.InfoFormat("Getting Team Config");
+            var teamConfig = _tfsStore.TeamProjectCollection.GetService<Microsoft.TeamFoundation.ProcessConfiguration.Client.TeamSettingsConfigurationService>()
+                .GetTeamConfigurationsForUser(new[] { _tfsProject.Uri.ToString() });
+
+            if (teamConfig != null)
+            {
+                _teamSettings = teamConfig.First().TeamSettings;
+            }
+
             Logger.InfoFormat("Initializing WorkItems Cache");
             InitWorkItemsCache();
 
@@ -268,7 +278,15 @@ namespace Mail2Bug.WorkItemManagement
             workItem.Open();
             foreach (var key in values.Keys)
             {
-                TryApplyFieldValue(workItem, key, values[key]);
+                string value = values[key];
+
+                // Resolve current iteration
+                if (_teamSettings != null && key == "Iteration Path" && value == "@CurrentIteration")
+                {
+                    value = _teamSettings.CurrentIterationPath;
+                }
+
+                TryApplyFieldValue(workItem, key, value);
             }
 
             // Workaround for TFS issue - if you change the "Assigned To" field, and then you change the "Activated by" field, the "Assigned To" field reverts
@@ -509,6 +527,7 @@ namespace Mail2Bug.WorkItemManagement
 
         private readonly WorkItemStore _tfsStore;
         private readonly Project _tfsProject;
+        private readonly Microsoft.TeamFoundation.ProcessConfiguration.Client.TeamSettings _teamSettings;
         private readonly NameResolver _nameResolver;
 
         private readonly Config.InstanceConfig _config;
