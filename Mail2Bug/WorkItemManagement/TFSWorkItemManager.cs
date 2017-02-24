@@ -356,7 +356,7 @@ namespace Mail2Bug.WorkItemManagement
             Logger.DebugFormat("Work item {0} conversation ID is {1}", workItem.Id, keyFieldValue);
             if (string.IsNullOrEmpty(keyFieldValue))
             {
-                Logger.WarnFormat("Problem caching work item {0}. Field '{1}' is empty - using ID instead.", workItem.Id, keyField);
+                Logger.DebugFormat("Problem caching work item {0}. Field '{1}' is empty - using ID instead.", workItem.Id, keyField);
                 WorkItemsCache[workItem.Id.ToString(CultureInfo.InvariantCulture)] = workItem.Id;
             }
 
@@ -465,7 +465,10 @@ namespace Mail2Bug.WorkItemManagement
 
         public void Dispose()
         {
-            _tfsServer.Dispose();
+            if (_tfsServer != null)
+            {
+                _tfsServer.Dispose();
+            }
         }
 
         ~TFSWorkItemManager()
