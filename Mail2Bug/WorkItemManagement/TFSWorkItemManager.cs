@@ -182,56 +182,56 @@ namespace Mail2Bug.WorkItemManagement
                 throw new BadConfigException("AltAuthPasswordFile", "Alt password file doesn't exist");
             }
 
-            var scope = _config.TfsServerConfig.EncryptionScope;
-
-            return new Tuple<string, string>(_config.TfsServerConfig.AltAuthUsername,
-                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.AltAuthPasswordFile, _config.TfsServerConfig.EncryptionScope));
+            return new Tuple<string, string>(
+                    _config.TfsServerConfig.AltAuthUsername,
+                    DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.AltAuthPasswordFile, _config.TfsServerConfig.EncryptionScope));
         }
 
         private Tuple<string,string> GetServiceIdentityUsernameAndPasswordFromConfig()
         {
-            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityUsername)
-                || string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPasswordFile))
+            if ((string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPasswordFile) || 
+                 string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityUsername)
+                ) &&
+                _config.TfsServerConfig.ServiceIdentityKeyVaultSecret == null)
             {
                 return null;
             }
 
-            if (!File.Exists(_config.TfsServerConfig.ServiceIdentityPasswordFile))
-            {
-                throw new BadConfigException("ServiceIdentityPasswordFile", "Service identity password file doesn't exist");
-            }
+            var credentialsHelper = new Helpers.CredentialsHelper();
+            string password = credentialsHelper.GetPassword(
+                _config.TfsServerConfig.ServiceIdentityPasswordFile,
+                _config.TfsServerConfig.EncryptionScope,
+                _config.TfsServerConfig.ServiceIdentityKeyVaultSecret);
 
-            return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, 
-                DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPasswordFile, _config.TfsServerConfig.EncryptionScope));
+            return new Tuple<string, string>(_config.TfsServerConfig.ServiceIdentityUsername, password);
         }
 
         private IEnumerable<TfsClientCredentials> GetServiceIdentityPatCredentials()
         {
-            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile))
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile) && _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret == null)
             {
                 return new List<TfsClientCredentials>();
             }
 
             var netCred = new NetworkCredential("", GetPatFromConfig());
             var basicCred = new BasicAuthCredential(netCred);
-            var patCred = new TfsClientCredentials(basicCred) {AllowInteractive = false};
+            var patCred = new TfsClientCredentials(basicCred) { AllowInteractive = false };
 
-            return new List<TfsClientCredentials> {patCred};
+            return new List<TfsClientCredentials> { patCred };
         }
 
         private string GetPatFromConfig()
         {
-            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile))
+            if (string.IsNullOrWhiteSpace(_config.TfsServerConfig.ServiceIdentityPatFile) && _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret == null)
             {
                 return null;
             }
 
-            if (!File.Exists(_config.TfsServerConfig.ServiceIdentityPatFile))
-            {
-                throw new BadConfigException("ServiceIdentityPatFile", "Personal Access Token file doesn't exist");
-            }
-
-            return DPAPIHelper.ReadDataFromFile(_config.TfsServerConfig.ServiceIdentityPatFile, _config.TfsServerConfig.EncryptionScope);
+            var credentialsHelper = new Helpers.CredentialsHelper();
+            return credentialsHelper.GetPassword(
+                _config.TfsServerConfig.ServiceIdentityPatFile,
+                _config.TfsServerConfig.EncryptionScope,
+                _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret);
         }
 
         public void AttachFiles(int workItemId, List<string> fileList)
@@ -356,7 +356,7 @@ namespace Mail2Bug.WorkItemManagement
             Logger.DebugFormat("Work item {0} conversation ID is {1}", workItem.Id, keyFieldValue);
             if (string.IsNullOrEmpty(keyFieldValue))
             {
-                Logger.WarnFormat("Problem caching work item {0}. Field '{1}' is empty - using ID instead.", workItem.Id, keyField);
+                Logger.DebugFormat("Problem caching work item {0}. Field '{1}' is empty - using ID instead.", workItem.Id, keyField);
                 WorkItemsCache[workItem.Id.ToString(CultureInfo.InvariantCulture)] = workItem.Id;
             }
 
@@ -465,7 +465,10 @@ namespace Mail2Bug.WorkItemManagement
 
         public void Dispose()
         {
-            _tfsServer.Dispose();
+            if (_tfsServer != null)
+            {
+                _tfsServer.Dispose();
+            }
         }
 
         ~TFSWorkItemManager()
