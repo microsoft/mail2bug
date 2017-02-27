@@ -18,6 +18,7 @@ namespace Mail2Bug.Helpers
         public string GetPassword(string dpapiFilePath, System.Security.Cryptography.DataProtectionScope scope, Config.KeyVaultSecret secretsTuple)
         {
             var task = GetPasswordAsync(dpapiFilePath, scope, secretsTuple);
+
             task.Wait();
             if (task.IsFaulted)
             {
