@@ -281,7 +281,7 @@ namespace Mail2Bug.WorkItemManagement
                 string value = values[key];
 
                 // Resolve current iteration
-                if (_teamSettings != null && key == "Iteration Path" && value == "@CurrentIteration")
+                if (_teamSettings != null && key == IterationPathFieldKey && value == CurrentIterationSpecialValue)
                 {
                     value = _teamSettings.CurrentIterationPath;
                 }
@@ -522,7 +522,8 @@ namespace Mail2Bug.WorkItemManagement
         #region Consts
 
         private const string AssignedToFieldKey = "Assigned To";
-
+        private const string IterationPathFieldKey = "Iteration Path";
+        private const string CurrentIterationSpecialValue = "@CurrentIteration";
         #endregion
 
         private readonly WorkItemStore _tfsStore;
