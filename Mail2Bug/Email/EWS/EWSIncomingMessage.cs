@@ -10,33 +10,22 @@ namespace Mail2Bug.Email.EWS
 {
     public class EWSIncomingMessage : IIncomingEmailMessage
     {
-        private const int PidTagBodyHtmlTag = 0x1013;
-        private const int PidTagConversationIdTag = 0x3013;
 
         private readonly EmailMessage _message;
         private readonly byte[] _conversationId;
         private readonly bool _useConversationGuidOnly;
-
-        // Extended property for PidTagBodyHtmlTag, which is the HTML body of the Message object
-        // See https://msdn.microsoft.com/en-us/library/ee202050(v=exchg.80).aspx
-        private static readonly ExtendedPropertyDefinition PidTagBodyHtml = new ExtendedPropertyDefinition(PidTagBodyHtmlTag, MapiPropertyType.Binary);
 
         public EWSIncomingMessage(EmailMessage message, bool useConversationGuidOnly = false)
         {
             _message = message;
             _useConversationGuidOnly = useConversationGuidOnly;
 
-            // Extended property for PidTagConversationId, which is the GUID portion of the ConversationIndex
-            // See https://msdn.microsoft.com/en-us/library/cc433490(v=EXCHG.80).aspx and
-            // https://msdn.microsoft.com/en-us/library/ee204279(v=exchg.80).aspx for more information
-            ExtendedPropertyDefinition conversationId = new ExtendedPropertyDefinition(PidTagConversationIdTag, MapiPropertyType.Binary);
-
             message.Load(new PropertySet(
                     ItemSchema.Subject,
-                    ItemSchema.Body, 
-                    PidTagBodyHtml,
+                    ItemSchema.Body,
+                    EWSExtendedProperty.PidTagBody,
+                    EWSExtendedProperty.PidTagConversationId,
                     EmailMessageSchema.ConversationIndex, 
-                    conversationId,
                     EmailMessageSchema.Sender,
                     EmailMessageSchema.From,
                     EmailMessageSchema.ToRecipients,
@@ -50,9 +39,9 @@ namespace Mail2Bug.Email.EWS
                     MeetingRequestSchema.Location,
                     MeetingRequestSchema.Start,
                     MeetingRequestSchema.End
-                ) { RequestedBodyType = BodyType.Text });
-            
-            message.TryGetProperty(conversationId, out _conversationId);
+                ) { RequestedBodyType = BodyType.HTML }); // Specify Exchange should convert native body format to HTML before returning
+
+            message.TryGetProperty(EWSExtendedProperty.PidTagConversationId, out _conversationId);
 
             Attachments = BuildAttachmentList(message);
         }
@@ -60,19 +49,8 @@ namespace Mail2Bug.Email.EWS
         public string Subject { get { return _message.Subject; } }
         public string ConversationTopic { get { return _message.ConversationTopic; } }
 
-        public string RawBody
-        {
-            get
-            {
-                byte[] bodyHtml;
-                if (_message.TryGetProperty(PidTagBodyHtml, out bodyHtml))
-                {
-                    return Encoding.Default.GetString(bodyHtml);
-                }
-
-                return _message.Body.Text ?? string.Empty;
-            }
-        }
+        public string RawBody { get { return _message.Body.Text; } }
+        
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
 
         public string ConversationId
@@ -183,11 +161,17 @@ namespace Mail2Bug.Email.EWS
 
         private static string GetPlainTextBody(Item message)
         {
+            string plainTextBody;
+
+            if (!message.TryGetProperty(EWSExtendedProperty.PidTagBody, out plainTextBody))
+            {
+                plainTextBody = EmailBodyProcessingUtils.ConvertHtmlMessageToPlainText(message.Body.Text); // Fallback
+            }
+
             // When there's no text whatsoever in the email, EWS may return null rather than an empty string. We normalize
             // to empty string to avoid repeated null checks later on, since empty string represents the same meaning as null
             // in our context.
-            var text = message.Body.Text ?? string.Empty;
-            return message.Body.BodyType == BodyType.Text ? text : EmailBodyProcessingUtils.ConvertHtmlMessageToPlainText(text);
+            return plainTextBody ?? string.Empty;
         }
 
         private static IEnumerable<IIncomingEmailAttachment> BuildAttachmentList(Item message)
