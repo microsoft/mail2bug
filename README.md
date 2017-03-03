@@ -24,6 +24,7 @@ Another common scenario is for support organizations - for automatically creatin
   * Requires Exchange2010 or newer
 * Supports Unicode text
 * Secure credential/secrets storage using DPAPI or Azure KeyVault
+  * Read this [blog post](https://www.jeff.wilcox.name/2017/02/mail2bug/) on how to set up Mail2Bug as an Azure service
 
 # Usage
 Once Mail2Bug is deployed and configured, just add the appropriate email address to the 'To' or 'Cc' line of an email to have a work item created for the thread.
