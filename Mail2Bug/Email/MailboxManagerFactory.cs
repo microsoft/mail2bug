@@ -19,11 +19,13 @@ namespace Mail2Bug.Email
 
         public IMailboxManager CreateMailboxManager(Config.EmailSettings emailSettings)
         {
+            var credentialsHelper = new Helpers.CredentialsHelper();
+            string password = credentialsHelper.GetPassword(emailSettings.EWSPasswordFile, emailSettings.EncryptionScope, emailSettings.EWSKeyVaultSecret);
             var credentials = new EWSConnectionManger.Credentials
             {
                 EmailAddress = emailSettings.EWSMailboxAddress,
                 UserName = emailSettings.EWSUsername,
-                Password = DPAPIHelper.ReadDataFromFile(emailSettings.EWSPasswordFile, emailSettings.EncryptionScope)
+                Password = password
             };
 
             var exchangeService = _connectionManger.GetConnection(credentials, emailSettings.UseConversationGuidOnly);
