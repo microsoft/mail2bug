@@ -172,8 +172,6 @@ namespace Mail2Bug.WorkItemManagement
             return new List<TfsClientCredentials>
             {
                 new TfsClientCredentials(
-                    new SimpleWebTokenCredential(usernameAndPassword.Item1, usernameAndPassword.Item2)),
-                new TfsClientCredentials(
                     new WindowsCredential(
                         new NetworkCredential(usernameAndPassword.Item1, usernameAndPassword.Item2)))
             };
