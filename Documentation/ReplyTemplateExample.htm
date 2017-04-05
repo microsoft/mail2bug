@@ -1,91 +1,42 @@
 ﻿<html>
 <head>
     <meta http-equiv=Content-Type content="text/html; charset=utf-8">
-    <title></title>
+    <title>Mail2Bug</title>
 </head>
 <body>
     <style>
-        body, td {
-            font-family: Segoe UI Emoji, Segoe UI, Calibri;
-            font-size: 0.9em;
-        }
-
-        .card {
-            max-width: 350px;
-        }
-
-        .workitem {
-            border: 1px solid #f0f0f0;
-            border-left-width: 10px;
-            border-left-color: #cc293d;
-            padding: 20px;
-        }
-
-        .workitem a {
-            text-decoration: none;
-            color: black;
-        }
-
-        .subtitle {
-            font-size: 0.85em;
-            color: gray;
-            text-transform: uppercase;
-        }
-
-        h1 {
-            font-size: 2em;
-            font-weight: normal;
-            margin: 0px;
-            padding: 0px;
-        }
-
-        h2 {
-            font-size: 1.45em;
-            font-weight: normal;
-            margin: 0px;
-            padding: 0px;
-        }
-
-        h3 {
-            font-size: 1.1em;
-            font-weight: normal;
-            margin: 0px;
-            padding: 0px;
-        }
-
-        .info {
-            font-size: 0.9em;
-            background-color: #f0f0f0;
-            padding: 15px 25px;
-            color: gray;
-        }
-
-        .info a {
-            color: black;
-        }
+        body, td { font-family: Segoe UI Emoji, Segoe UI, Calibri; font-size: 0.9em; }
+        h1 { font-size: 2em; font-weight: normal; margin: 0px; padding: 0px; }
+        h2 { font-size: 1.45em; font-weight: normal; margin: 0px; padding: 0px; }
+        h3 { font-size: 1.1em; font-weight: normal; margin: 0px; padding: 0px; }
+        .card { max-width: 350px; }
+        .workitem { border: 1px solid #f0f0f0; border-left-width: 10px; border-left-color: #cc293d; padding: 20px; }
+        .workitem a { text-decoration: none; color: black; }
+        .subtitle { font-size: 0.85em; color: gray; text-transform: uppercase; }
+        .info { font-size: 0.9em; background-color: #f0f0f0; padding: 15px 25px; color: gray; }
+        .info a { color: black; }
     </style>
     <table cellspacing="0" cellpadding="0" border="0" class="card">
         <tr>
             <td class="workitem">
-                <div class="subtitle">
-                    [TFSProject]
-                    &middot; [BugType]
-                </div>
 
-                <h1>
-                    <a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&id=[BUGID]">
-                        [BUGID]
-                    </a>
-                </h1>
+                <div class="subtitle">[TFSProject] &middot; [TFSWorkItemTemplate]</div>
 
-                <h2>
-                    <a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&id=[BUGID]">
-                        [BugTitle]
-                    </a>
-                </h2>
-                <h3>
-                    [BugOwner]
-                </h3>
+                <h1><a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&id=[_ID]">[_ID]</a></h1>
+                <h2><a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&id=[_ID]">[_TITLE]</a></h2>
+                <h3>[_OWNER:Unassigned]</h3>
+
+                <!--
+                To include any field from the work item in the email, please add a placeholder 
+                in the format [FieldName] or [FieldName:Default Value]. 
+                Examples: [Priority], [Stack Rank:TBD].
+
+                You could also use these generic placeholders that work with all systems.
+                [_ID]       -> ID of the work item
+                [_TITLE]    -> Title of the work item
+                [_OWNER]    -> Owner of the work item
+                [_STATE]    -> State of the work item
+                -->
             </td>
         </tr>
 

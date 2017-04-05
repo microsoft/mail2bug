@@ -304,21 +304,11 @@ namespace Mail2Bug.WorkItemManagement
             workItem.Save();
         }
 
-        public SimpleWorkItem GetWorkItem(int workItemId)
+        public IWorkItemFields GetWorkItemField(int workItemId)
         {
             if (workItemId <= 0) return null;
             var tfsWorkItem = _tfsStore.GetWorkItem(workItemId);
-
-            var workItem = new SimpleWorkItem()
-            {
-                Id = tfsWorkItem.Id,
-                Title = tfsWorkItem.Title,
-                AssignedTo = tfsWorkItem.Fields["Assigned To"].Value as string,
-                State = tfsWorkItem.State,
-                Fields = AsDictionary(tfsWorkItem.Fields)
-            };
-
-            return workItem;
+            return new TFSWorkItemFields(tfsWorkItem);
         }
 
         private Dictionary<string, string> AsDictionary(FieldCollection fields)

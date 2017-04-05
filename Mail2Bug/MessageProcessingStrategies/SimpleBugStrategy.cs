@@ -71,7 +71,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 Logger.ErrorFormat("Exception caught while applying settings to work item {0}\n{1}", workItemId, ex);
             }
 
-            var workItem = _workItemManager.GetWorkItem(workItemId);
+            var workItem = _workItemManager.GetWorkItemField(workItemId);
             _ackEmailHandler.SendAckEmail(message, workItem);
         }
 

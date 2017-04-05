@@ -23,10 +23,10 @@ namespace Mail2Bug.WorkItemManagement
         INameResolver GetNameResolver();
 
         /// <summary>
-        /// Get work item for the given ID.
+        /// Get fields for the work item with the given ID.
         /// </summary>
         /// <param name="workItemId">the work item ID</param>
         /// <returns>work item corresponding to the ID</returns>
-        SimpleWorkItem GetWorkItem(int workItemId);
+        IWorkItemFields GetWorkItemField(int workItemId);
     }
 }

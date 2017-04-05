@@ -18,7 +18,7 @@ namespace Mail2Bug.Email
         /// <summary>
         /// Send mail announcing receipt of new ticket
         /// </summary>
-        public void SendAckEmail(IIncomingEmailMessage originalMessage, SimpleWorkItem workItem)
+        public void SendAckEmail(IIncomingEmailMessage originalMessage, IWorkItemFields workItemFields)
         {
             // Don't send ack emails if it's disabled in configuration
             if (!_config.EmailSettings.SendAckEmails)
@@ -30,29 +30,17 @@ namespace Mail2Bug.Email
             var ewsMessage = originalMessage as EWSIncomingMessage;
             if (ewsMessage != null)
             {
-                HandleEWSMessage(ewsMessage, workItem);
+                HandleEWSMessage(ewsMessage, workItemFields);
             }
         }
 
-        private void HandleEWSMessage(EWSIncomingMessage originalMessage, SimpleWorkItem workItem)
+        private void HandleEWSMessage(EWSIncomingMessage originalMessage, IWorkItemFields workItemFields)
         {
-            originalMessage.Reply(GetReplyContents(workItem), _config.EmailSettings.AckEmailsRecipientsAll);
+            var replyTemplate = new AckEmailTemplate(_config.EmailSettings.GetReplyTemplate());
+            var replyBody = replyTemplate.Apply(workItemFields, _config);
+            originalMessage.Reply(replyBody, _config.EmailSettings.AckEmailsRecipientsAll);
         }
-
-        private string GetReplyContents(SimpleWorkItem workItem)
-        {
-            var bodyBuilder = new StringBuilder();
-            bodyBuilder.Append(_config.EmailSettings.GetReplyTemplate());
-            bodyBuilder.Replace("[BUGID]", workItem?.Id.ToString());
-            bodyBuilder.Replace("[BugTitle]", workItem?.Title);
-            bodyBuilder.Replace("[BugOwner]", string.IsNullOrEmpty(workItem?.AssignedTo) ? "Unassigned" : workItem.AssignedTo);
-            bodyBuilder.Replace("[BugType]", _config.TfsServerConfig.WorkItemTemplate);
-            bodyBuilder.Replace("[TFSCollectionUri]", _config.TfsServerConfig.CollectionUri);
-            bodyBuilder.Replace("[TFSProject]", _config.TfsServerConfig.Project);
-            bodyBuilder.Replace("[Mail2BugAlias]", _config.EmailSettings.Recipients?.Replace(';', '/'));
-            return bodyBuilder.ToString();
-        }
-
+        
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AckEmailHandler));
     }
 }

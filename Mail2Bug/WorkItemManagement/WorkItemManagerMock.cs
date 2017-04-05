@@ -67,6 +67,12 @@ namespace Mail2Bug.WorkItemManagement
                 id = _rand.Next(1, int.MaxValue);
             } while (Bugs.ContainsKey(id));
 
+            // Apply defaults
+            ApplyDefault(values, "ID", id.ToString());
+            ApplyDefault(values, "Title", $"WorkItem {id}");
+            ApplyDefault(values, "Assigned To", "Owner");
+            ApplyDefault(values, "State", "New");
+            
             Bugs[id] = new Dictionary<string, string>(values);
 
             CacheWorkItem(id);
@@ -98,7 +104,7 @@ namespace Mail2Bug.WorkItemManagement
             bugEntry[HistoryField] += comment;
         }
 
-        public SimpleWorkItem GetWorkItem(int workItemId)
+        public IWorkItemFields GetWorkItemField(int workItemId)
         {
             if (!Bugs.ContainsKey(workItemId))
             {
@@ -107,16 +113,7 @@ namespace Mail2Bug.WorkItemManagement
             }
             
             var bugEntry = Bugs[workItemId];
-            var workItem = new SimpleWorkItem()
-            {
-                Id = workItemId,
-                Title = $"WorkItem ${workItemId}",
-                AssignedTo = $"Owner ${workItemId}",
-                State = "New",
-                Fields = bugEntry
-            };
-
-            return workItem;
+            return new WorkItemFieldsMock(bugEntry);
         }
 
         public INameResolver GetNameResolver()
@@ -124,6 +121,14 @@ namespace Mail2Bug.WorkItemManagement
             if (ThrowOnGetNameResolver != null) throw ThrowOnGetNameResolver;
             return _resolver;
 
+        }
+
+        private void ApplyDefault(Dictionary<string, string> bugEntry, string fieldName, string defaultValue)
+        {
+            if (!bugEntry.ContainsKey(fieldName))
+            {
+                bugEntry[fieldName] = defaultValue;
+            }
         }
 
         public SortedList<string, int> WorkItemsCache { get; set; }
