@@ -12,7 +12,7 @@ namespace Mail2Bug.Email
         /// <summary>
         /// Regex pattern for placeholders.
         /// </summary>
-        private const string _pattern = @"\[(\w+)(:(.*))?\]";
+        private const string _pattern = @"\[([^:\]]+)(:([^\]]*))?\]";
 
         /// <summary>
         /// Provider independent placeholder for work item ID.

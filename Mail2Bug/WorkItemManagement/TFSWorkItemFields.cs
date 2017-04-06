@@ -25,7 +25,18 @@ namespace Mail2Bug.WorkItemManagement
 
         public string GetFieldValue(string fieldName)
         {
-            return _workItem.Fields[fieldName]?.ToString();
+            string fieldValue = null;
+
+            try
+            {
+                fieldValue = _workItem.Fields[fieldName]?.Value.ToString();
+            }
+            catch
+            {
+                // The field does not exist; ignore and proceed.
+            }
+
+            return fieldValue;
         }
     }
 }

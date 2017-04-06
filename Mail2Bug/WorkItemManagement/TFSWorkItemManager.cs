@@ -310,19 +310,7 @@ namespace Mail2Bug.WorkItemManagement
             var tfsWorkItem = _tfsStore.GetWorkItem(workItemId);
             return new TFSWorkItemFields(tfsWorkItem);
         }
-
-        private Dictionary<string, string> AsDictionary(FieldCollection fields)
-        {
-            var values = new Dictionary<string, string>(fields.Count);
-
-            foreach (Field field in fields)
-            {
-                values.Add(field.Name, field.Value?.ToString());
-            }
-
-            return values;
-        }
-
+        
         #region Work item caching
 
         public void CacheWorkItem(int workItemId)

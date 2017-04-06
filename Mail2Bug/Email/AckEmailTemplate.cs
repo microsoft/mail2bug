@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using log4net;
 using Mail2Bug.WorkItemManagement;
 
 namespace Mail2Bug.Email
@@ -31,10 +32,12 @@ namespace Mail2Bug.Email
             foreach (var placeholder in placeholders)
             {
                 var fieldNameUpper = placeholder.Field.ToUpper();
-                var value = specialReplacements.ContainsKey(fieldNameUpper)
+                var fieldValue = specialReplacements.ContainsKey(fieldNameUpper)
                     ? specialReplacements[fieldNameUpper]
                     : workItemFields.GetFieldValue(placeholder.Field);
-                bodyBuilder.Replace(placeholder.Text, value ?? placeholder.DefaultValue);
+                var value = string.IsNullOrWhiteSpace(fieldValue) ? placeholder.DefaultValue : fieldValue;
+                Logger.DebugFormat("Replacing placeholder {0} with value '{1}'", placeholder.Text, value);
+                bodyBuilder.Replace(placeholder.Text, value);
             }
             
             return bodyBuilder.ToString();
@@ -52,20 +55,37 @@ namespace Mail2Bug.Email
             return new Dictionary<string, string>
             {
                 // Non-work item fields.
-                ["MAIL2BUGALIAS"] = config.EmailSettings.Recipients?.Replace(';', '/'),
+                ["MAIL2BUGALIAS"] = EncodeHtml(config.EmailSettings.Recipients?.Replace(';', '/')),
 
                 // TFS specific fields.
-                ["TFSWORKITEMTEMPLATE"] = config.TfsServerConfig.WorkItemTemplate,
-                ["TFSCOLLECTIONURI"] = config.TfsServerConfig.CollectionUri,
-                ["TFSPROJECT"] = config.TfsServerConfig.Project,
+                ["TFSWORKITEMTEMPLATE"] = EncodeHtml(config.TfsServerConfig.WorkItemTemplate),
+                ["TFSCOLLECTIONURI"] = EncodeHtml(config.TfsServerConfig.CollectionUri),
+                ["TFSPROJECT"] = EncodeHtml(config.TfsServerConfig.Project),
 
                 // Special work item fields.
-                ["BUGID"] = workItemFields.ID,  // For backward compat
-                ["_ID"] = workItemFields.ID,
-                ["_TITLE"] = workItemFields.Title,
-                ["_OWNER"] = workItemFields.Owner,
-                ["_STATE"] = workItemFields.State
+                ["BUGID"] = EncodeHtml(workItemFields.ID),  // for backward compat
+                [AckEmailPlaceholder.ID] = EncodeHtml(workItemFields.ID),
+                [AckEmailPlaceholder.Title] = EncodeHtml(workItemFields.Title),
+                [AckEmailPlaceholder.Owner] = EncodeHtml(workItemFields.Owner),
+                [AckEmailPlaceholder.State] = EncodeHtml(workItemFields.State)
             };
         }
+
+        /// <summary>
+        /// Encode field values for use in HTML.
+        /// </summary>
+        /// <param name="value">the string to encode</param>
+        /// <returns>encoded string after handling HTML entities</returns>
+        private string EncodeHtml(string value)
+        {
+            return new StringBuilder(value)
+                .Replace("&", "&amp;")
+                .Replace("<", "&lt;")
+                .Replace(">", "&gt;")
+                .Replace("\"", "&quot;")
+                .ToString();
+        }
+
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(AckEmailTemplate));
     }
 }
