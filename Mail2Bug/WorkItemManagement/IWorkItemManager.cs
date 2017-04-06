@@ -27,6 +27,6 @@ namespace Mail2Bug.WorkItemManagement
         /// </summary>
         /// <param name="workItemId">the work item ID</param>
         /// <returns>work item corresponding to the ID</returns>
-        IWorkItemFields GetWorkItemField(int workItemId);
+        IWorkItemFields GetWorkItemFields(int workItemId);
     }
 }

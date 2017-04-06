@@ -304,7 +304,7 @@ namespace Mail2Bug.WorkItemManagement
             workItem.Save();
         }
 
-        public IWorkItemFields GetWorkItemField(int workItemId)
+        public IWorkItemFields GetWorkItemFields(int workItemId)
         {
             if (workItemId <= 0) return null;
             var tfsWorkItem = _tfsStore.GetWorkItem(workItemId);

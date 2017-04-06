@@ -104,7 +104,7 @@ namespace Mail2Bug.WorkItemManagement
             bugEntry[HistoryField] += comment;
         }
 
-        public IWorkItemFields GetWorkItemField(int workItemId)
+        public IWorkItemFields GetWorkItemFields(int workItemId)
         {
             if (!Bugs.ContainsKey(workItemId))
             {
