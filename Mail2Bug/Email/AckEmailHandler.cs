@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using log4net;
 using Mail2Bug.Email.EWS;
+using Mail2Bug.WorkItemManagement;
 
 namespace Mail2Bug.Email
 {
@@ -16,7 +18,7 @@ namespace Mail2Bug.Email
         /// <summary>
         /// Send mail announcing receipt of new ticket
         /// </summary>
-        public void SendAckEmail(IIncomingEmailMessage originalMessage, string workItemId)
+        public void SendAckEmail(IIncomingEmailMessage originalMessage, IWorkItemFields workItemFields)
         {
             // Don't send ack emails if it's disabled in configuration
             if (!_config.EmailSettings.SendAckEmails)
@@ -28,24 +30,17 @@ namespace Mail2Bug.Email
             var ewsMessage = originalMessage as EWSIncomingMessage;
             if (ewsMessage != null)
             {
-                HandleEWSMessage(ewsMessage, workItemId);
+                HandleEWSMessage(ewsMessage, workItemFields);
             }
         }
 
-        private void HandleEWSMessage(EWSIncomingMessage originalMessage, string workItemId)
+        private void HandleEWSMessage(EWSIncomingMessage originalMessage, IWorkItemFields workItemFields)
         {
-            originalMessage.Reply(GetReplyContents(workItemId), _config.EmailSettings.AckEmailsRecipientsAll);
+            var replyTemplate = new AckEmailTemplate(_config.EmailSettings.GetReplyTemplate());
+            var replyBody = replyTemplate.Apply(workItemFields, _config);
+            originalMessage.Reply(replyBody, _config.EmailSettings.AckEmailsRecipientsAll);
         }
-
-        private string GetReplyContents(string workItemId)
-        {
-            var bodyBuilder = new StringBuilder();
-            bodyBuilder.Append(_config.EmailSettings.GetReplyTemplate());
-            bodyBuilder.Replace("[BUGID]", workItemId);
-            bodyBuilder.Replace("[TFSCollectionUri]", _config.TfsServerConfig.CollectionUri);
-            return bodyBuilder.ToString();
-        }
-
+        
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AckEmailHandler));
     }
 }

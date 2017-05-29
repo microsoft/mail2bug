@@ -76,6 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecipientsMailboxManagerRouterUnitTest.cs" />
     <Compile Include="SimpleBugStrategyUnitTest.cs" />
+    <Compile Include="AckTemplateUnitTest.cs" />
     <Compile Include="TfsQueryParserUnitTest.cs" />
     <Compile Include="DPAPIUnitTests.cs" />
   </ItemGroup>
@@ -112,8 +113,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AckTemplateUnitTestConfig.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SimpleBugStrategyUnitTestConfig.xml">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\AckTemplate.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

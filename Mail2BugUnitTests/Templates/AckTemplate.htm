@@ -1,0 +1,44 @@
+﻿<html>
+<head>
+    <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+    <title></title>
+</head>
+<body>
+    <style>
+        body, td { font-family: Segoe UI Emoji, Segoe UI, Calibri; font-size: 0.9em; }
+        h1 { font-size: 2em; font-weight: normal; margin: 0px; padding: 0px; }
+        h2 { font-size: 1.45em; font-weight: normal; margin: 0px; padding: 0px; }
+        h3 { font-size: 1.1em; font-weight: normal; margin: 0px; padding: 0px; }
+        .card { max-width: 350px; }
+        .workitem { border: 1px solid #f0f0f0; border-left-width: 10px; border-left-color: #cc293d; padding: 20px; }
+        .workitem a { text-decoration: none; color: black; }
+        .subtitle { font-size: 0.85em; color: gray; text-transform: uppercase; }
+        .info { font-size: 0.9em; background-color: #f0f0f0; padding: 15px 25px; color: gray; }
+        .info a { color: black; }
+    </style>
+    <table cellspacing="0" cellpadding="0" border="0" class="card">
+        <tr>
+            <td class="workitem">
+                <div class="subtitle">[TFSProject] &middot; [TFSWorkItemTemplate]</div>
+
+                <h1><a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&amp;id=[_ID]">[_ID]</a></h1>
+                <h2><a href="[TFSCollectionUri]/[TFSProject]/_workitems#_a=edit&amp;id=[_ID]">[_TITLE]</a></h2>
+                <h3>[_OWNER:Unassigned]<br />[_STATE]</h3>
+
+                Priority is [Priority:PRI0]
+            </td>
+        </tr>
+
+        <tr>
+            <td class="info">
+                <p>
+                    The above work item has been created to track this issue.
+                    New messages in this conversation will be automatically added to the work item as long as [Mail2BugAlias] is a recipient.
+                </p>
+            </td>
+        </tr>
+    </table>
+    <br>&nbsp;
+    <br>&nbsp;
+</body>
+</html>

@@ -322,6 +322,13 @@ namespace Mail2Bug.WorkItemManagement
             workItem.Save();
         }
 
+        public IWorkItemFields GetWorkItemFields(int workItemId)
+        {
+            if (workItemId <= 0) return null;
+            var tfsWorkItem = _tfsStore.GetWorkItem(workItemId);
+            return new TFSWorkItemFields(tfsWorkItem);
+        }
+        
         #region Work item caching
 
         public void CacheWorkItem(int workItemId)

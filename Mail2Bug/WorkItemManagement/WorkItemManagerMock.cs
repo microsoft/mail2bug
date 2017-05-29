@@ -67,6 +67,12 @@ namespace Mail2Bug.WorkItemManagement
                 id = _rand.Next(1, int.MaxValue);
             } while (Bugs.ContainsKey(id));
 
+            // Apply defaults
+            ApplyDefault(values, "ID", id.ToString());
+            ApplyDefault(values, "Title", $"WorkItem {id}");
+            ApplyDefault(values, "Assigned To", "Owner");
+            ApplyDefault(values, "State", "New");
+            
             Bugs[id] = new Dictionary<string, string>(values);
 
             CacheWorkItem(id);
@@ -98,11 +104,31 @@ namespace Mail2Bug.WorkItemManagement
             bugEntry[HistoryField] += comment;
         }
 
+        public IWorkItemFields GetWorkItemFields(int workItemId)
+        {
+            if (!Bugs.ContainsKey(workItemId))
+            {
+                Logger.WarnFormat("Trying to modify non-existing bug {0}", workItemId);
+                return null;
+            }
+            
+            var bugEntry = Bugs[workItemId];
+            return new WorkItemFieldsMock(bugEntry);
+        }
+
         public INameResolver GetNameResolver()
         {
             if (ThrowOnGetNameResolver != null) throw ThrowOnGetNameResolver;
             return _resolver;
 
+        }
+
+        private void ApplyDefault(Dictionary<string, string> bugEntry, string fieldName, string defaultValue)
+        {
+            if (!bugEntry.ContainsKey(fieldName))
+            {
+                bugEntry[fieldName] = defaultValue;
+            }
         }
 
         public SortedList<string, int> WorkItemsCache { get; set; }

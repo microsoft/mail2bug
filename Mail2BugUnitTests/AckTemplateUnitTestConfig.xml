@@ -1,0 +1,34 @@
+﻿<?xml version="1.0"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Instances>
+    <InstanceConfig Name="MockMockMock">
+      <TfsServerConfig>
+        <CollectionUri>http://tfsdomain.com:8080/tfs</CollectionUri>
+        <Project>MyProj</Project>
+        <WorkItemTemplate>Bug</WorkItemTemplate>
+        <CacheQueryFile>Query.txt</CacheQueryFile>
+        <SimulationMode>false</SimulationMode>
+        <NamesListFieldName>Assigned To</NamesListFieldName>
+      </TfsServerConfig>
+      <WorkItemSettings>
+        <ConversationIndexFieldName>ConversationId</ConversationIndexFieldName>
+        <DefaultFieldValues>
+          <DefaultValueDefinition Field="Assigned To" Value="ABCD" />
+        </DefaultFieldValues>
+      </WorkItemSettings>
+      <EmailSettings>
+        <ServiceType>EWSByRecipients</ServiceType>
+        <EWSMailboxAddress>abc@def.com</EWSMailboxAddress>
+        <Recipients>abc@def.com</Recipients>
+
+        <SendAckEmails>false</SendAckEmails>
+        <AckEmailsRecipientsAll>true</AckEmailsRecipientsAll>
+        <IncomingFolder>M2B</IncomingFolder>
+        <AppendOnlyEmailTitleRegex>.*(bug)\s*#\s*(?&lt;id&gt;\d+)</AppendOnlyEmailTitleRegex>
+        <AppendOnlyEmailBodyRegex>!!!(bug)\s*#?\s*(?&lt;id&gt;\d+)</AppendOnlyEmailBodyRegex>
+        <ExplicitOverridesRegex>###\s*(?&lt;fieldName&gt;[^:]*):\s*(?&lt;value&gt;.*)</ExplicitOverridesRegex>
+        <ReplyTemplate>ReplyTemplate.htm</ReplyTemplate>
+      </EmailSettings>
+    </InstanceConfig>
+  </Instances>
+</Config>

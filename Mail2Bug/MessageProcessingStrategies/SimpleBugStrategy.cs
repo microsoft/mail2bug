@@ -70,7 +70,9 @@ namespace Mail2Bug.MessageProcessingStrategies
             {
                 Logger.ErrorFormat("Exception caught while applying settings to work item {0}\n{1}", workItemId, ex);
             }
-            _ackEmailHandler.SendAckEmail(message, workItemId.ToString(CultureInfo.InvariantCulture));
+
+            var workItem = _workItemManager.GetWorkItemFields(workItemId);
+            _ackEmailHandler.SendAckEmail(message, workItem);
         }
 
         private void AttachMessageToWorkItem(IIncomingEmailMessage message, int workItemId, string prefix)
