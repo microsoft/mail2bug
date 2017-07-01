@@ -50,10 +50,18 @@ namespace Mail2Bug.Email
         {
             // First remove comments, since they may have nested tags in them, which throw off the tag stripper regex
             text = Regex.Replace(text, "<!--.*?-->", string.Empty, RegexOptions.Singleline);
+
+            // Remove invisible html elements
+            text = Regex.Replace(text, "<head>.*</head>", string.Empty, RegexOptions.Singleline);
+            text = Regex.Replace(text, "<title>.*</title>", string.Empty, RegexOptions.Singleline);
+            text = Regex.Replace(text, "<style>.*</style>", string.Empty, RegexOptions.Singleline);
+            text = Regex.Replace(text, "<script>.*</script>", string.Empty, RegexOptions.Singleline);
+
+            // Remove tags and translate unicode entities
             text = Regex.Replace(text, "<.*?>", string.Empty, RegexOptions.Singleline);
             text = Regex.Replace(text, @"&#(?<ordinal>\d+);", ResolveOridnalToChar); 
 
-           var sb = new StringBuilder(text.Trim());
+            var sb = new StringBuilder(text.Trim());
 
             // Now unescape chars
             sb.Replace("&quot;", "\"");
