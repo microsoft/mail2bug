@@ -137,7 +137,7 @@ namespace Mail2Bug.Email.EWS
         public string GetConversationGuid()
         {
             return _conversationId == null
-               ? this.ConversationId.Substring(12, 32)
+               ? this.GetConversationIndex().Substring(12, 32)
                : string.Join("", _conversationId.Select(b => b.ToString("X2")));
         }
 

@@ -37,7 +37,8 @@ namespace Mail2Bug.Email
                     return new FolderMailboxManager(
                         exchangeService.Service, 
                         emailSettings.IncomingFolder,
-                        postProcessor);
+                        postProcessor,
+                        emailSettings.UseConversationGuidOnly);
 
                 case Config.EmailSettings.MailboxServiceType.EWSByRecipients:
 
