@@ -5,10 +5,11 @@ using System.IO;
 using System.Linq;
 using log4net;
 using Mail2Bug.MessageProcessingStrategies;
+using Mail2Bug.Email;
 
 namespace Mail2Bug.WorkItemManagement
 {
-    public class WorkItemManagerMock :IWorkItemManager
+    public class WorkItemManagerMock : IWorkItemManager
     {
         private readonly string _keyField;
 
@@ -20,7 +21,7 @@ namespace Mail2Bug.WorkItemManagement
             WorkItemsCache = new SortedList<string, int>();
         }
 
-        public void AttachFiles(int workItemId, List<string> fileList)
+        public void AttachFiles(int workItemId, IEnumerable<string> fileList)
         {
             foreach (var filename in fileList.Where(filename => !File.Exists(filename)))
             {
@@ -38,6 +39,11 @@ namespace Mail2Bug.WorkItemManagement
             }
 
             Attachments[workItemId].AddRange(fileList);
+        }
+
+        void IWorkItemManager.AttachAndInlineFiles(int workItemId, IEnumerable<Tuple<string, IIncomingEmailAttachment>> fileList)
+        {
+            throw new NotImplementedException();
         }
 
         public void CacheWorkItem(int workItemId)

@@ -13,7 +13,7 @@ namespace Mail2Bug.Email
     public interface IIncomingEmailMessage
     {
         string Subject { get; }
-        string RawBody { get; }
+        string HtmlBody { get; }
         string PlainTextBody { get; }
         string ConversationId { get; }
         string ConversationTopic { get; }
@@ -27,8 +27,6 @@ namespace Mail2Bug.Email
         IEnumerable<string> CcNames { get; }
         DateTime SentOn { get; }
         DateTime ReceivedOn { get; }
-
-        bool IsHtmlBody { get; }
 
         string Location { get; }
         DateTime? StartTime { get; }

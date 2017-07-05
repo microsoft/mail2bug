@@ -47,7 +47,7 @@ namespace Mail2BugUnitTests.Mocks.Email
             var message = AddMessage(false);
             message.Subject = subject;
             message.PlainTextBody = body;
-            message.RawBody = body;
+            message.HtmlBody = body;
 
             return message;
         }

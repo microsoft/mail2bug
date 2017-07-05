@@ -16,6 +16,7 @@ namespace Mail2Bug.MessageProcessingStrategies
         public const string MessageBodyKeyword = "##MessageBody";
         public const string MessageBodyWithSenderKeyword = "##MessageBodyWithSender";
         public const string RawMessageBodyKeyword = "##RawMessageBody";
+        public const string HtmlMessageBodyKeyword = "##HtmlMessageBody";
         public const string NowKeyword = "##Now";
         public const string TodayKeyword = "##Today";
         public const string LocationKeyword = "##Location";
@@ -36,7 +37,8 @@ namespace Mail2Bug.MessageProcessingStrategies
                 _valueResolutionMap[MessageBodyKeyword], 
                 message.SenderName, 
                 message.SenderAddress);
-            _valueResolutionMap[RawMessageBodyKeyword] = TextUtils.FixLineBreaks(message.RawBody);
+            _valueResolutionMap[RawMessageBodyKeyword] = message.HtmlBody; // Obsolete; left in for backwards compatibility
+            _valueResolutionMap[HtmlMessageBodyKeyword] = message.HtmlBody;
             _valueResolutionMap[NowKeyword] = DateTime.Now.ToString("g");
             _valueResolutionMap[TodayKeyword] = DateTime.Now.ToString("d");
             _valueResolutionMap[LocationKeyword] = message.Location;
@@ -55,7 +57,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 return value;
             }
 
-            // Found specia value - return resolution
+            // Found special value - return resolution
             var resolvedValue = _valueResolutionMap[value];
             Logger.DebugFormat("Resolved value '{0}' to '{1}'", value, resolvedValue);
             return resolvedValue;
@@ -65,7 +67,7 @@ namespace Mail2Bug.MessageProcessingStrategies
         public string Subject { get { return _valueResolutionMap[SubjectKeyword]; } }
         public string Sender { get { return _valueResolutionMap[SenderKeyword]; } }
         public string MessageBody { get { return _valueResolutionMap[MessageBodyKeyword]; } }
-        public string RawMessageBody { get { return _valueResolutionMap[RawMessageBodyKeyword]; } }
+        public string HtmlMessageBody { get { return _valueResolutionMap[HtmlMessageBodyKeyword]; } }
         public string Location { get { return _valueResolutionMap[LocationKeyword]; } }
         public string StartTime { get { return _valueResolutionMap[StartTimeKeyword]; } }
         public string EndTime { get { return _valueResolutionMap[EndTimeKeyword]; } }

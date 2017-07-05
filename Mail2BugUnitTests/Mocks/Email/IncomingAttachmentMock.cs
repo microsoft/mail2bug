@@ -17,6 +17,10 @@ namespace Mail2BugUnitTests.Mocks.Email
             Rand.NextBytes(Data);
         }
 
+        public bool IsInline { get { return false; } }
+
+        public string ContentId { get { return String.Empty; } }
+
         public string SaveAttachmentToFile()
         {
             return SaveAttachmentToFile(Path.GetTempFileName());

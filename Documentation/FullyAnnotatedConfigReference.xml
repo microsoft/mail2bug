@@ -106,7 +106,11 @@
                people/tools overwriting it with unrelated data. You should also consider not adding the field to the work
                item editing form (since no one should be editing it manually) -->
         <ConversationIndexFieldName>ConversationID</ConversationIndexFieldName>
-
+        <!-- For inlining of images to work, the EmailBodyFieldName must identify the TFS field
+             that the email body is populated to (this is because the field value must be read back after 
+             creation for reparsing of the image URLs).
+             Note: you should remove any mapping to this field in the DefaultFieldValues collection. -->
+        <EmailBodyFieldName>Description</EmailBodyFieldName>
         <!-- 'DefaultFieldValues' defines all the deafult values that should be assigned to the work item fields, one
              DefaultValueDefinition item per field.
              The important part is to include a default value for every mandatory field, otherwise work item creation will
@@ -119,13 +123,11 @@
         
                The default settings supports the following special values, prefixed by double hash-signs.
                - Subject - The email subject
-               - MessageBody - The body of the email message converted to plain text (i.e. if the body was HTML,
-                               it would be stripped to plain text)
+               - MessageBody - The body of the email message converted to plain text
                - MessageBodyWithSender - Similar to MessageBody, but with an added line at the bottom mentioning the
                  display name and email address of the sender. Useful to include indication of the person whose email
                  triggered the work item creation
-               - RawMessageBody - The raw body of the email - i.e. if it's an HTML message, this would be the full
-                 message HTML
+               - HtmlMessageBody - The HTML body of the email - i.e. RTF and plain-text messages are converted to HTML
                - Now - Current date time in general ("g") date time format (see 
                  https://msdn.microsoft.com/en-us/library/az4se3k1%28v=vs.110%29.aspx for date time format specification)
                - Today - Current date in short date format ("d")
@@ -133,10 +135,12 @@
                           this would resolve to the sender display name.
                - Location - In case the email is a meeting invite, the location of the meeting; empty string otherwise.
                - StartTime - In case the email is a meeting invite, the meeting start time; empty string otherwise.
-               - EndTime - In case the email is a meeting invite, the meeting end time; empty string otherwise.
-                    
+               - EndTime - In case the email is a meeting invite, the meeting end time; empty string otherwise.        
+               
+               Note: The "Iteration Path" field also recognizes the special value "@CurrentIteration".
+               
                The example below sets default for 5 fields - 4 of them with static default values, and the last
-               one (Description) set to the text of the email body
+               one (Description) set to the plain text version of the email body
                -->
           <DefaultValueDefinition Field="Assigned To" Value="Unassigned" />
           <DefaultValueDefinition Field="Severity" Value="1" />

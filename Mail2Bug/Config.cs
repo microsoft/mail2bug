@@ -105,7 +105,7 @@ namespace Mail2Bug
 
         public class WorkItemSettings
         {
-            // C'tor for assignign defaults
+            // C'tor for assigning defaults
             public WorkItemSettings()
             {
                 OverrideChangedBy = true;
@@ -120,6 +120,7 @@ namespace Mail2Bug
             }
 
             public string ConversationIndexFieldName { get; set; }
+            public string EmailBodyFieldName { get; set; }
 
             public List<DefaultValueDefinition> DefaultFieldValues { get; set; }
             public List<MnemonicDefinition> Mnemonics { get; set; }
@@ -187,6 +188,11 @@ namespace Mail2Bug
 
         public class EmailSettings
         {
+            public EmailSettings()
+            {
+                ConvertInlineAttachments = true;
+            }
+
             public enum MailboxServiceType
             {
                 EWSByFolder,
@@ -262,6 +268,8 @@ namespace Mail2Bug
                     return GetEncryptionScope(UseMachineScopeEncryption);
                 }
             }
+
+            public bool ConvertInlineAttachments { get; set; }
 
             private string _replyTemplate;
         }

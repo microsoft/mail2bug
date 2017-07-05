@@ -5,6 +5,8 @@
     /// </summary>
     public interface IIncomingEmailAttachment
     {
+        bool IsInline { get; }
+        string ContentId { get; }
         string SaveAttachmentToFile();
         string SaveAttachmentToFile(string filename);
     }

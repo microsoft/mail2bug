@@ -291,6 +291,7 @@
     <Compile Include="Email\EWS\ArchiverMessagePostProcessor.cs" />
     <Compile Include="Email\EWS\EWSConnectionManger.cs" />
     <Compile Include="Email\EWS\EWSExtendedProperty.cs" />
+    <Compile Include="Email\EWS\EWSIncomingAttachmentConverter.cs" />
     <Compile Include="Email\EWS\EWSIncomingFileAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingItemAttachment.cs" />
     <Compile Include="Email\EWS\EWSIncomingMessage.cs" />

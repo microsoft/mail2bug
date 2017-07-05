@@ -12,10 +12,11 @@ namespace Mail2Bug.Email.EWS
     {
 
         private readonly EmailMessage _message;
+        private readonly string _htmlBody;
         private readonly byte[] _conversationId;
         private readonly bool _useConversationGuidOnly;
 
-        public EWSIncomingMessage(EmailMessage message, bool useConversationGuidOnly = false)
+        public EWSIncomingMessage(EmailMessage message, bool useConversationGuidOnly = false, bool convertInlineAttachments = false)
         {
             _message = message;
             _useConversationGuidOnly = useConversationGuidOnly;
@@ -43,14 +44,15 @@ namespace Mail2Bug.Email.EWS
 
             message.TryGetProperty(EWSExtendedProperty.PidTagConversationId, out _conversationId);
 
-            Attachments = BuildAttachmentList(message);
+            var converter = new EWSIncomingAttachmentConverter(message);
+            converter.ProcessAttachments(convertInlineAttachments);
+            _htmlBody = converter.BodyText;
+            Attachments = converter.Attachments;
         }
 
         public string Subject { get { return _message.Subject; } }
         public string ConversationTopic { get { return _message.ConversationTopic; } }
-
-        public string RawBody { get { return _message.Body.Text; } }
-        
+        public string HtmlBody { get { return _htmlBody; } }
         public string PlainTextBody { get { return GetPlainTextBody(_message); } }
 
         public string ConversationId
@@ -70,7 +72,6 @@ namespace Mail2Bug.Email.EWS
         public IEnumerable<string> CcNames { get { return _message.CcRecipients.Select(x => x.Name); } }
         public DateTime SentOn { get { return _message.DateTimeSent; } }
         public DateTime ReceivedOn { get { return _message.DateTimeReceived; } }
-        public bool IsHtmlBody { get { return _message.Body.BodyType == BodyType.HTML; } }
 
         public string Location
         {
