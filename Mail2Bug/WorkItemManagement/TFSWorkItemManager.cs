@@ -297,6 +297,11 @@ namespace Mail2Bug.WorkItemManagement
 
                 const string pattern = @"(\<img.* src=\"")(cid:)(.*)(\"".*\>)";
 
+                // Images that are too large to have been base64 encoded are handled here. The item body is scanned for content ids
+                // and matched up to their attachments, and the image src attribute is updated to point to the attachment.
+                // The attachment is then removed, since TFS appears to retail the file in the host system without needing to retain
+                // the attached reference.
+
                 html = Regex.Replace(html, pattern, match =>
                 {
                     string contentId = match.Groups[3].ToString();
@@ -472,33 +477,6 @@ namespace Mail2Bug.WorkItemManagement
             }
 
             workItem.Save();
-        }
-
-        private IEnumerable<int> InternalAttachFiles(int workItemId, IEnumerable<string> fileList)
-        {
-            var attachmentIndexes = new List<int>();
-
-            if (workItemId > 0)
-            {
-                try
-                {
-                    var workItem = _tfsStore.GetWorkItem(workItemId);
-                    workItem.Open();
-
-                    foreach (var file in fileList)
-                    {
-                        attachmentIndexes.Add(workItem.Attachments.Add(new Attachment(file)));
-                    }
-
-                    ValidateAndSaveWorkItem(workItem);
-                }
-                catch (Exception exception)
-                {
-                    Logger.Error(exception.ToString());
-                }
-            }
-
-            return attachmentIndexes;
         }
 
         private NameResolver InitNameResolver()

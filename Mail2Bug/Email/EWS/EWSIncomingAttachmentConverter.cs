@@ -7,6 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace Mail2Bug.Email.EWS
 {
+    /// <summary>
+    /// This class processes attachments associated with the incoming email. For file attachments it captures information needed
+    /// for inlining of images. It also converts small images to base64 format and removes from them from the attachment list.
+    /// Larger images will be processed downstream as image references after the item is created in TFS.
+    /// </summary>
     public class EWSIncomingAttachmentConverter
     {
         // TFS drops large base64 inline images: http://johannblais.blogspot.com/2015/08/migrate-tfs-repro-steps-field-to.html
@@ -22,7 +27,7 @@ namespace Mail2Bug.Email.EWS
             _message = message;
         }
 
-        public void ProcessAttachments(bool convertInlineAttachments = false)
+        public void ProcessAttachments(bool convertInlineAttachments)
         {
             _bodyText = _message.Body.Text ?? String.Empty;
             _attachments = new List<IIncomingEmailAttachment>();
@@ -31,15 +36,20 @@ namespace Mail2Bug.Email.EWS
 
             foreach (var ma in _message.Attachments)
             {
-                if (doInlining)
-                    ma.Load(); // Content property requires load, and for RTF the ContentType property is also not available unless loaded
+                if (doInlining) ma.Load(); // Content property requires load, and for RTF the ContentType property is also not available unless loaded
 
                 if (ma is FileAttachment)
+                {
                     _attachments.Add(new EWSIncomingFileAttachment(ma as FileAttachment));
+                }
                 else if (ma is ItemAttachment)
+                {
                     _attachments.Add(new EWSIncomingItemAttachment(ma as ItemAttachment));
+                }
                 else
+                {
                     Logger.ErrorFormat("Skipping attachment because it's not a file attachment ({0})", ma.Name);
+                }
             }
 
             if (doInlining)
@@ -72,17 +82,13 @@ namespace Mail2Bug.Email.EWS
 
             _bodyText = Regex.Replace(_bodyText, pattern, match =>
             {
-                var inlineAttachment = inlineAttachments.ElementAtOrDefault(index++);
-                if (inlineAttachments != null)
+                var fileAttachment = inlineAttachments.ElementAtOrDefault(index++) as EWSIncomingFileAttachment;
+                if (fileAttachment != null)
                 {
-                    var fileAttachment = inlineAttachment as EWSIncomingFileAttachment;
-                    if (fileAttachment != null)
-                    {
-                        Logger.DebugFormat("Fixing content id");
-                        string contentId = Guid.NewGuid().ToString();
-                        fileAttachment.SetContentId(contentId);
-                        return $"{match.Groups[1]}{contentId}{match.Groups[3]}";
-                    }
+                    Logger.DebugFormat("Fixing content id");
+                    string contentId = Guid.NewGuid().ToString();
+                    fileAttachment.SetContentId(contentId);
+                    return $"{match.Groups[1]}{contentId}{match.Groups[3]}";
                 }
                 return match.Groups[0].ToString();
             });

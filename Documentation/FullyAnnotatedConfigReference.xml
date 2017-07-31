@@ -217,7 +217,6 @@
 
       <!-- 'EmailSettings' - contains settings related to accessing the email account and processing individual emails -->
       <EmailSettings>
-
         <!-- 'ServiceType' - this value dictates how the email inbox is monitored and which emails will be picked up for
              processing.
              
@@ -297,6 +296,11 @@
         <AppendOnlyEmailTitleRegex>.*(bug|work item)\s*#*\s*(?&lt;id&gt;\d+)</AppendOnlyEmailTitleRegex>
         <AppendOnlyEmailBodyRegex>!!!(bug|work item)\s*#*\s*(?&lt;id&gt;\d+)</AppendOnlyEmailBodyRegex>
         <ExplicitOverridesRegex>###\s*(?&lt;fieldName&gt;[^:]*):\s*(?&lt;value&gt;.*)</ExplicitOverridesRegex>
+
+        <!-- Process images that were inline in the email as inlined images in the resulting ticket body.
+             To activate this functionality, the EmailBodyFieldName must also be specified.
+             If this element is omitted, the default value is true.-->
+        <ConvertInlineAttachments>true</ConvertInlineAttachments>
       </EmailSettings>
     </InstanceConfig>
   </Instances>
