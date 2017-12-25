@@ -5,11 +5,12 @@ using Mail2Bug.Email;
 using Mail2Bug.Helpers;
 using Mail2Bug.MessageProcessingStrategies;
 using Mail2Bug.WorkItemManagement;
+using System.Collections.Generic;
 
 namespace Mail2Bug
 {
 	class Mail2BugEngine : IDisposable
-	{
+    {
 	    private readonly IMailboxManager _mailboxManager;
 		private readonly Config.InstanceConfig _config;
 
@@ -25,7 +26,7 @@ namespace Mail2Bug
 
 		public Mail2BugEngine(Config.InstanceConfig configInstance, MailboxManagerFactory mailboxManagerFactory)
 		{
-		    _config = configInstance;
+            _config = configInstance;
 
 		    Logger.InfoFormat("Initalizing MailboxManager");
             _mailboxManager = mailboxManagerFactory.CreateMailboxManager(_config.EmailSettings);
@@ -94,19 +95,21 @@ namespace Mail2Bug
         private IMessageProcessingStrategy InitProcessingStrategy()
         {
             IWorkItemManager workItemManager;
+            List<IMessageProcessingStrategy> strategies = new List<IMessageProcessingStrategy>();
             if (_config.TfsServerConfig.SimulationMode)
             {
                 Logger.InfoFormat("Working in simulation mode. Using WorkItemManagerMock");
                 workItemManager = new WorkItemManagerMock(_config.WorkItemSettings.ConversationIndexFieldName);
+                strategies.Add(new SimpleBugStrategy(_config, workItemManager));
             }
             else
             {
                 Logger.InfoFormat("Working in standard mode, using TFSWorkItemManager");
-                workItemManager = new TFSWorkItemManager(_config);
+                strategies.Add(new SimpleBugStrategy(_config));
             }
-
             Logger.InfoFormat("Initializing MessageProcessingStrategy");
-            return new SimpleBugStrategy(_config, workItemManager);
+            
+            return new MultiStrategy(strategies);
         }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Mail2BugEngine));

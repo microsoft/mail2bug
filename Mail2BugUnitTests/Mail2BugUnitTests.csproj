@@ -72,6 +72,8 @@
     <Compile Include="Mocks\Email\IncomingAttachmentMock.cs" />
     <Compile Include="Mocks\Email\IncomingEmailMessageMock.cs" />
     <Compile Include="Mocks\Email\MailManagerMock.cs" />
+    <Compile Include="Mocks\ProcessingStrategyMock.cs" />
+    <Compile Include="MultiStrategyUnitTest.cs" />
     <Compile Include="OverridesExtractorUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecipientsMailboxManagerRouterUnitTest.cs" />
