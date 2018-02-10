@@ -12,6 +12,7 @@ namespace Mail2Bug.WorkItemManagement
         private readonly string _appendOnlyEmailTitleRegex;
         private readonly string _appendOnlyEmailBodyRegex;
         private readonly SortedList<string, int> _workItemsCache;
+        private readonly bool _useConversationGuidOnly;
 
         /// <summary>
         /// This class is used for mapping incoming messages to work item IDs, either based on the
@@ -24,16 +25,18 @@ namespace Mail2Bug.WorkItemManagement
         /// a message's body text</param>
         /// <param name="workItemsCache">The work items cache, mapping from conversation IDs to work
         /// item IDs</param>
-        /// <param name="useConversationGuid">Use conversationID rather than whole conversationIndex
+        /// <param name="useConversationGuidOnly">Use conversationID rather than whole conversationIndex
         /// </param>
         public MessageToWorkItemMapper(
             string appendOnlyEmailTitleRegex,
             string appendOnlyEmailBodyRegex,
-            SortedList<string,int> workItemsCache)
+            SortedList<string,int> workItemsCache,
+            bool useConversationGuidOnly)
         {
             _appendOnlyEmailTitleRegex = appendOnlyEmailTitleRegex;
             _appendOnlyEmailBodyRegex = appendOnlyEmailBodyRegex;
             _workItemsCache = workItemsCache;
+            _useConversationGuidOnly = useConversationGuidOnly;
     }
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace Mail2Bug.WorkItemManagement
             }
 
             // Just a standard conversation - look up the cache based on the conversation ID (or guid)
-            return GetWorkItemIdFromConversationId(message.ConversationId, _workItemsCache);
+            return GetWorkItemIdFromConversationId(message.ConversationId, _workItemsCache, _useConversationGuidOnly);
         }
 
         private int? IsAppendOnlyMessage(IIncomingEmailMessage message)
@@ -99,7 +102,7 @@ namespace Mail2Bug.WorkItemManagement
             return Int32.Parse(workItemIdString);
         }
 
-        public static int? GetWorkItemIdFromConversationId(string conversationId, SortedList<string, int> bugs)
+        public static int? GetWorkItemIdFromConversationId(string conversationId, SortedList<string, int> bugs, bool useConversationGuidOnly)
         {
             Logger.DebugFormat("GetWorkItemIdFromConversationId {0}", conversationId);
             foreach (var bugConversationId in bugs.Keys)
@@ -110,8 +113,12 @@ namespace Mail2Bug.WorkItemManagement
                     continue;
                 }
 
-                if (conversationId.StartsWith(bugConversationId))
+                // If we are using only the ConversationGuid, look for an exact match.
+                // Otherwise, do a StartsWith match, as we used to do.
+                if ((!useConversationGuidOnly && conversationId.StartsWith(bugConversationId)) 
+                     || conversationId.Equals(bugConversationId))
                 {
+                    Logger.DebugFormat("Matched conversation {0} against bug with conversation id {1}", conversationId, bugConversationId);
                     return bugs[bugConversationId];
                 }
 
