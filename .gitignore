@@ -43,6 +43,7 @@ ipch/
 TestResults/
 Ankh.NoLoad
 pingme.txt
+*.userprefs
 
  
 
