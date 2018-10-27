@@ -1,0 +1,1 @@
+﻿.\Mail2Bug.exe

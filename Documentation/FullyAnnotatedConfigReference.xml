@@ -72,6 +72,24 @@
         <ServiceIdentityPatFile>.\Resources\your-m2b-user-token.bin</ServiceIdentityPatFile>
         -->
 
+        <!-- 
+            Authenticate using a PAT stored in Azure KeyVault, especially when running as a WebJob. 
+            The environment variables configured here should contain the Application ID of the registered 
+            AAD application and the secret needed to access the keyvault entry.
+
+            For more details on configuring Mail2Bug as WebJob:
+            https://www.jeff.wilcox.name/2017/02/mail2bug/
+            https://docs.microsoft.com/en-us/azure/app-service/web-sites-create-web-jobs
+            https://github.com/projectkudu/kudu/wiki/WebJobs
+            https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-integrating-applications
+
+        <ServiceIdentityPatKeyVaultSecret>
+            <KeyVaultPath>https://myvault.vault.azure.net/secrets/mysecret</KeyVaultPath>
+            <ApplicationIdEnvironmentVariableName>DIRECTORY_APPLICATION_ID</ApplicationIdEnvironmentVariableName>
+            <ApplicationSecretEnvironmentVariableName>DIRECTORY_APPLICATION_SECRET</ApplicationSecretEnvironmentVariableName>
+        </ServiceIdentityPatKeyVaultSecret>
+        -->
+        
         <!-- 'Project' - The name of the project within the collection -->
         <Project>HelloWorldProject</Project>
 
@@ -266,6 +284,18 @@
              run under the same credentials that mail2bug will run with, otherwise it won't be able to decrypt the
              contents. -->
         <EWSPasswordFile>.\Resources\mail2bug.bin</EWSPasswordFile>
+
+        <!-- 
+            Authenticate using a password stored in Azure KeyVault, especially when running as a WebJob. 
+            The environment variables configured here should contain the Application ID of the registered 
+            AAD application and the secret needed to access the keyvault entry.
+
+        <EWSKeyVaultSecret>
+            <KeyVaultPath>https://myvault.vault.azure.net/secrets/mysecret</KeyVaultPath>
+            <ApplicationIdEnvironmentVariableName>DIRECTORY_APPLICATION_ID</ApplicationIdEnvironmentVariableName>
+            <ApplicationSecretEnvironmentVariableName>DIRECTORY_APPLICATION_SECRET</ApplicationSecretEnvironmentVariableName>
+        </EWSKeyVaultSecret>
+        -->
 
         <!-- Instead of using the whole ConversationIndex, use only the ConversationID, which is the guid portion of
              the ConversationIndex, to identify a conversation. This should help avoid the possibility of replies
