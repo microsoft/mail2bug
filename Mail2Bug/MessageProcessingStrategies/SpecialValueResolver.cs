@@ -23,7 +23,6 @@ namespace Mail2Bug.MessageProcessingStrategies
         public const string EndTimeKeyword = "##EndTime";
         public const string SenderEmailKeyword = "##SenderEmail";
 
-
         #endregion
 
         public SpecialValueResolver(IIncomingEmailMessage message, INameResolver resolver)
