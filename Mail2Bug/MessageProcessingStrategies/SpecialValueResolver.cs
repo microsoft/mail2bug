@@ -21,6 +21,8 @@ namespace Mail2Bug.MessageProcessingStrategies
         public const string LocationKeyword = "##Location";
         public const string StartTimeKeyword = "##StartTime";
         public const string EndTimeKeyword = "##EndTime";
+        public const string SenderEmailKeyword = "##SenderEmail";
+
 
         #endregion
 
@@ -42,6 +44,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             _valueResolutionMap[LocationKeyword] = message.Location;
             _valueResolutionMap[StartTimeKeyword] = GetValidTimeString(message.StartTime);
             _valueResolutionMap[EndTimeKeyword] = GetValidTimeString(message.EndTime);
+            _valueResolutionMap[SenderEmailKeyword] = message.SenderAddress;
         }
 
 
@@ -69,6 +72,7 @@ namespace Mail2Bug.MessageProcessingStrategies
         public string Location { get { return _valueResolutionMap[LocationKeyword]; } }
         public string StartTime { get { return _valueResolutionMap[StartTimeKeyword]; } }
         public string EndTime { get { return _valueResolutionMap[EndTimeKeyword]; } }
+        public string SenderEmail { get { return _valueResolutionMap[SenderEmailKeyword]; } }
 
         private string GetSender(IIncomingEmailMessage message)
         {
