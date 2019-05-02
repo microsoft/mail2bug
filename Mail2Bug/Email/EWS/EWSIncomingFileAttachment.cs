@@ -7,10 +7,22 @@ namespace Mail2Bug.Email.EWS
     class EWSIncomingFileAttachment : IIncomingEmailAttachment
     {
         private readonly Microsoft.Exchange.WebServices.Data.FileAttachment _attachment;
+        private string _contentId;
 
         public EWSIncomingFileAttachment(Microsoft.Exchange.WebServices.Data.FileAttachment attachment)
         {
             _attachment = attachment;
+            _contentId = attachment.ContentId;
+        }
+
+        public bool IsInline { get { return _attachment.IsInline; } }
+        public string ContentId { get { return _contentId; } }
+        public string ContentType { get { return _attachment.ContentType; } }
+        public byte[] Content { get { return _attachment.Content; } }
+
+        public void SetContentId(string contentId)
+        {
+            _contentId = contentId;
         }
 
         public string SaveAttachmentToFile()

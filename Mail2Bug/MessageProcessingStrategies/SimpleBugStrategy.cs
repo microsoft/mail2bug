@@ -60,7 +60,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 // Since the work item *has* been created, failures in this stage are not treated as critical
                 var overrides = new OverridesExtractor(_config).GetOverrides(message);
                 TryApplyFieldOverrides(overrides, workItemId);
-                ProcessAttachments(message, workItemId);
+                ProcessAttachments(message, workItemId, _config.EmailSettings.ConvertInlineAttachments);
                 
                 if (_config.WorkItemSettings.AttachOriginalMessage)
                 {
@@ -105,7 +105,17 @@ namespace Mail2Bug.MessageProcessingStrategies
     		{
     		    workItemUpdates[defaultFieldValue.Field] = resolver.Resolve(defaultFieldValue.Value);
     		}
-    	}
+
+            string emailBodyFieldName = _config.WorkItemSettings.EmailBodyFieldName;
+            if (!String.IsNullOrEmpty(emailBodyFieldName))
+            {
+                if (workItemUpdates.Keys.Contains(emailBodyFieldName))
+                {
+                    Logger.Warn($"Field {emailBodyFieldName} is defined for mapping in {nameof(_config.WorkItemSettings.EmailBodyFieldName)} for mapping. The DefaultValueDefinition entry will be ignored.");
+                }
+                workItemUpdates[emailBodyFieldName] = resolver.HtmlMessageBody;
+            }
+        }
 
         private void TryApplyFieldOverrides(Dictionary<string, string> overrides, int workItemId)
         {
@@ -152,7 +162,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             // Construct the text to be appended
             _workItemManager.ModifyWorkItem(workItemId, message.GetLastMessageText(), workItemUpdates);
 
-            ProcessAttachments(message, workItemId);
+            ProcessAttachments(message, workItemId, false);
 
             if (_config.WorkItemSettings.AttachUpdateMessages)
             {
@@ -160,32 +170,32 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
         }
 
-        private void ProcessAttachments(IIncomingEmailMessage message, int workItemId)
+        private void ProcessAttachments(IIncomingEmailMessage message, int workItemId, bool convertInlineAttachments)
         {
-            var attachmentFiles = SaveAttachments(message);
-            _workItemManager.AttachFiles(workItemId, (from object file in attachmentFiles select file.ToString()).ToList());
-            attachmentFiles.Delete();
+            var fileList = SaveAttachments(message);
+            _workItemManager.AttachAndInlineFiles(workItemId, fileList);
+            fileList.ToList().ForEach(x => File.Delete(x.Item1));
         }
 
         /// <summary>
         /// Take attachments from the current mail message and put them in a work item
         /// </summary>
         /// <param name="message"></param>
-        private static TempFileCollection SaveAttachments(IIncomingEmailMessage message)
+        private static IEnumerable<Tuple<string, IIncomingEmailAttachment>> SaveAttachments(IIncomingEmailMessage message)
         {
-            var attachmentFiles = new TempFileCollection();
+            var attachedFiles = new List<Tuple<string, IIncomingEmailAttachment>>();
 
             foreach (var attachment in message.Attachments)
             {
-                var filename = attachment.SaveAttachmentToFile();
-                if (filename != null)
+                var file = attachment.SaveAttachmentToFile();
+                if (file != null)
                 {
-                    attachmentFiles.AddFile(filename, false);
-                    Logger.InfoFormat("Attachment saved to file {0}", filename);
+                    attachedFiles.Add(new Tuple<string, IIncomingEmailAttachment>(file, attachment));
+                    Logger.InfoFormat("Attachment saved to file {0}", file);
                 }
             }
 
-            return attachmentFiles;
+            return attachedFiles;
         }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SimpleBugStrategy));

@@ -1,11 +1,15 @@
+using System;
 using System.Collections.Generic;
+using Mail2Bug.Email;
 using Mail2Bug.MessageProcessingStrategies;
 
 namespace Mail2Bug.WorkItemManagement
 {
     public interface IWorkItemManager
     {
-        void AttachFiles(int workItemId, List<string> fileList);
+        void AttachFiles(int workItemId, IEnumerable<string> fileList);
+
+        void AttachAndInlineFiles(int workItemId, IEnumerable<Tuple<string, IIncomingEmailAttachment>> fileList);
 
         SortedList<string, int> WorkItemsCache { get; }
 

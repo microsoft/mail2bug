@@ -35,7 +35,7 @@ namespace Mail2BugUnitTests.Mocks.Email
             var mock = new IncomingEmailMessageMock
                 {
                     Subject = RandomDataHelper.GetSubject(_seed++),
-                    RawBody = RandomDataHelper.GetBody(_seed++),
+                    HtmlBody = RandomDataHelper.GetBody(_seed++),
                     PlainTextBody = RandomDataHelper.GetBody(_seed++),
                     ConversationId = RandomDataHelper.GetConversationId(_seed++),
                     ConversationTopic = RandomDataHelper.GetSubject(_seed++),
@@ -63,7 +63,7 @@ namespace Mail2BugUnitTests.Mocks.Email
         }
 
         public string Subject { get; set; }
-        public string RawBody { get; set; }
+        public string HtmlBody { get; set; }
         public string PlainTextBody { get; set; }
         public string ConversationId { get; set; }
         public string ConversationTopic { get; set; }
@@ -97,7 +97,7 @@ namespace Mail2BugUnitTests.Mocks.Email
             {
                 sw.WriteLine("Subject: " + Subject);
                 sw.WriteLine();
-                sw.WriteLine(RawBody);
+                sw.WriteLine(HtmlBody);
             }
 
             return filename;

@@ -19,6 +19,9 @@ namespace Mail2Bug.Email.EWS
             Logger.DebugFormat("Attachment name is {0}", _attachment.Name);
         }
 
+        public bool IsInline { get { return _attachment.IsInline; } }
+        public string ContentId { get { return _attachment.ContentId; } }
+
         public string SaveAttachmentToFile()
         {
             return SaveAttachmentToFile(FileUtils.GetValidFileName(_attachment.Name, "eml", Path.GetTempPath()));

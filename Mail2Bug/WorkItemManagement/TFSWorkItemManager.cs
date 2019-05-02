@@ -12,6 +12,8 @@ using Mail2Bug.MessageProcessingStrategies;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using System.Text.RegularExpressions;
+using Mail2Bug.Email;
 
 namespace Mail2Bug.WorkItemManagement
 {
@@ -39,7 +41,7 @@ namespace Mail2Bug.WorkItemManagement
                 throw new Exception("Cannot initialize TFS Store");
             }
 
-            Logger.InfoFormat("Geting TFS Project");
+            Logger.InfoFormat("Getting TFS Project");
             _tfsProject = _tfsStore.Projects[config.TfsServerConfig.Project];
 
 
@@ -242,7 +244,7 @@ namespace Mail2Bug.WorkItemManagement
                 _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret);
         }
 
-        public void AttachFiles(int workItemId, List<string> fileList)
+        public void AttachFiles(int workItemId, IEnumerable<string> fileList)
         {
             if (workItemId <= 0) return;
 
@@ -251,7 +253,71 @@ namespace Mail2Bug.WorkItemManagement
                 WorkItem workItem = _tfsStore.GetWorkItem(workItemId);
                 workItem.Open();
 
-                fileList.ForEach(file => workItem.Attachments.Add(new Attachment(file)));
+                foreach (var file in fileList)
+                    workItem.Attachments.Add(new Attachment(file));
+
+                ValidateAndSaveWorkItem(workItem);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception.ToString());
+            }
+        }
+
+        public void AttachAndInlineFiles(int workItemId, IEnumerable<Tuple<string, IIncomingEmailAttachment>> fileList)
+        {
+            if (workItemId <= 0) return;
+
+            string fieldNameToUpdate = _config.WorkItemSettings.EmailBodyFieldName;
+
+            if (_config.EmailSettings.ConvertInlineAttachments && String.IsNullOrEmpty(fieldNameToUpdate))
+            {
+                Logger.WarnFormat("Inlining of images as attachments is not available because EmailBodyFieldName has not been set");
+                AttachFiles(workItemId, fileList.Select(f => f.Item1));
+                return;
+            }
+
+            try
+            {
+                var workItem = _tfsStore.GetWorkItem(workItemId);
+                workItem.PartialOpen();
+
+                var attachmentTrackers = fileList.Select(f => new
+                {
+                    WorkItemAttachmentIndex = workItem.Attachments.Add(new Attachment(f.Item1)),
+                    IsInline = f.Item2.IsInline,
+                    ContentId = f.Item2.ContentId
+                });
+
+                ValidateAndSaveWorkItem(workItem); // Save before proceeding to generate the URIs for the attachments
+
+                workItem.PartialOpen();
+
+                string html = workItem.Fields[fieldNameToUpdate].Value?.ToString();
+
+                const string pattern = @"(\<img.* src=\"")(cid:)(.*)(\"".*\>)";
+
+                // Images that are too large to have been base64 encoded are handled here. The item body is scanned for content ids
+                // and matched up to their attachments, and the image src attribute is updated to point to the attachment.
+                // The attachment is then removed, since TFS appears to retail the file in the host system without needing to retain
+                // the attached reference.
+
+                html = Regex.Replace(html, pattern, match =>
+                {
+                    string contentId = match.Groups[3].ToString();
+
+                    var tracker = attachmentTrackers.FirstOrDefault(a => a.ContentId == contentId);
+                    if (tracker != null)
+                    {
+                        Logger.DebugFormat("Converting attached image to inline reference");
+                        var workItemAttachment = workItem.Attachments[tracker.WorkItemAttachmentIndex];
+                        workItem.Attachments.Remove(workItemAttachment); // No need to keep the image as an attachment once it's been inlined.
+                        return $"{match.Groups[1]}{workItemAttachment.Uri.ToString()}{match.Groups[4]}";
+                    }
+                    return match.Groups[0].ToString();
+                });
+
+                workItem.Fields[fieldNameToUpdate].Value = html;
                 ValidateAndSaveWorkItem(workItem);
             }
             catch (Exception exception)
