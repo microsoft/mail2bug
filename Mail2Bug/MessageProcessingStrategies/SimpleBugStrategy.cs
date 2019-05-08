@@ -19,10 +19,10 @@ namespace Mail2Bug.MessageProcessingStrategies
         private readonly AckEmailHandler _ackEmailHandler;
         private readonly MessageToWorkItemMapper _messageToWorkItemMapper;
 
-		public SimpleBugStrategy(Config.InstanceConfig config, IWorkItemManager workItemManager)
+		public SimpleBugStrategy(Config.InstanceConfig config)
         {
             _config = config;
-            _workItemManager = workItemManager;
+            _workItemManager = InitWorkItemManager();
 		    _ackEmailHandler = new AckEmailHandler(config);
             _messageToWorkItemMapper = 
                 new MessageToWorkItemMapper(
@@ -31,7 +31,17 @@ namespace Mail2Bug.MessageProcessingStrategies
                     _workItemManager.WorkItemsCache,
                     _config.EmailSettings.UseConversationGuidOnly);
         }
-
+        public SimpleBugStrategy(Config.InstanceConfig config, IWorkItemManager WitManager)
+        {
+            _config = config;
+            _workItemManager = WitManager;
+            _ackEmailHandler = new AckEmailHandler(config);
+            _messageToWorkItemMapper =
+                new MessageToWorkItemMapper(
+                    _config.EmailSettings.AppendOnlyEmailTitleRegex,
+                    _config.EmailSettings.AppendOnlyEmailBodyRegex,
+                    _workItemManager.WorkItemsCache);
+        }
         public void ProcessInboxMessage(IIncomingEmailMessage message)
         {
             var workItemId = _messageToWorkItemMapper.GetWorkItemId(message);
@@ -186,6 +196,22 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
 
             return attachmentFiles;
+        }
+
+        private IWorkItemManager InitWorkItemManager() {
+            IWorkItemManager workItemManager;
+            if (_config.TfsServerConfig.SimulationMode)
+            {
+                Logger.InfoFormat("Working in simulation mode. Using WorkItemManagerMock");
+                workItemManager = new WorkItemManagerMock(_config.WorkItemSettings.ConversationIndexFieldName);
+            }
+            else
+            {
+                Logger.InfoFormat("Working in standard mode, using TFSWorkItemManager");
+                workItemManager = new TFSWorkItemManager(_config);
+            }
+
+            return workItemManager;
         }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SimpleBugStrategy));
