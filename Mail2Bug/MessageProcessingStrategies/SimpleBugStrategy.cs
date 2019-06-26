@@ -118,7 +118,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             try
             {
                 Logger.DebugFormat("Overrides found. Calling 'ModifyWorkItem'");
-                _workItemManager.ModifyWorkItem(workItemId, "", overrides);
+                _workItemManager.ModifyWorkItem(workItemId, "", false, overrides);
             }
             catch (Exception ex)
             {
@@ -139,10 +139,11 @@ namespace Mail2Bug.MessageProcessingStrategies
                 workItemUpdates["Changed By"] = resolver.Sender;
             }
 
+            string lastMessageText = message.GetLastMessageText();
             if (_config.WorkItemSettings.ApplyOverridesDuringUpdate)
             {
                 var extractor = new OverridesExtractor(_config);
-                var overrides = extractor.GetOverrides(message.GetLastMessageText());
+                var overrides = extractor.GetOverrides(lastMessageText);
 
                 Logger.DebugFormat("Found {0} overrides for update message", overrides.Count);
 
@@ -150,7 +151,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
 
             // Construct the text to be appended
-            _workItemManager.ModifyWorkItem(workItemId, message.GetLastMessageText(), workItemUpdates);
+            _workItemManager.ModifyWorkItem(workItemId, lastMessageText, message.IsHtmlBody, workItemUpdates);
 
             ProcessAttachments(message, workItemId);
 

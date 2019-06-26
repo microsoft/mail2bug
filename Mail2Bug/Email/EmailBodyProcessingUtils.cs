@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using CsQuery;
 
 namespace Mail2Bug.Email
 {
@@ -10,8 +11,13 @@ namespace Mail2Bug.Email
     {
         public static string GetLastMessageText(IIncomingEmailMessage message)
         {
+            return message.IsHtmlBody ? GetLastMessageText_Html(message.RawBody) : GetLastMessageText_PlainText(message);
+        }
+
+        private static string GetLastMessageText_PlainText(IIncomingEmailMessage message)
+        {
             var lastMessage = new StringBuilder();
-            lastMessage.Append(message.PlainTextBody);
+            lastMessage.Append(message.RawBody);
 
             var next = GetReplySeperatorIndex(lastMessage.ToString());
 
@@ -23,6 +29,48 @@ namespace Mail2Bug.Email
             return lastMessage.ToString();
         }
 
+        public static string GetLastMessageText_Html(string rawBody)
+        {
+            CQ dom = rawBody;
+
+            foreach (IDomObject element in dom["*"])
+            {
+                if (!element.ChildElements.Any() && !string.IsNullOrWhiteSpace(element.InnerText))
+                {
+                    var separatorIndex = IndexOfAny(element.InnerText, MessageBorderMarkers);
+                    if (separatorIndex.HasValue)
+                    {
+                        element.InnerText = element.InnerText.Substring(0, separatorIndex.Value);
+                        RemoveSubsequent(element);
+                        break;
+                    }
+                }
+            }
+
+            return dom.Render();
+        }
+
+        private static void RemoveSubsequent(IDomObject element)
+        {
+            IDomObject nextNode;
+            while ((nextNode = element.NextSibling) != null)
+            {
+                nextNode.Remove();
+            }
+
+            if (element.ParentNode is IDomObject parentElement)
+            {
+                RemoveSubsequent(parentElement);
+            }
+        }
+
+        private static readonly string[] MessageBorderMarkers =
+        {
+            "_____",
+            "-----Original Message",
+            "From:",
+        };
+
         /// <summary>
         /// Get the seperate denotation between reply content and original content.
         /// </summary>
@@ -30,20 +78,17 @@ namespace Mail2Bug.Email
         /// <returns></returns>
         private static int GetReplySeperatorIndex(string description)
         {
-            var indices = new List<int> 
-            {
-                description.IndexOf("_____", StringComparison.Ordinal),
-                description.IndexOf("-----Original Message", StringComparison.Ordinal),
-                description.IndexOf("From:", StringComparison.Ordinal)
-            };
+            return IndexOfAny(description, MessageBorderMarkers) ?? description.Length;
+        }
 
-            indices.RemoveAll(x => x < 0);
-            if (indices.Count == 0)
-            {
-                return description.Length;
-            }
-
-            return indices.Min();
+        private static int? IndexOfAny(string text, IEnumerable<string> searchTerms)
+        {
+            return searchTerms
+                .Select(search => text.IndexOf(search, StringComparison.Ordinal))
+                .Where(index => index >= 0)
+                .OrderBy(index => index)
+                .Cast<int?>()
+                .FirstOrDefault();
         }
 
         public static string ConvertHtmlMessageToPlainText(string text)

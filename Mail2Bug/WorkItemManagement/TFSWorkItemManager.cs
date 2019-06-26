@@ -303,7 +303,7 @@ namespace Mail2Bug.WorkItemManagement
         /// <param name="workItemId">The ID of the work item to modify </param>
         /// <param name="comment">Comment to add to description</param>
         /// <param name="values">List of fields to change</param>
-        public void ModifyWorkItem(int workItemId, string comment, Dictionary<string, string> values)
+        public void ModifyWorkItem(int workItemId, string comment, bool commentIsHtml, Dictionary<string, string> values)
         {
             if (workItemId <= 0) return;
 
@@ -311,7 +311,7 @@ namespace Mail2Bug.WorkItemManagement
 
             workItem.Open();
 
-            workItem.History = comment.Replace("\n", "<br>");
+            workItem.History = commentIsHtml ? comment : comment.Replace("\n", "<br>");
             foreach (var key in values.Keys)
             {
                 TryApplyFieldValue(workItem, key, values[key]);

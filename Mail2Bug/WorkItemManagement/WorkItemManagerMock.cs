@@ -80,7 +80,7 @@ namespace Mail2Bug.WorkItemManagement
             return id;
         }
 
-        public void ModifyWorkItem(int workItemId, string comment, Dictionary<string, string> values)
+        public void ModifyWorkItem(int workItemId, string comment, bool commentIsHtml, Dictionary<string, string> values)
         {
             if (ThrowOnModifyBug != null) throw ThrowOnModifyBug;
 
