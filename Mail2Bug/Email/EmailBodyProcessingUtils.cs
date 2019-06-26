@@ -17,7 +17,7 @@ namespace Mail2Bug.Email
         private static string GetLastMessageText_PlainText(IIncomingEmailMessage message)
         {
             var lastMessage = new StringBuilder();
-            lastMessage.Append(message.RawBody);
+            lastMessage.Append(message.PlainTextBody);
 
             var next = GetReplySeperatorIndex(lastMessage.ToString());
 
