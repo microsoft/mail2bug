@@ -123,5 +123,24 @@ namespace Mail2Bug.Email
             var unicodeChar = (char)int.Parse(ordinalMatch.Groups["ordinal"].Value);
             return new string(new[] {unicodeChar});
         }
+
+        public static string FixUpImgLinks(string description, IDictionary<string, string> messageContentIdToTfsGuid)
+        {
+            CQ dom = description;
+            foreach (var pair in messageContentIdToTfsGuid)
+            {
+                string contentId = pair.Key;
+                string guid = pair.Value;
+
+                string originalImgSrc = $"cid:{contentId}";
+                var matchingImgLinks = dom[$"img[src$='{originalImgSrc}']"];
+                foreach (IDomObject img in matchingImgLinks)
+                {
+                    img.SetAttribute("src", guid);
+                }
+            }
+
+            return dom.Render();
+        }
     }
 }

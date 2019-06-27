@@ -5,7 +5,7 @@ namespace Mail2Bug.WorkItemManagement
 {
     public interface IWorkItemManager
     {
-        void AttachFiles(int workItemId, List<string> fileList);
+        void AttachFiles(int workItemId, IReadOnlyCollection<MessageAttachmentInfo> fileList);
 
         SortedList<string, int> WorkItemsCache { get; }
 

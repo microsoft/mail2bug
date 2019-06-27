@@ -242,7 +242,7 @@ namespace Mail2Bug.WorkItemManagement
                 _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret);
         }
 
-        public void AttachFiles(int workItemId, List<string> fileList)
+        public void AttachFiles(int workItemId, IReadOnlyCollection<MessageAttachmentInfo> fileList)
         {
             if (workItemId <= 0) return;
 
@@ -251,7 +251,19 @@ namespace Mail2Bug.WorkItemManagement
                 WorkItem workItem = _tfsStore.GetWorkItem(workItemId);
                 workItem.Open();
 
-                fileList.ForEach(file => workItem.Attachments.Add(new Attachment(file)));
+                var description = workItem.Fields["Description"].Value.ToString();
+                IDictionary<string, string> messageContentIdToUrl = new Dictionary<string, string>(fileList.Count);
+
+                foreach (var attachment in fileList)
+                {
+                    var tfsAttachment = new Attachment(attachment.FilePath);
+                    workItem.Attachments.Add(tfsAttachment);
+                    messageContentIdToUrl.Add(attachment.ContentId, tfsAttachment.Uri.ToString());
+                }
+
+                description = EmailBodyProcessingUtils.FixUpImgLinks(description, messageContentIdToUrl);
+                workItem.Fields["Description"].Value = description;
+
                 ValidateAndSaveWorkItem(workItem);
             }
             catch (Exception exception)

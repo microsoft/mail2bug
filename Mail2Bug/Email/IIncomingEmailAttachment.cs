@@ -7,5 +7,6 @@
     {
         string SaveAttachmentToFile();
         string SaveAttachmentToFile(string filename);
+        string ContentId { get; set; }
     }
 }

@@ -20,9 +20,9 @@ namespace Mail2Bug.WorkItemManagement
             WorkItemsCache = new SortedList<string, int>();
         }
 
-        public void AttachFiles(int workItemId, List<string> fileList)
+        public void AttachFiles(int workItemId, IReadOnlyCollection<MessageAttachmentInfo> fileList)
         {
-            foreach (var filename in fileList.Where(filename => !File.Exists(filename)))
+            foreach (var filename in fileList.Where(filename => !File.Exists(filename.FilePath)))
             {
                 Logger.ErrorFormat("Couldn't find attachment file {0}", filename);
             }
@@ -37,7 +37,7 @@ namespace Mail2Bug.WorkItemManagement
                 Attachments[workItemId] = new List<string>();
             }
 
-            Attachments[workItemId].AddRange(fileList);
+            Attachments[workItemId].AddRange(fileList.Select(f => f.FilePath));
         }
 
         public void CacheWorkItem(int workItemId)

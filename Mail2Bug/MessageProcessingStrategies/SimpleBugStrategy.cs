@@ -88,7 +88,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 // Remove the file once we're done attaching it
                 tfc.AddFile(filePath, false);
 
-                _workItemManager.AttachFiles(workItemId, new List<string> { filePath });
+                _workItemManager.AttachFiles(workItemId, new List<MessageAttachmentInfo> { new MessageAttachmentInfo(filePath, string.Empty) });
             }
         }
 
@@ -172,21 +172,20 @@ namespace Mail2Bug.MessageProcessingStrategies
         /// Take attachments from the current mail message and put them in a work item
         /// </summary>
         /// <param name="message"></param>
-        private static TempFileCollection SaveAttachments(IIncomingEmailMessage message)
+        private static IReadOnlyCollection<MessageAttachmentInfo> SaveAttachments(IIncomingEmailMessage message)
         {
-            var attachmentFiles = new TempFileCollection();
-
+            List<MessageAttachmentInfo> result = new List<MessageAttachmentInfo>();
             foreach (var attachment in message.Attachments)
             {
                 var filename = attachment.SaveAttachmentToFile();
                 if (filename != null)
                 {
-                    attachmentFiles.AddFile(filename, false);
+                    result.Add(new MessageAttachmentInfo(filename, attachment.ContentId));
                     Logger.InfoFormat("Attachment saved to file {0}", filename);
                 }
             }
 
-            return attachmentFiles;
+            return result;
         }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SimpleBugStrategy));
@@ -195,5 +194,18 @@ namespace Mail2Bug.MessageProcessingStrategies
         {
             DisposeUtils.DisposeIfDisposable(_workItemManager);
         }
+    }
+
+    public class MessageAttachmentInfo
+    {
+        public MessageAttachmentInfo(string filePath, string contentId)
+        {
+            FilePath = filePath;
+            ContentId = contentId;
+        }
+
+        public string FilePath { get; }
+
+        public string ContentId { get; }
     }
 }

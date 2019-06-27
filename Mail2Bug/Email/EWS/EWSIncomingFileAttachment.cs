@@ -28,6 +28,12 @@ namespace Mail2Bug.Email.EWS
             return filename;
         }
 
+        public string ContentId
+        {
+            get => _attachment.ContentId;
+            set => _attachment.ContentId = value;
+        }
+
         private static readonly ILog Logger = LogManager.GetLogger(typeof(EWSIncomingFileAttachment));
     }
 }
