@@ -37,6 +37,8 @@ namespace Mail2BugUnitTests.Mocks.Email
             return filename;
         }
 
+        public string ContentId { get; set; }
+
         public Exception ExceptionToThrow { get; set; }
         public byte[] Data = new byte[1];
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using log4net;
+using Mail2Bug.Email;
 using Mail2Bug.ExceptionClasses;
 using Mail2Bug.Helpers;
 using Mail2Bug.MessageProcessingStrategies;
@@ -242,7 +243,7 @@ namespace Mail2Bug.WorkItemManagement
                 _config.TfsServerConfig.ServiceIdentityPatKeyVaultSecret);
         }
 
-        public void AttachFiles(int workItemId, IReadOnlyCollection<MessageAttachmentInfo> fileList)
+        public void AttachFiles(int workItemId, IReadOnlyCollection<MessageAttachmentInfo> messageAttachments)
         {
             if (workItemId <= 0) return;
 
@@ -251,18 +252,10 @@ namespace Mail2Bug.WorkItemManagement
                 WorkItem workItem = _tfsStore.GetWorkItem(workItemId);
                 workItem.Open();
 
-                var description = workItem.Fields["Description"].Value.ToString();
-                IDictionary<string, string> messageContentIdToUrl = new Dictionary<string, string>(fileList.Count);
-
-                foreach (var attachment in fileList)
+                foreach (var attachment in messageAttachments)
                 {
-                    var tfsAttachment = new Attachment(attachment.FilePath);
-                    workItem.Attachments.Add(tfsAttachment);
-                    messageContentIdToUrl.Add(attachment.ContentId, tfsAttachment.Uri.ToString());
+                    workItem.Attachments.Add(new Attachment(attachment.FilePath));
                 }
-
-                description = EmailBodyProcessingUtils.FixUpImgLinks(description, messageContentIdToUrl);
-                workItem.Fields["Description"].Value = description;
 
                 ValidateAndSaveWorkItem(workItem);
             }
@@ -273,8 +266,9 @@ namespace Mail2Bug.WorkItemManagement
         }
 
         /// <param name="values">The list of fields and their desired values to apply to the work item</param>
+        /// <param name="attachments"></param>
         /// <returns>Work item ID of the newly created work item</returns>
-        public int CreateWorkItem(Dictionary<string, string> values)
+        public int CreateWorkItem(Dictionary<string, string> values, MessageAttachmentCollection attachments)
         {
             if (values == null)
             {
@@ -306,6 +300,11 @@ namespace Mail2Bug.WorkItemManagement
                 TryApplyFieldValue(workItem, AssignedToFieldKey, values[AssignedToFieldKey]);
             }
 
+            foreach (var attachmentPath in attachments.LocalFilePaths)
+            {
+                workItem.Attachments.Add(new Attachment(attachmentPath));
+            }
+
             ValidateAndSaveWorkItem(workItem);
 
             CacheWorkItem(workItem);
@@ -314,8 +313,10 @@ namespace Mail2Bug.WorkItemManagement
 
         /// <param name="workItemId">The ID of the work item to modify </param>
         /// <param name="comment">Comment to add to description</param>
+        /// <param name="commentIsHtml"></param>
         /// <param name="values">List of fields to change</param>
-        public void ModifyWorkItem(int workItemId, string comment, bool commentIsHtml, Dictionary<string, string> values)
+        /// <param name="attachments"></param>
+        public void ModifyWorkItem(int workItemId, string comment, bool commentIsHtml, Dictionary<string, string> values, MessageAttachmentCollection attachments)
         {
             if (workItemId <= 0) return;
 
@@ -323,10 +324,23 @@ namespace Mail2Bug.WorkItemManagement
 
             workItem.Open();
 
-            workItem.History = commentIsHtml ? comment : comment.Replace("\n", "<br>");
+            if (commentIsHtml)
+            {
+                workItem.History = EmailBodyProcessingUtils.FixUpImgLinks(comment, attachments.Attachments);
+            }
+            else
+            {
+                workItem.History = comment.Replace("\n", "<br>");
+            }
+
             foreach (var key in values.Keys)
             {
                 TryApplyFieldValue(workItem, key, values[key]);
+            }
+
+            foreach (var attachment in attachments.Attachments)
+            {
+                workItem.Attachments.Add(new Attachment(attachment.FilePath));
             }
 
             ValidateAndSaveWorkItem(workItem);

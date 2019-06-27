@@ -1,7 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using log4net;
@@ -49,9 +48,11 @@ namespace Mail2Bug.MessageProcessingStrategies
         {
             var workItemUpdates = new Dictionary<string, string>();
 
-            InitWorkItemFields(message, workItemUpdates);
+            var attachments = SaveAttachments(message);
 
-        	var workItemId = _workItemManager.CreateWorkItem(workItemUpdates);
+            InitWorkItemFields(message, workItemUpdates, attachments);
+
+        	var workItemId = _workItemManager.CreateWorkItem(workItemUpdates, attachments);
             Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})", 
                 workItemId, message.Subject, message.ConversationId);
 
@@ -60,12 +61,13 @@ namespace Mail2Bug.MessageProcessingStrategies
                 // Since the work item *has* been created, failures in this stage are not treated as critical
                 var overrides = new OverridesExtractor(_config).GetOverrides(message);
                 TryApplyFieldOverrides(overrides, workItemId);
-                ProcessAttachments(message, workItemId);
                 
                 if (_config.WorkItemSettings.AttachOriginalMessage)
                 {
                     AttachMessageToWorkItem(message, workItemId, "OriginalMessage");
                 }
+
+                attachments.DeleteLocalFiles();
             }
             catch (Exception ex)
             {
@@ -92,7 +94,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
         }
 
-        private void InitWorkItemFields(IIncomingEmailMessage message, Dictionary<string, string> workItemUpdates)
+        private void InitWorkItemFields(IIncomingEmailMessage message, Dictionary<string, string> workItemUpdates, MessageAttachmentCollection attachments)
     	{
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
 
@@ -103,8 +105,14 @@ namespace Mail2Bug.MessageProcessingStrategies
 
     		foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
     		{
-    		    workItemUpdates[defaultFieldValue.Field] = resolver.Resolve(defaultFieldValue.Value);
-    		}
+    		    var result = resolver.Resolve(defaultFieldValue.Value);
+                if (message.IsHtmlBody && defaultFieldValue.Value == SpecialValueResolver.RawMessageBodyKeyword)
+                {
+                    result = EmailBodyProcessingUtils.FixUpImgLinks(result, attachments.Attachments);
+                }
+
+                workItemUpdates[defaultFieldValue.Field] = result;
+            }
     	}
 
         private void TryApplyFieldOverrides(Dictionary<string, string> overrides, int workItemId)
@@ -118,7 +126,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             try
             {
                 Logger.DebugFormat("Overrides found. Calling 'ModifyWorkItem'");
-                _workItemManager.ModifyWorkItem(workItemId, "", false, overrides);
+                _workItemManager.ModifyWorkItem(workItemId, "", false, overrides, null);
             }
             catch (Exception ex)
             {
@@ -150,10 +158,12 @@ namespace Mail2Bug.MessageProcessingStrategies
                 overrides.ToList().ForEach(x => workItemUpdates[x.Key] = x.Value);
             }
 
-            // Construct the text to be appended
-            _workItemManager.ModifyWorkItem(workItemId, lastMessageText, message.IsHtmlBody, workItemUpdates);
+            var attachments = SaveAttachments(message);
 
-            ProcessAttachments(message, workItemId);
+            // Construct the text to be appended
+            _workItemManager.ModifyWorkItem(workItemId, lastMessageText, message.IsHtmlBody, workItemUpdates, attachments);
+
+            attachments.DeleteLocalFiles();
 
             if (_config.WorkItemSettings.AttachUpdateMessages)
             {
@@ -161,26 +171,19 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
         }
 
-        private void ProcessAttachments(IIncomingEmailMessage message, int workItemId)
-        {
-            var attachmentFiles = SaveAttachments(message);
-            _workItemManager.AttachFiles(workItemId, (from object file in attachmentFiles select file.ToString()).ToList());
-            attachmentFiles.Delete();
-        }
-
         /// <summary>
         /// Take attachments from the current mail message and put them in a work item
         /// </summary>
         /// <param name="message"></param>
-        private static IReadOnlyCollection<MessageAttachmentInfo> SaveAttachments(IIncomingEmailMessage message)
+        private static MessageAttachmentCollection SaveAttachments(IIncomingEmailMessage message)
         {
-            List<MessageAttachmentInfo> result = new List<MessageAttachmentInfo>();
+            var result = new MessageAttachmentCollection();
             foreach (var attachment in message.Attachments)
             {
                 var filename = attachment.SaveAttachmentToFile();
                 if (filename != null)
                 {
-                    result.Add(new MessageAttachmentInfo(filename, attachment.ContentId));
+                    result.Add(filename, attachment.ContentId);
                     Logger.InfoFormat("Attachment saved to file {0}", filename);
                 }
             }
@@ -193,6 +196,32 @@ namespace Mail2Bug.MessageProcessingStrategies
         public void Dispose()
         {
             DisposeUtils.DisposeIfDisposable(_workItemManager);
+        }
+    }
+
+    public class MessageAttachmentCollection
+    {
+        private readonly List<MessageAttachmentInfo> _attachments;
+        private readonly TempFileCollection _tempFileCollection;
+
+        public IReadOnlyCollection<MessageAttachmentInfo> Attachments => _attachments;
+        public IEnumerable<string> LocalFilePaths => _attachments.Select(a => a.FilePath);
+
+        public MessageAttachmentCollection()
+        {
+            _attachments = new List<MessageAttachmentInfo>();
+            _tempFileCollection = new TempFileCollection();
+        }
+
+        public void Add(string localFilePath, string contentId)
+        {
+            _attachments.Add(new MessageAttachmentInfo(localFilePath, contentId));
+            _tempFileCollection.AddFile(localFilePath, keepFile: false);
+        }
+
+        public void DeleteLocalFiles()
+        {
+            _tempFileCollection.Delete();
         }
     }
 

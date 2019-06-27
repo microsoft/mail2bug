@@ -54,7 +54,7 @@ namespace Mail2Bug.WorkItemManagement
             WorkItemsCache[conversationId] = workItemId;
         }
 
-        public int CreateWorkItem(Dictionary<string, string> values)
+        public int CreateWorkItem(Dictionary<string, string> values, MessageAttachmentCollection attachments)
         {
             if (ThrowOnCreateBug != null) throw ThrowOnCreateBug;
 
@@ -80,7 +80,7 @@ namespace Mail2Bug.WorkItemManagement
             return id;
         }
 
-        public void ModifyWorkItem(int workItemId, string comment, bool commentIsHtml, Dictionary<string, string> values)
+        public void ModifyWorkItem(int workItemId, string comment, bool commentIsHtml, Dictionary<string, string> values, MessageAttachmentCollection attachments)
         {
             if (ThrowOnModifyBug != null) throw ThrowOnModifyBug;
 

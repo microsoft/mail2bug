@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using CsQuery;
+using Mail2Bug.MessageProcessingStrategies;
+using Microsoft.TeamFoundation.WorkItemTracking.Internals;
 
 namespace Mail2Bug.Email
 {
@@ -124,19 +126,22 @@ namespace Mail2Bug.Email
             return new string(new[] {unicodeChar});
         }
 
-        public static string FixUpImgLinks(string description, IDictionary<string, string> messageContentIdToTfsGuid)
+        public static string FixUpImgLinks(string originalHtml, System.Collections.Generic.IReadOnlyCollection<MessageAttachmentInfo> attachments)
         {
-            CQ dom = description;
-            foreach (var pair in messageContentIdToTfsGuid)
+            if (attachments == null || attachments.Count == 0)
             {
-                string contentId = pair.Key;
-                string guid = pair.Value;
+                return originalHtml;
+            }
 
-                string originalImgSrc = $"cid:{contentId}";
+            CQ dom = originalHtml;
+            foreach (var attachment in attachments)
+            {
+                string originalImgSrc = $"cid:{attachment.ContentId}";
                 var matchingImgLinks = dom[$"img[src$='{originalImgSrc}']"];
+                var newSrc = new Uri(attachment.FilePath);
                 foreach (IDomObject img in matchingImgLinks)
                 {
-                    img.SetAttribute("src", guid);
+                    img.SetAttribute("src", newSrc.AbsoluteUri);
                 }
             }
 
