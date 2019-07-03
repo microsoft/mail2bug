@@ -108,7 +108,7 @@ namespace Mail2Bug.MessageProcessingStrategies
     		    var result = resolver.Resolve(defaultFieldValue.Value);
                 if (message.IsHtmlBody && defaultFieldValue.Value == SpecialValueResolver.RawMessageBodyKeyword)
                 {
-                    result = EmailBodyProcessingUtils.FixUpImgLinks(result, attachments.Attachments);
+                    result = EmailBodyProcessingUtils.UpdateEmbeddedImageLinks(result, attachments.Attachments);
                 }
 
                 workItemUpdates[defaultFieldValue.Field] = result;

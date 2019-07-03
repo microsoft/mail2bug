@@ -126,7 +126,11 @@ namespace Mail2Bug.Email
             return new string(new[] {unicodeChar});
         }
 
-        public static string FixUpImgLinks(string originalHtml, System.Collections.Generic.IReadOnlyCollection<MessageAttachmentInfo> attachments)
+        /// <summary>
+        /// If an email embeds an email inline in its html, that embedded image won't display correctly unless we modify the html.
+        /// This method does that, given information about email's known attachments
+        /// </summary>
+        public static string UpdateEmbeddedImageLinks(string originalHtml, System.Collections.Generic.IReadOnlyCollection<MessageAttachmentInfo> attachments)
         {
             if (attachments == null || attachments.Count == 0)
             {
@@ -138,6 +142,10 @@ namespace Mail2Bug.Email
             {
                 string originalImgSrc = $"cid:{attachment.ContentId}";
                 var matchingImgLinks = dom[$"img[src$='{originalImgSrc}']"];
+
+                // This may point to the file on the local file-system if we haven't yet uploaded the attachment
+                // However, the work item APIs seem to magically 'just work' with this and update the URI to point to the uploaded location
+                // If for some reason that stops working, we'd need to either infer the uploaded URI or upload first and mutate the html afterward
                 var newSrc = new Uri(attachment.FilePath);
                 foreach (IDomObject img in matchingImgLinks)
                 {
