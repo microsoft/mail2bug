@@ -162,7 +162,8 @@ namespace Mail2Bug.MessageProcessingStrategies
             var attachments = SaveAttachments(message);
 
             // Construct the text to be appended
-            _workItemManager.ModifyWorkItem(workItemId, lastMessageText, message.IsHtmlBody, workItemUpdates, attachments);
+            bool commentIsHtml = message.IsHtmlBody && _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
+            _workItemManager.ModifyWorkItem(workItemId, lastMessageText, commentIsHtml, workItemUpdates, attachments);
 
             attachments.DeleteLocalFiles();
 
