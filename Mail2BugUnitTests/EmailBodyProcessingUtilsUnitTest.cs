@@ -5,7 +5,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Mail2Bug.Email;
-using Mail2Bug.MessageProcessingStrategies;
 using Mail2Bug.TestHelpers;
 using Mail2BugUnitTests.Mocks.Email;
 using Microsoft.Test.Text;

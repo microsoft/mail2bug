@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mail2Bug.Email;
 using Mail2Bug.MessageProcessingStrategies;
 
 namespace Mail2Bug.WorkItemManagement

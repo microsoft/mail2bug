@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using log4net;
+using Mail2Bug.Email;
 using Mail2Bug.MessageProcessingStrategies;
 
 namespace Mail2Bug.WorkItemManagement

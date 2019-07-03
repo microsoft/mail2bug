@@ -198,43 +198,4 @@ namespace Mail2Bug.MessageProcessingStrategies
             DisposeUtils.DisposeIfDisposable(_workItemManager);
         }
     }
-
-    public class MessageAttachmentCollection
-    {
-        private readonly List<MessageAttachmentInfo> _attachments;
-        private readonly TempFileCollection _tempFileCollection;
-
-        public IReadOnlyCollection<MessageAttachmentInfo> Attachments => _attachments;
-        public IEnumerable<string> LocalFilePaths => _attachments.Select(a => a.FilePath);
-
-        public MessageAttachmentCollection()
-        {
-            _attachments = new List<MessageAttachmentInfo>();
-            _tempFileCollection = new TempFileCollection();
-        }
-
-        public void Add(string localFilePath, string contentId)
-        {
-            _attachments.Add(new MessageAttachmentInfo(localFilePath, contentId));
-            _tempFileCollection.AddFile(localFilePath, keepFile: false);
-        }
-
-        public void DeleteLocalFiles()
-        {
-            _tempFileCollection.Delete();
-        }
-    }
-
-    public class MessageAttachmentInfo
-    {
-        public MessageAttachmentInfo(string filePath, string contentId)
-        {
-            FilePath = filePath;
-            ContentId = contentId;
-        }
-
-        public string FilePath { get; }
-
-        public string ContentId { get; }
-    }
 }
