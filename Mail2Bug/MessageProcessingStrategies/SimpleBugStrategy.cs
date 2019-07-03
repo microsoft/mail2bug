@@ -48,34 +48,33 @@ namespace Mail2Bug.MessageProcessingStrategies
         {
             var workItemUpdates = new Dictionary<string, string>();
 
-            var attachments = SaveAttachments(message);
-
-            InitWorkItemFields(message, workItemUpdates, attachments);
-
-        	var workItemId = _workItemManager.CreateWorkItem(workItemUpdates, attachments);
-            Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})", 
-                workItemId, message.Subject, message.ConversationId);
-
-            try
+            using (var attachments = SaveAttachments(message))
             {
-                // Since the work item *has* been created, failures in this stage are not treated as critical
-                var overrides = new OverridesExtractor(_config).GetOverrides(message);
-                TryApplyFieldOverrides(overrides, workItemId);
-                
-                if (_config.WorkItemSettings.AttachOriginalMessage)
+                InitWorkItemFields(message, workItemUpdates, attachments);
+
+                int workItemId = _workItemManager.CreateWorkItem(workItemUpdates, attachments);
+                Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})", 
+                    workItemId, message.Subject, message.ConversationId);
+
+                try
                 {
-                    AttachMessageToWorkItem(message, workItemId, "OriginalMessage");
+                    // Since the work item *has* been created, failures in this stage are not treated as critical
+                    var overrides = new OverridesExtractor(_config).GetOverrides(message);
+                    TryApplyFieldOverrides(overrides, workItemId);
+                
+                    if (_config.WorkItemSettings.AttachOriginalMessage)
+                    {
+                        AttachMessageToWorkItem(message, workItemId, "OriginalMessage");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.ErrorFormat("Exception caught while applying settings to work item {0}\n{1}", workItemId, ex);
                 }
 
-                attachments.DeleteLocalFiles();
+                var workItem = _workItemManager.GetWorkItemFields(workItemId);
+                _ackEmailHandler.SendAckEmail(message, workItem);
             }
-            catch (Exception ex)
-            {
-                Logger.ErrorFormat("Exception caught while applying settings to work item {0}\n{1}", workItemId, ex);
-            }
-
-            var workItem = _workItemManager.GetWorkItemFields(workItemId);
-            _ackEmailHandler.SendAckEmail(message, workItem);
         }
 
         private void AttachMessageToWorkItem(IIncomingEmailMessage message, int workItemId, string prefix)
@@ -159,13 +158,11 @@ namespace Mail2Bug.MessageProcessingStrategies
                 overrides.ToList().ForEach(x => workItemUpdates[x.Key] = x.Value);
             }
 
-            var attachments = SaveAttachments(message);
-
-            // Construct the text to be appended
-            bool commentIsHtml = message.IsHtmlBody && _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
-            _workItemManager.ModifyWorkItem(workItemId, lastMessageText, commentIsHtml, workItemUpdates, attachments);
-
-            attachments.DeleteLocalFiles();
+            using (var attachments = SaveAttachments(message))
+            {
+                bool commentIsHtml = message.IsHtmlBody && _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
+                _workItemManager.ModifyWorkItem(workItemId, lastMessageText, commentIsHtml, workItemUpdates, attachments);
+            }
 
             if (_config.WorkItemSettings.AttachUpdateMessages)
             {
