@@ -326,7 +326,10 @@ namespace Mail2Bug.WorkItemManagement
 
             if (commentIsHtml)
             {
-                workItem.History = EmailBodyProcessingUtils.UpdateEmbeddedImageLinks(comment, attachments.Attachments);
+                if (_config.WorkItemSettings.EnableExperimentalHtmlFeatures)
+                {
+                    workItem.History = EmailBodyProcessingUtils.UpdateEmbeddedImageLinks(comment, attachments.Attachments);
+                }
             }
             else
             {

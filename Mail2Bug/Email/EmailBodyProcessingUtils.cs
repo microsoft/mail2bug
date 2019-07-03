@@ -11,9 +11,9 @@ namespace Mail2Bug.Email
 {
     public class EmailBodyProcessingUtils
     {
-        public static string GetLastMessageText(IIncomingEmailMessage message)
+        public static string GetLastMessageText(IIncomingEmailMessage message, bool enableExperimentalHtmlFeatures)
         {
-            return message.IsHtmlBody ? GetLastMessageText_Html(message.RawBody) : GetLastMessageText_PlainText(message);
+            return enableExperimentalHtmlFeatures && message.IsHtmlBody ? GetLastMessageText_Html(message.RawBody) : GetLastMessageText_PlainText(message);
         }
 
         private static string GetLastMessageText_PlainText(IIncomingEmailMessage message)

@@ -130,7 +130,7 @@ namespace Mail2BugUnitTests
 
             fields["Assigned To"] = null;
             fields["Priority"] = null;
-            var placeholdersWithDefaults = placeholders.Where(p => p.Field.Equals("BugOwner") || p.Field.Equals("Priority"));
+            var placeholdersWithDefaults = placeholders.Where(p => p.Field.Equals("BugOwner") || p.Field.Equals("Priority")).ToList();
             Assert.AreEqual(2, placeholdersWithDefaults.Count(), "Bad test data; all expected placeholders not found.");
 
             var workItem = new WorkItemFieldsMock(fields);

@@ -130,6 +130,7 @@ namespace Mail2Bug
             public bool ApplyOverridesDuringUpdate { get; set; }
             public bool AttachOriginalMessage { get; set; }
             public bool AttachUpdateMessages { get; set; }
+            public bool EnableExperimentalHtmlFeatures { get; set; }
 
             public ProcessingStrategyType ProcessingStrategy = ProcessingStrategyType.SimpleBugStrategy;
         }

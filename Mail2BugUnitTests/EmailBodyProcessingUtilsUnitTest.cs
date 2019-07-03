@@ -31,7 +31,7 @@ namespace Mail2BugUnitTests
             }
             message.PlainTextBody = bodyBuilder.ToString();
 
-            Assert.AreEqual(lastMessageText, EmailBodyProcessingUtils.GetLastMessageText(message), "Verifying extracted last message text correctness");
+            Assert.AreEqual(lastMessageText, EmailBodyProcessingUtils.GetLastMessageText(message, true), "Verifying extracted last message text correctness");
         }
 
         [TestMethod]
@@ -94,7 +94,7 @@ namespace Mail2BugUnitTests
 </body></html>";
 
             string actual = EmailBodyProcessingUtils.UpdateEmbeddedImageLinks(original, attachmentInfo);
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(Normalize(expected), Normalize(actual));
         }
 
         [TestMethod]
@@ -114,7 +114,7 @@ This is a boring email.
 </body></html>";
 
             string actual = EmailBodyProcessingUtils.GetLastMessageText_Html(original);
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(Normalize(expected), Normalize(actual));
         }
 
         [TestMethod]
@@ -153,7 +153,7 @@ This is a boring email.
             <p class=""customStyling""><b></b></p></div></div></div></body></html>";
 
             string actual = EmailBodyProcessingUtils.GetLastMessageText_Html(original);
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(Normalize(expected), Normalize(actual));
         }
 
         private static string Normalize(string text)

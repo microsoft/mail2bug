@@ -201,7 +201,7 @@ namespace Mail2BugUnitTests
             {
                 expectedValues["Changed By"] = message3.SenderName;
             }
-            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
+            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message2.GetLastMessageText(true) + message3.GetLastMessageText(true));
 
             ValidateBugValues(expectedValues, bugFields);
         }
@@ -249,7 +249,7 @@ namespace Mail2BugUnitTests
 
             expectedValues["Changed By"] = message4.SenderName;
             expectedValues[WorkItemManagerMock.HistoryField] = 
-                TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText() + message4.GetLastMessageText());
+                TextUtils.FixLineBreaks(message2.GetLastMessageText(true) + message3.GetLastMessageText(true) + message4.GetLastMessageText(true));
             expectedValues[mnemonicDef.Field] = mnemonicDef.Value;
             expectedValues[explicitOverride1.Key] = explicitOverride1.Value;
 
@@ -284,7 +284,7 @@ namespace Mail2BugUnitTests
 
             expectedValues["Changed By"] = message3.SenderName;
             expectedValues[WorkItemManagerMock.HistoryField] = 
-                TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
+                TextUtils.FixLineBreaks(message2.GetLastMessageText(true) + message3.GetLastMessageText(true));
 
             ValidateBugValues(expectedValues, bugFields);
 
@@ -325,7 +325,7 @@ namespace Mail2BugUnitTests
 
             var expectedValues = new Dictionary<string, string>();
             expectedValues["Changed By"] = appendOnlyMessage.SenderName;
-            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText());
+            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText(false));
 
             Assert.AreEqual(2, workItemManagerMock.Bugs.Count, "Only one bug should exist");
             ValidateBugValues(expectedValues, workItemManagerMock.Bugs[newBugId]);
@@ -388,7 +388,7 @@ namespace Mail2BugUnitTests
 
             var expectedValues = new Dictionary<string, string>();
             expectedValues["Changed By"] = appendOnlyMessage.SenderName;
-            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText());
+            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText(true));
 
             Assert.AreEqual(2, workItemManagerMock.Bugs.Count, "Only one bug should exist");
             ValidateBugValues(expectedValues, workItemManagerMock.Bugs[newBugId]);

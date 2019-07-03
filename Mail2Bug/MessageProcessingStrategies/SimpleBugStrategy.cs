@@ -103,10 +103,11 @@ namespace Mail2Bug.MessageProcessingStrategies
             workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] = 
                 rawConversationIndex.Substring(0, Math.Min(rawConversationIndex.Length, TfsTextFieldMaxLength));
 
-    		foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
+            bool enableImgUpdating = _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
+            foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
     		{
     		    var result = resolver.Resolve(defaultFieldValue.Value);
-                if (message.IsHtmlBody && defaultFieldValue.Value == SpecialValueResolver.RawMessageBodyKeyword)
+                if (enableImgUpdating && message.IsHtmlBody && defaultFieldValue.Value == SpecialValueResolver.RawMessageBodyKeyword)
                 {
                     result = EmailBodyProcessingUtils.UpdateEmbeddedImageLinks(result, attachments.Attachments);
                 }
@@ -147,7 +148,7 @@ namespace Mail2Bug.MessageProcessingStrategies
                 workItemUpdates["Changed By"] = resolver.Sender;
             }
 
-            string lastMessageText = message.GetLastMessageText();
+            string lastMessageText = message.GetLastMessageText(_config.WorkItemSettings.EnableExperimentalHtmlFeatures);
             if (_config.WorkItemSettings.ApplyOverridesDuringUpdate)
             {
                 var extractor = new OverridesExtractor(_config);

@@ -116,9 +116,9 @@ namespace Mail2Bug.Email.EWS
             return filename;
         }
 
-        public string GetLastMessageText()
+        public string GetLastMessageText(bool enableExperimentalHtmlFeatures)
         {
-            return EmailBodyProcessingUtils.GetLastMessageText(this);
+            return EmailBodyProcessingUtils.GetLastMessageText(this, enableExperimentalHtmlFeatures);
         }
 
         public void Delete()
