@@ -338,9 +338,12 @@ namespace Mail2Bug.WorkItemManagement
                 TryApplyFieldValue(workItem, key, values[key]);
             }
 
-            foreach (var attachment in attachments.Attachments)
+            if (attachments != null)
             {
-                workItem.Attachments.Add(new Attachment(attachment.FilePath));
+                foreach (var attachment in attachments.Attachments)
+                {
+                    workItem.Attachments.Add(new Attachment(attachment.FilePath));
+                }
             }
 
             ValidateAndSaveWorkItem(workItem);
