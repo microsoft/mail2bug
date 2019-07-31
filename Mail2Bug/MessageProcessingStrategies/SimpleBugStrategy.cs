@@ -147,11 +147,19 @@ namespace Mail2Bug.MessageProcessingStrategies
                 workItemUpdates["Changed By"] = resolver.Sender;
             }
 
-            string lastMessageText = message.GetLastMessageText(_config.WorkItemSettings.EnableExperimentalHtmlFeatures);
+            bool isHtmlEnabled = _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
+            bool commentIsHtml = message.IsHtmlBody && isHtmlEnabled;
+
+            string lastMessageText = message.GetLastMessageText(isHtmlEnabled);
             if (_config.WorkItemSettings.ApplyOverridesDuringUpdate)
             {
+                // OverrideExtractor can't currently handle HTML input, so we need to make sure we pass it the plain text version
+                string lastMessagePlainText = commentIsHtml
+                    ? message.GetLastMessageText(enableExperimentalHtmlFeatures: false)
+                    : lastMessageText;
+
                 var extractor = new OverridesExtractor(_config);
-                var overrides = extractor.GetOverrides(lastMessageText);
+                var overrides = extractor.GetOverrides(lastMessagePlainText);
 
                 Logger.DebugFormat("Found {0} overrides for update message", overrides.Count);
 
@@ -160,7 +168,6 @@ namespace Mail2Bug.MessageProcessingStrategies
 
             using (var attachments = SaveAttachments(message))
             {
-                bool commentIsHtml = message.IsHtmlBody && _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
                 _workItemManager.ModifyWorkItem(workItemId, lastMessageText, commentIsHtml, workItemUpdates, attachments);
             }
 

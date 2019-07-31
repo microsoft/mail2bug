@@ -258,6 +258,39 @@ namespace Mail2BugUnitTests
         }
 
         [TestMethod]
+        public void TestApplyingOverridesInUpdateMessage_Html()
+        {
+            var seed = _rand.Next();
+
+            Logger.InfoFormat("Using seed {0}", seed);
+
+            var mailManager = new MailManagerMock();
+            var explicitOverride1 = new KeyValuePair<string, string>("IsThisExplicit?","Indeed");
+            var explicitLine1 = string.Format("\n###{0}:{1}", explicitOverride1.Key, explicitOverride1.Value);
+            var message1 = mailManager.AddMessage(false);
+
+            var htmlText = string.Format("<html><head></head><body><p>{0}</p></body></html>", explicitLine1);
+            var message2 = mailManager.AddReply(message1, htmlText);
+            message2.IsHtmlBody = true;
+            message2.PlainTextBody = explicitLine1;
+
+            var instanceConfig = GetConfig().Instances.First();
+            instanceConfig.WorkItemSettings.ApplyOverridesDuringUpdate = true;
+            instanceConfig.WorkItemSettings.EnableExperimentalHtmlFeatures = true;
+
+            var workItemManagerMock = new WorkItemManagerMock(instanceConfig.WorkItemSettings.ConversationIndexFieldName);
+            ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
+
+            Assert.AreEqual(1, workItemManagerMock.Bugs.Count, "Only one bug should exist");
+            var bug = workItemManagerMock.Bugs.First();
+            var bugFields = bug.Value;
+
+            Assert.IsTrue(bugFields.ContainsKey(explicitOverride1.Key));
+            string actualValue = bugFields[explicitOverride1.Key];
+            Assert.AreEqual(explicitOverride1.Value, actualValue);
+        }
+
+        [TestMethod]
         public void TestAttachingUpdateMessages()
         {
             var seed = _rand.Next();
