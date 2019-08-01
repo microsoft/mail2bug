@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using CsQuery;
-using Mail2Bug.MessageProcessingStrategies;
-using Microsoft.TeamFoundation.WorkItemTracking.Internals;
 
 namespace Mail2Bug.Email
 {
@@ -35,8 +33,23 @@ namespace Mail2Bug.Email
         {
             CQ dom = rawBody;
 
+            const string messageSeparatorStyle = "border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in 0in 0in";
+
             foreach (IDomObject element in dom["*"])
             {
+                // Lots of email clients insert html elements as message delimiters which have styling but no inner text
+                // This block checks for some of these patterns
+                if (element.NodeName == "DIV")
+                {
+                    if (element.Id == "divRplyFwdMsg" || element.Id == "x_divRplyFwdMsg" || messageSeparatorStyle.Equals(element.GetAttribute("style")))
+                    {
+                        IDomContainer parent = element.ParentNode;
+                        element.Remove();
+                        RemoveSubsequent(parent);
+                        break;
+                    }
+                }
+
                 if (!element.ChildElements.Any() && !string.IsNullOrWhiteSpace(element.InnerText))
                 {
                     var separatorIndex = IndexOfAny(element.InnerText, MessageBorderMarkers);
