@@ -340,9 +340,27 @@ namespace Mail2Bug.WorkItemManagement
 
             if (attachments != null)
             {
+                string GetAttachmentKey(string fileName, long length)
+                {
+                    return  $"{fileName}|{length}";
+                }
+
+                var existingAttachments = new HashSet<string>(workItem.Attachments
+                    .OfType<Attachment>()
+                    .Select(attachment => GetAttachmentKey(attachment.Name, attachment.Length)));
+
                 foreach (var attachment in attachments.Attachments)
                 {
-                    workItem.Attachments.Add(new Attachment(attachment.FilePath));
+                    var localFileInfo = new FileInfo(attachment.FilePath);
+                    string key = GetAttachmentKey(localFileInfo.Name, localFileInfo.Length);
+
+                    // If there's already an attachment with the same file name and size, don't bother re-uploading it
+                    // TODO: this may break embedded images for html replies since we update the img tag above to point to a local path we don't upload
+                    // However, we haven't confirmed this breaks and replying with an identical image is unlikely, so we ignore this for now
+                    if (!existingAttachments.Contains(key))
+                    {
+                        workItem.Attachments.Add(new Attachment(attachment.FilePath));
+                    }
                 }
             }
 
