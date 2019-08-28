@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using log4net;
+using Mail2Bug.Email;
 using Mail2Bug.MessageProcessingStrategies;
 
 namespace Mail2Bug.WorkItemManagement
@@ -20,9 +21,9 @@ namespace Mail2Bug.WorkItemManagement
             WorkItemsCache = new SortedList<string, int>();
         }
 
-        public void AttachFiles(int workItemId, List<string> fileList)
+        public void AttachFiles(int workItemId, IReadOnlyCollection<MessageAttachmentInfo> fileList)
         {
-            foreach (var filename in fileList.Where(filename => !File.Exists(filename)))
+            foreach (var filename in fileList.Where(filename => !File.Exists(filename.FilePath)))
             {
                 Logger.ErrorFormat("Couldn't find attachment file {0}", filename);
             }
@@ -37,7 +38,7 @@ namespace Mail2Bug.WorkItemManagement
                 Attachments[workItemId] = new List<string>();
             }
 
-            Attachments[workItemId].AddRange(fileList);
+            Attachments[workItemId].AddRange(fileList.Select(f => f.FilePath));
         }
 
         public void CacheWorkItem(int workItemId)
@@ -54,7 +55,7 @@ namespace Mail2Bug.WorkItemManagement
             WorkItemsCache[conversationId] = workItemId;
         }
 
-        public int CreateWorkItem(Dictionary<string, string> values)
+        public int CreateWorkItem(Dictionary<string, string> values, MessageAttachmentCollection attachments)
         {
             if (ThrowOnCreateBug != null) throw ThrowOnCreateBug;
 
@@ -80,7 +81,7 @@ namespace Mail2Bug.WorkItemManagement
             return id;
         }
 
-        public void ModifyWorkItem(int workItemId, string comment, Dictionary<string, string> values)
+        public void ModifyWorkItem(int workItemId, string comment, bool commentIsHtml, Dictionary<string, string> values, MessageAttachmentCollection attachments)
         {
             if (ThrowOnModifyBug != null) throw ThrowOnModifyBug;
 

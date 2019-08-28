@@ -1,7 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using log4net;
@@ -49,31 +48,33 @@ namespace Mail2Bug.MessageProcessingStrategies
         {
             var workItemUpdates = new Dictionary<string, string>();
 
-            InitWorkItemFields(message, workItemUpdates);
-
-        	var workItemId = _workItemManager.CreateWorkItem(workItemUpdates);
-            Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})", 
-                workItemId, message.Subject, message.ConversationId);
-
-            try
+            using (var attachments = SaveAttachments(message))
             {
-                // Since the work item *has* been created, failures in this stage are not treated as critical
-                var overrides = new OverridesExtractor(_config).GetOverrides(message);
-                TryApplyFieldOverrides(overrides, workItemId);
-                ProcessAttachments(message, workItemId);
-                
-                if (_config.WorkItemSettings.AttachOriginalMessage)
+                InitWorkItemFields(message, workItemUpdates, attachments);
+
+                int workItemId = _workItemManager.CreateWorkItem(workItemUpdates, attachments);
+                Logger.InfoFormat("Added new work item {0} for message with subject: {1} (conversation index:{2})", 
+                    workItemId, message.Subject, message.ConversationId);
+
+                try
                 {
-                    AttachMessageToWorkItem(message, workItemId, "OriginalMessage");
+                    // Since the work item *has* been created, failures in this stage are not treated as critical
+                    var overrides = new OverridesExtractor(_config).GetOverrides(message);
+                    TryApplyFieldOverrides(overrides, workItemId);
+                
+                    if (_config.WorkItemSettings.AttachOriginalMessage)
+                    {
+                        AttachMessageToWorkItem(message, workItemId, "OriginalMessage");
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorFormat("Exception caught while applying settings to work item {0}\n{1}", workItemId, ex);
-            }
+                catch (Exception ex)
+                {
+                    Logger.ErrorFormat("Exception caught while applying settings to work item {0}\n{1}", workItemId, ex);
+                }
 
-            var workItem = _workItemManager.GetWorkItemFields(workItemId);
-            _ackEmailHandler.SendAckEmail(message, workItem);
+                var workItem = _workItemManager.GetWorkItemFields(workItemId);
+                _ackEmailHandler.SendAckEmail(message, workItem);
+            }
         }
 
         private void AttachMessageToWorkItem(IIncomingEmailMessage message, int workItemId, string prefix)
@@ -88,11 +89,11 @@ namespace Mail2Bug.MessageProcessingStrategies
                 // Remove the file once we're done attaching it
                 tfc.AddFile(filePath, false);
 
-                _workItemManager.AttachFiles(workItemId, new List<string> { filePath });
+                _workItemManager.AttachFiles(workItemId, new List<MessageAttachmentInfo> { new MessageAttachmentInfo(filePath, string.Empty) });
             }
         }
 
-        private void InitWorkItemFields(IIncomingEmailMessage message, Dictionary<string, string> workItemUpdates)
+        private void InitWorkItemFields(IIncomingEmailMessage message, Dictionary<string, string> workItemUpdates, MessageAttachmentCollection attachments)
     	{
             var resolver = new SpecialValueResolver(message, _workItemManager.GetNameResolver());
 
@@ -101,10 +102,17 @@ namespace Mail2Bug.MessageProcessingStrategies
             workItemUpdates[_config.WorkItemSettings.ConversationIndexFieldName] = 
                 rawConversationIndex.Substring(0, Math.Min(rawConversationIndex.Length, TfsTextFieldMaxLength));
 
-    		foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
+            bool enableImgUpdating = _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
+            foreach (var defaultFieldValue in _config.WorkItemSettings.DefaultFieldValues)
     		{
-    		    workItemUpdates[defaultFieldValue.Field] = resolver.Resolve(defaultFieldValue.Value);
-    		}
+    		    var result = resolver.Resolve(defaultFieldValue.Value);
+                if (enableImgUpdating && message.IsHtmlBody && defaultFieldValue.Value == SpecialValueResolver.RawMessageBodyKeyword)
+                {
+                    result = EmailBodyProcessingUtils.UpdateEmbeddedImageLinks(result, attachments.Attachments);
+                }
+
+                workItemUpdates[defaultFieldValue.Field] = result;
+            }
     	}
 
         private void TryApplyFieldOverrides(Dictionary<string, string> overrides, int workItemId)
@@ -118,7 +126,7 @@ namespace Mail2Bug.MessageProcessingStrategies
             try
             {
                 Logger.DebugFormat("Overrides found. Calling 'ModifyWorkItem'");
-                _workItemManager.ModifyWorkItem(workItemId, "", overrides);
+                _workItemManager.ModifyWorkItem(workItemId, "", false, overrides, null);
             }
             catch (Exception ex)
             {
@@ -139,20 +147,29 @@ namespace Mail2Bug.MessageProcessingStrategies
                 workItemUpdates["Changed By"] = resolver.Sender;
             }
 
+            bool isHtmlEnabled = _config.WorkItemSettings.EnableExperimentalHtmlFeatures;
+            bool commentIsHtml = message.IsHtmlBody && isHtmlEnabled;
+
+            string lastMessageText = message.GetLastMessageText(isHtmlEnabled);
             if (_config.WorkItemSettings.ApplyOverridesDuringUpdate)
             {
+                // OverrideExtractor can't currently handle HTML input, so we need to make sure we pass it the plain text version
+                string lastMessagePlainText = commentIsHtml
+                    ? message.GetLastMessageText(enableExperimentalHtmlFeatures: false)
+                    : lastMessageText;
+
                 var extractor = new OverridesExtractor(_config);
-                var overrides = extractor.GetOverrides(message.GetLastMessageText());
+                var overrides = extractor.GetOverrides(lastMessagePlainText);
 
                 Logger.DebugFormat("Found {0} overrides for update message", overrides.Count);
 
                 overrides.ToList().ForEach(x => workItemUpdates[x.Key] = x.Value);
             }
 
-            // Construct the text to be appended
-            _workItemManager.ModifyWorkItem(workItemId, message.GetLastMessageText(), workItemUpdates);
-
-            ProcessAttachments(message, workItemId);
+            using (var attachments = SaveAttachments(message))
+            {
+                _workItemManager.ModifyWorkItem(workItemId, lastMessageText, commentIsHtml, workItemUpdates, attachments);
+            }
 
             if (_config.WorkItemSettings.AttachUpdateMessages)
             {
@@ -160,32 +177,24 @@ namespace Mail2Bug.MessageProcessingStrategies
             }
         }
 
-        private void ProcessAttachments(IIncomingEmailMessage message, int workItemId)
-        {
-            var attachmentFiles = SaveAttachments(message);
-            _workItemManager.AttachFiles(workItemId, (from object file in attachmentFiles select file.ToString()).ToList());
-            attachmentFiles.Delete();
-        }
-
         /// <summary>
         /// Take attachments from the current mail message and put them in a work item
         /// </summary>
         /// <param name="message"></param>
-        private static TempFileCollection SaveAttachments(IIncomingEmailMessage message)
+        private static MessageAttachmentCollection SaveAttachments(IIncomingEmailMessage message)
         {
-            var attachmentFiles = new TempFileCollection();
-
+            var result = new MessageAttachmentCollection();
             foreach (var attachment in message.Attachments)
             {
                 var filename = attachment.SaveAttachmentToFile();
                 if (filename != null)
                 {
-                    attachmentFiles.AddFile(filename, false);
+                    result.Add(filename, attachment.ContentId);
                     Logger.InfoFormat("Attachment saved to file {0}", filename);
                 }
             }
 
-            return attachmentFiles;
+            return result;
         }
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SimpleBugStrategy));

@@ -201,7 +201,7 @@ namespace Mail2BugUnitTests
             {
                 expectedValues["Changed By"] = message3.SenderName;
             }
-            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
+            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(message2.GetLastMessageText(true) + message3.GetLastMessageText(true));
 
             ValidateBugValues(expectedValues, bugFields);
         }
@@ -249,12 +249,45 @@ namespace Mail2BugUnitTests
 
             expectedValues["Changed By"] = message4.SenderName;
             expectedValues[WorkItemManagerMock.HistoryField] = 
-                TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText() + message4.GetLastMessageText());
+                TextUtils.FixLineBreaks(message2.GetLastMessageText(true) + message3.GetLastMessageText(true) + message4.GetLastMessageText(true));
             expectedValues[mnemonicDef.Field] = mnemonicDef.Value;
             expectedValues[explicitOverride1.Key] = explicitOverride1.Value;
 
             ValidateBugValues(expectedValues, bugFields);
             Assert.IsFalse(bugFields.ContainsKey(explicitOverride2.Key));
+        }
+
+        [TestMethod]
+        public void TestApplyingOverridesInUpdateMessage_Html()
+        {
+            var seed = _rand.Next();
+
+            Logger.InfoFormat("Using seed {0}", seed);
+
+            var mailManager = new MailManagerMock();
+            var explicitOverride1 = new KeyValuePair<string, string>("IsThisExplicit?","Indeed");
+            var explicitLine1 = string.Format("\n###{0}:{1}", explicitOverride1.Key, explicitOverride1.Value);
+            var message1 = mailManager.AddMessage(false);
+
+            var htmlText = string.Format("<html><head></head><body><p>{0}</p></body></html>", explicitLine1);
+            var message2 = mailManager.AddReply(message1, htmlText);
+            message2.IsHtmlBody = true;
+            message2.PlainTextBody = explicitLine1;
+
+            var instanceConfig = GetConfig().Instances.First();
+            instanceConfig.WorkItemSettings.ApplyOverridesDuringUpdate = true;
+            instanceConfig.WorkItemSettings.EnableExperimentalHtmlFeatures = true;
+
+            var workItemManagerMock = new WorkItemManagerMock(instanceConfig.WorkItemSettings.ConversationIndexFieldName);
+            ProcessMailbox(mailManager, instanceConfig, workItemManagerMock);
+
+            Assert.AreEqual(1, workItemManagerMock.Bugs.Count, "Only one bug should exist");
+            var bug = workItemManagerMock.Bugs.First();
+            var bugFields = bug.Value;
+
+            Assert.IsTrue(bugFields.ContainsKey(explicitOverride1.Key));
+            string actualValue = bugFields[explicitOverride1.Key];
+            Assert.AreEqual(explicitOverride1.Value, actualValue);
         }
 
         [TestMethod]
@@ -284,7 +317,7 @@ namespace Mail2BugUnitTests
 
             expectedValues["Changed By"] = message3.SenderName;
             expectedValues[WorkItemManagerMock.HistoryField] = 
-                TextUtils.FixLineBreaks(message2.GetLastMessageText() + message3.GetLastMessageText());
+                TextUtils.FixLineBreaks(message2.GetLastMessageText(true) + message3.GetLastMessageText(true));
 
             ValidateBugValues(expectedValues, bugFields);
 
@@ -325,7 +358,7 @@ namespace Mail2BugUnitTests
 
             var expectedValues = new Dictionary<string, string>();
             expectedValues["Changed By"] = appendOnlyMessage.SenderName;
-            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText());
+            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText(false));
 
             Assert.AreEqual(2, workItemManagerMock.Bugs.Count, "Only one bug should exist");
             ValidateBugValues(expectedValues, workItemManagerMock.Bugs[newBugId]);
@@ -388,7 +421,7 @@ namespace Mail2BugUnitTests
 
             var expectedValues = new Dictionary<string, string>();
             expectedValues["Changed By"] = appendOnlyMessage.SenderName;
-            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText());
+            expectedValues[WorkItemManagerMock.HistoryField] = TextUtils.FixLineBreaks(appendOnlyMessage.GetLastMessageText(true));
 
             Assert.AreEqual(2, workItemManagerMock.Bugs.Count, "Only one bug should exist");
             ValidateBugValues(expectedValues, workItemManagerMock.Bugs[newBugId]);

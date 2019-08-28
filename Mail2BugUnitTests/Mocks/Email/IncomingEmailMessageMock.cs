@@ -49,7 +49,7 @@ namespace Mail2BugUnitTests.Mocks.Email
             mock.CcNames = GetRandomNamesList(mock.CcAddresses.Count());
             mock.SentOn = new DateTime(Rand.Next(2012, 2525), Rand.Next(1, 12), Rand.Next(1, 28));
             mock.ReceivedOn = new DateTime(Rand.Next(2012, 2525), Rand.Next(1, 12), Rand.Next(1, 28));
-            mock.IsHtmlBody = Rand.Next(0, 1) == 0;
+            mock.IsHtmlBody = false; // this isn't html unless the creator specifically makes it so
 
             var attachments = new List<IIncomingEmailAttachment>(numAttachments);
             for (var i = 0; i < numAttachments; i++)
@@ -103,9 +103,9 @@ namespace Mail2BugUnitTests.Mocks.Email
             return filename;
         }
 
-        public string GetLastMessageText()
+        public string GetLastMessageText(bool enableExperimentalHtmlFeatures)
         {
-            return EmailBodyProcessingUtils.GetLastMessageText(this);
+            return EmailBodyProcessingUtils.GetLastMessageText(this, enableExperimentalHtmlFeatures);
         }
 
         public void CopyToFolder(string destinationFolder)

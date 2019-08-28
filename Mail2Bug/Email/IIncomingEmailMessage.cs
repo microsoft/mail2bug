@@ -43,7 +43,7 @@ namespace Mail2Bug.Email
         /// messages dropped, whereas the body includes all of that "history".
         /// </summary>
         /// <returns></returns>
-        string GetLastMessageText();
+        string GetLastMessageText(bool enableExperimentalHtmlFeatures);
 
         /// <summary>
         /// Deletes the message

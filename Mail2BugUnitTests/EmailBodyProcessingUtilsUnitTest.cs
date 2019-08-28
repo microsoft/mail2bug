@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -30,7 +31,7 @@ namespace Mail2BugUnitTests
             }
             message.PlainTextBody = bodyBuilder.ToString();
 
-            Assert.AreEqual(lastMessageText, EmailBodyProcessingUtils.GetLastMessageText(message), "Verifying extracted last message text correctness");
+            Assert.AreEqual(lastMessageText, EmailBodyProcessingUtils.GetLastMessageText(message, true), "Verifying extracted last message text correctness");
         }
 
         [TestMethod]
@@ -69,6 +70,90 @@ namespace Mail2BugUnitTests
 
                 Assert.AreEqual(expectedText, convertedHtml);
             }
+        }
+
+        [TestMethod]
+        public void TestUpdateEmbeddedImageLinks_Basic()
+        {
+            string original = @"<html>
+<body>
+<img src=""cid:123"" >
+</body>
+</html>";
+
+            IReadOnlyCollection<MessageAttachmentInfo> attachmentInfo = new List<MessageAttachmentInfo>
+            {
+                new MessageAttachmentInfo(@"x:\image.png", "123"),
+            };
+
+            // Note: it's acceptable to not preserve whitespace / insert empty HTML tags because we're
+            // manipulating HTML, not plain text. As long as the rendered page isn't impacted, all is well
+            string expected = @"<html><head></head><body>
+<img src=""file:///x:/image.png"">
+
+</body></html>";
+
+            string actual = EmailBodyProcessingUtils.UpdateEmbeddedImageLinks(original, attachmentInfo);
+            Assert.AreEqual(Normalize(expected), Normalize(actual));
+        }
+
+        [TestMethod]
+        public void TestGetLastMessageText_NoPrevious()
+        {
+            string original = @"<html>
+<body>
+This is a boring email.
+</body>
+</html>";
+
+            // Note: it's acceptable to not preserve whitespace / insert empty HTML tags because we're
+            // manipulating HTML, not plain text. As long as the rendered page isn't impacted, all is well
+            string expected = @"<html><head></head><body>
+This is a boring email.
+
+</body></html>";
+
+            string actual = EmailBodyProcessingUtils.GetLastMessageText_Html(original);
+            Assert.AreEqual(Normalize(expected), Normalize(actual));
+        }
+
+        [TestMethod]
+        public void TestGetLastMessageText_Previous_FromColon()
+        {
+            string original = @"<html>
+<body>
+<div class=""wrapppingBothMessageAndReply"">
+    <p class=""customStyling"">This is random text with some custom styling and outlook-generated elements.<o:p></o:p></p>
+    <div>
+        <div style=""border:none;border-top:solid"">
+            <p class=""customStyling""><b>From:</b> someAddress;<br><b>Subject:</b> RE: Build error<o:p></o:p>
+            </p>
+        </div>
+    </div>
+    <p class=""customStyling"">
+        <o:p>&nbsp;</o:p>
+    </p>
+    <p class=""customStyling"">text of the reply
+    </p>
+</div>
+<div>Something after the containing div</div>
+</body>
+</html>";
+
+            // Note: it's acceptable to not preserve whitespace because it's
+            // manipulating HTML, not plain text. As long as the rendered page isn't impacted, all is well
+            // Note that we expect that both
+            // 1. Elements following the latest message are removed
+            // 2. Anything in the same element as the latest message but after the start of the previous should be cleared out
+            string expected = @"<html><head></head><body>
+<div class=""wrapppingBothMessageAndReply"">
+    <p class=""customStyling"">This is random text with some custom styling and outlook-generated elements.<o:p></o:p></p>
+    <div>
+        <div style=""border:none;border-top:solid"">
+            <p class=""customStyling""><b></b></p></div></div></div></body></html>";
+
+            string actual = EmailBodyProcessingUtils.GetLastMessageText_Html(original);
+            Assert.AreEqual(Normalize(expected), Normalize(actual));
         }
 
         private static string Normalize(string text)
