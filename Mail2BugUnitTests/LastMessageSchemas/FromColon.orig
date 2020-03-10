@@ -1,0 +1,19 @@
+﻿<html>
+<body>
+<div class="wrapppingBothMessageAndReply">
+    <p class="customStyling">This is random text with some custom styling and outlook-generated elements.<o:p></o:p></p>
+    <div>
+        <div style="border:none;border-top:solid">
+            <p class="customStyling"><b>From:</b> someAddress;<br><b>Subject:</b> RE: Build error<o:p></o:p>
+            </p>
+        </div>
+    </div>
+    <p class="customStyling">
+        <o:p>&nbsp;</o:p>
+    </p>
+    <p class="customStyling">text of the reply
+    </p>
+</div>
+<div>Something after the containing div</div>
+</body>
+</html>

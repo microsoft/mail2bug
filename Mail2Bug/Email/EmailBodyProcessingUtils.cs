@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,21 +33,30 @@ namespace Mail2Bug.Email
         {
             CQ dom = rawBody;
 
-            const string messageSeparatorStyle = "border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in 0in 0in";
+            const string outlookDesktopSeparatorStyle = "border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in 0in 0in";
+            const string outlookMobileSeparatorStyle = "display:inline-block;width:98%";
 
+            // There's no well-defined way to parse the latest email from a thread
+            // We have to use heuristics to cover different email clients
             foreach (IDomObject element in dom["*"])
             {
                 // Lots of email clients insert html elements as message delimiters which have styling but no inner text
                 // This block checks for some of these patterns
-                if (element.NodeName == "DIV")
+                if (string.Equals(element.NodeName, "div", StringComparison.OrdinalIgnoreCase) &&
+                    outlookDesktopSeparatorStyle.Equals(element.GetAttribute("style")))
                 {
-                    if (element.Id == "divRplyFwdMsg" || element.Id == "x_divRplyFwdMsg" || messageSeparatorStyle.Equals(element.GetAttribute("style")))
-                    {
-                        IDomContainer parent = element.ParentNode;
-                        element.Remove();
-                        RemoveSubsequent(parent);
-                        break;
-                    }
+                    IDomContainer parent = element.ParentNode;
+                    RemoveSubsequent(parent);
+                    parent.Remove();
+                    break;
+                }
+
+                if (string.Equals(element.NodeName, "hr", StringComparison.OrdinalIgnoreCase) &&
+                    outlookMobileSeparatorStyle.Equals(element.GetAttribute("style")))
+                {
+                    RemoveSubsequent(element);
+                    element.Remove();
+                    break;
                 }
 
                 if (!element.ChildElements.Any() && !string.IsNullOrWhiteSpace(element.InnerText))

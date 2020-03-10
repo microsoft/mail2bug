@@ -82,6 +82,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="LastMessageSchemas\FromColon.expected">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LastMessageSchemas\FromColon.orig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LastMessageSchemas\OutlookDesktopSeparator.orig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LastMessageSchemas\OutlookMobileSeparator.expected">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LastMessageSchemas\OutlookMobileSeparator.orig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LastMessageSchemas\OutlookDesktopSeparator.expected">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="RegressionMessages\Basic.expected">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

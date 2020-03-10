@@ -1,0 +1,18 @@
+﻿<html>
+<body>
+<div class="wrappingBothMessageAndReply">
+  <b><p class="customStyling">This is random text with some custom styling and outlook-generated elements.<o:p></o:p></p></b>
+  <div>
+    <div style="border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in 0in 0in">
+      <p class="customStyling">
+        <b>Old emails from: field and subject</b>
+      </p>
+    </div>
+  </div>
+  <p class="customStyling"><o:p>&nbsp;</o:p></p>
+  <div>
+      Something after the containing div
+  </div>
+</div>
+</body>
+</html>

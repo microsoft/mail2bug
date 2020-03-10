@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -45,7 +45,7 @@ namespace Mail2BugUnitTests
 
             // Can't have '<' or '>' chars in the content, since it breaks the HTML processing. This is OK, since real HTML should never have these
             // chracters either (they will be escaped as &lt; and &gt;)
-            var expectedText = 
+            var expectedText =
                 StringFactory.GenerateRandomString(properties, _rand.Next()).Trim().Replace("<", "").Replace(">", "");
             var htmlText = string.Format("<html><head></head><body><p>{0}</p></body></html>", expectedText);
             var plainText = EmailBodyProcessingUtils.ConvertHtmlMessageToPlainText(htmlText);
@@ -118,42 +118,27 @@ This is a boring email.
         }
 
         [TestMethod]
-        public void TestGetLastMessageText_Previous_FromColon()
+        public void TestGetLastMessageText_EmailClientsSchemas()
         {
-            string original = @"<html>
-<body>
-<div class=""wrapppingBothMessageAndReply"">
-    <p class=""customStyling"">This is random text with some custom styling and outlook-generated elements.<o:p></o:p></p>
-    <div>
-        <div style=""border:none;border-top:solid"">
-            <p class=""customStyling""><b>From:</b> someAddress;<br><b>Subject:</b> RE: Build error<o:p></o:p>
-            </p>
-        </div>
-    </div>
-    <p class=""customStyling"">
-        <o:p>&nbsp;</o:p>
-    </p>
-    <p class=""customStyling"">text of the reply
-    </p>
-</div>
-<div>Something after the containing div</div>
-</body>
-</html>";
+            const string schemasFolder = "LastMessageSchemas";
+            foreach (var originalFilename in Directory.GetFiles(schemasFolder, "*.orig"))
+            {
+                Trace.WriteLine(string.Format("Processing email schema file {0}", originalFilename));
 
-            // Note: it's acceptable to not preserve whitespace because it's
-            // manipulating HTML, not plain text. As long as the rendered page isn't impacted, all is well
-            // Note that we expect that both
-            // 1. Elements following the latest message are removed
-            // 2. Anything in the same element as the latest message but after the start of the previous should be cleared out
-            string expected = @"<html><head></head><body>
-<div class=""wrapppingBothMessageAndReply"">
-    <p class=""customStyling"">This is random text with some custom styling and outlook-generated elements.<o:p></o:p></p>
-    <div>
-        <div style=""border:none;border-top:solid"">
-            <p class=""customStyling""><b></b></p></div></div></div></body></html>";
+                var baseFilename = Path.GetFileNameWithoutExtension(originalFilename);
+                var expectedFilename = Path.Combine(schemasFolder, baseFilename + ".expected");
 
-            string actual = EmailBodyProcessingUtils.GetLastMessageText_Html(original);
-            Assert.AreEqual(Normalize(expected), Normalize(actual));
+                var original = File.ReadAllText(originalFilename);
+                var expected = Normalize(File.ReadAllText(expectedFilename));
+                var actual = Normalize(EmailBodyProcessingUtils.GetLastMessageText_Html(original));
+
+                // Note: it's acceptable to not preserve whitespace because it's
+                // manipulating HTML, not plain text. As long as the rendered page isn't impacted, all is well
+                // Note that we expect that both
+                // 1. Elements following the latest message are removed
+                // 2. Anything in the same element as the latest message but after the start of the previous should be cleared out
+                Assert.AreEqual(expected, actual);
+            }
         }
 
         private static string Normalize(string text)
