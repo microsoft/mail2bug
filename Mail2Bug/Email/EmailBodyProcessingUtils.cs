@@ -43,7 +43,7 @@ namespace Mail2Bug.Email
                 // Lots of email clients insert html elements as message delimiters which have styling but no inner text
                 // This block checks for some of these patterns
                 if (string.Equals(element.NodeName, "div", StringComparison.OrdinalIgnoreCase) &&
-                    outlookDesktopSeparatorStyle.Equals(element.GetAttribute("style")))
+                   (element.Id == "divRplyFwdMsg" || element.Id == "x_divRplyFwdMsg" || outlookDesktopSeparatorStyle.Equals(element.GetAttribute("style"))))
                 {
                     IDomContainer parent = element.ParentNode;
                     RemoveSubsequent(parent);
