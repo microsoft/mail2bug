@@ -1,0 +1,10 @@
+﻿<html><head></head>
+<body>
+<div>
+  <div>
+    <div style="customStyle">Message content from iPhone</div>
+  </div>
+  <div><br></div>
+  <div class="ms-outlook-ios-signature"></div>
+</div>
+</body></html>

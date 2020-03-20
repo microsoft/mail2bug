@@ -1,0 +1,15 @@
+﻿<html><head></head>
+<body>
+<div>
+  <div>
+    <div style="customStyle">Message content from iPhone</div>
+  </div>
+  <div><br /></div>
+  <div class="ms-outlook-ios-signature"></div>
+</div>
+<hr style="display:inline-block;width:98%" tabindex="-1" />
+<div>
+    Something after the containing div
+</div>
+</body>
+</html>
