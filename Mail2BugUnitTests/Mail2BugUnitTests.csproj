@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.10\lib\net40-full\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.10\lib\net40\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1506.2016\lib\net40\Moq.dll</HintPath>
