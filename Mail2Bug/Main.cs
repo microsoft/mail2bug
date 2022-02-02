@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
@@ -30,6 +31,12 @@ namespace Mail2Bug
 
             try
             {
+                // Enforce TLS 1.2
+                if (ReadBoolFromAppConfig("EnforceTls12", false))
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                }
+
                 string configPath = ConfigurationManager.AppSettings["ConfigPath"];
                 string configsFilePattern = ConfigurationManager.AppSettings["ConfigFilePattern"];
 
